@@ -1,7 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
-import { SearchMinor, MetafieldsMinor, DiscountsFilledMinor, MagicMinor, StoreDetailsMinor } from '@shopify/polaris-icons';
-import { ActionList, Button, Card, Form, FormLayout, IndexTable, Layout, LegacyCard, Page, Popover, Spinner, Text, TextField, VerticalStack } from "@shopify/polaris";
+import { SearchIcon, MetafieldsIcon, DiscountFilledIcon, MagicIcon, TextInRowsIcon } from '@shopify/polaris-icons';
+import { ActionList, Button, Card, Form, FormLayout, IndexTable, Layout, LegacyCard, Page, Popover, Spinner, Text, TextField, BlockStack } from "@shopify/polaris";
 import indexStyles from "./_index/style.css";
 import { useEffect, useState } from "react";
 import AdminServer from "~/server/admin.server";
@@ -30,7 +30,7 @@ export default function Admin() {
                 id: id
             }
         }
-    }); 
+    });
 
     const [updateAdmin, { loading: updatedAdminLoading, error: updatedAdminError, data: updatedAdminData }] = useMutation(UPDATE_ADMIN);
 
@@ -66,7 +66,7 @@ export default function Admin() {
     useEffect(() => {
         setFormState(getAdminData?.getAdmin);
         setCleanFormState(getAdminData?.getAdmin);
-    }, [getAdminData]); 
+    }, [getAdminData]);
 
     let AdminInformation;
 
@@ -96,7 +96,7 @@ export default function Admin() {
 
     return (
         <Page
-            backAction={{content: 'Settings', url: '/admin/management'}} 
+            backAction={{content: 'Settings', url: '/admin/management'}}
             title={admin ? "Update admin information" : "Create new admin"}
             primaryAction={
                 <Button
@@ -108,22 +108,22 @@ export default function Admin() {
                   Save
                 </Button>
             }
-        >   
+        >
             {
                 error ? (<p>{error.message}</p>) : null
             }
             <Layout>
                 <Layout.Section>
-                    <VerticalStack gap="5">
+                    <BlockStack gap="5">
                         <Card>
                             {
                                 getAdminError ? <p>{getAdminError.message}</p> : null
                             }
-                            <VerticalStack gap="5">
+                            <BlockStack gap="5">
                                 {AdminInformation}
-                            </VerticalStack>
+                            </BlockStack>
                         </Card>
-                    </VerticalStack>
+                    </BlockStack>
                 </Layout.Section>
             </Layout>
         </Page>

@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { Bleed, Button, Card, Divider, HorizontalStack, Layout, Page, PageActions, Spinner, Text, TextField, VerticalStack } from "@shopify/polaris";
+import { Bleed, Button, Card, Divider, InlineStack, Layout, Page, PageActions, Spinner, Text, TextField, BlockStack } from "@shopify/polaris";
 import indexStyles from "./_index/style.css";
 import { useQuery } from "@apollo/client";
 import { GET_STORE } from "~/graphql/query";
@@ -20,7 +20,7 @@ export default function AdminStoreDetail() {
             }
         }
     });
-    
+
     let StoreInformation;
 
     if(data?.getStore) {
@@ -157,26 +157,26 @@ export default function AdminStoreDetail() {
             }
             <Layout>
                 <Layout.Section>
-                    <VerticalStack gap="5">
+                    <BlockStack gap="5">
                         <Card>
-                            <VerticalStack gap="5">
+                            <BlockStack gap="5">
                                 <Text as={"h2"} variant="headingLg">
                                     Store Information
                                 </Text>
                                 {StoreInformation}
-                            </VerticalStack>
+                            </BlockStack>
                         </Card>
-                    </VerticalStack>
+                    </BlockStack>
                 </Layout.Section>
-                <Layout.Section secondary> 
-                    <VerticalStack gap={"5"}>
+                <Layout.Section secondary>
+                    <BlockStack gap={"5"}>
                         <Card>
-                            <VerticalStack gap={"5"}>
-                                <HorizontalStack align="space-between">
-                                    <Text as="h2" variant="headingLg"> 
+                            <BlockStack gap={"5"}>
+                                <InlineStack align="space-between">
+                                    <Text as="h2" variant="headingLg">
                                         Action
                                     </Text>
-                                </HorizontalStack>
+                                </InlineStack>
                                 <Bleed marginInline="20">
                                     <Divider />
                                 </Bleed>
@@ -200,15 +200,15 @@ export default function AdminStoreDetail() {
                                 >
                                     Instant Page
                                 </Button>
-                            </VerticalStack>
+                            </BlockStack>
                         </Card>
                         <Card>
-                        <VerticalStack gap={"5"}>
-                                <HorizontalStack align="space-between">
-                                    <Text as="h2" variant="headingLg"> 
+                        <BlockStack gap={"5"}>
+                                <InlineStack align="space-between">
+                                    <Text as="h2" variant="headingLg">
                                         Secret information
                                     </Text>
-                                </HorizontalStack>
+                                </InlineStack>
                                 <Bleed marginInline="20">
                                     <Divider />
                                 </Bleed>
@@ -224,13 +224,13 @@ export default function AdminStoreDetail() {
                                         <p style={{ textAlign: 'center' }}><Spinner /></p>
                                     )
                                 }
-                                
-                            </VerticalStack>
+
+                            </BlockStack>
                         </Card>
-                    </VerticalStack>
+                    </BlockStack>
                 </Layout.Section>
                 <Layout.Section>
-                    <PageActions 
+                    <PageActions
                         secondaryActions={[
                             {
                                 content: "Delete",

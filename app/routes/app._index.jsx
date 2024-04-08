@@ -10,10 +10,10 @@ import {
   Page,
   Layout,
   Text,
-  VerticalStack,
+  BlockStack,
   Card,
   Button,
-  HorizontalStack,
+  InlineStack,
   Box,
   Divider,
   List,
@@ -45,7 +45,7 @@ export const loader = async ({ request }) => {
   const shopData = await StoreModel.findOneAndUpdate(
     {
       id: shop.id
-    }, 
+    },
     {
       id: shop.id,
       name: shop.name,
@@ -66,11 +66,11 @@ export const loader = async ({ request }) => {
       phone: shop.phone || "NULL",
       created_at: shop.created_at,
       accessToken: session.accessToken,
-    }, 
+    },
     {
       upsert: true,
     });
-  
+
   return json({ shop: shopData });
 };
 
@@ -140,7 +140,7 @@ export default function Index() {
   }, [productId]);
 
   const generateProduct = () => submit({}, { replace: true, method: "POST" });
-  
+
   return (
     <Page>
       <ui-title-bar title="Store information">
@@ -148,9 +148,9 @@ export default function Index() {
           Generate a product
         </button>
       </ui-title-bar>
-      <VerticalStack gap="5">
+      <BlockStack gap="5">
       <Card>
-        <Form onSubmit={() => submit({}, { replace: true, method: "GET" })}> 
+        <Form onSubmit={() => submit({}, { replace: true, method: "GET" })}>
           <FormLayout>
             <TextField
               label="Shop id"
@@ -282,7 +282,7 @@ export default function Index() {
           </FormLayout>
         </Form>
       </Card>
-      </VerticalStack>
+      </BlockStack>
     </Page>
   );
 }

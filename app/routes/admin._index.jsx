@@ -1,5 +1,5 @@
 import { useNavigate } from "@remix-run/react";
-import { SearchMinor, MetafieldsMinor, DiscountsFilledMinor, MagicMinor, StoreDetailsMinor } from '@shopify/polaris-icons';
+import { SearchIcon, MetafieldsIcon, DiscountFilledIcon, MagicIcon, TextInRowsIcon } from '@shopify/polaris-icons';
 import { ActionList, Button, IndexTable, LegacyCard, Page, Popover, Spinner, Text } from "@shopify/polaris";
 import indexStyles from "./_index/style.css";
 import { useState } from "react";
@@ -34,7 +34,7 @@ export default function Admin() {
     }
 
     const { loading, error, data } = useQuery(GET_ALL_STORES);
-    
+
     const resourceName = {
         singular: 'merchant',
         plural: 'merchants',
@@ -76,33 +76,33 @@ export default function Admin() {
                                     items: [
                                         {
                                             content: 'Detail',
-                                            icon: StoreDetailsMinor,
+                                            icon: TextInRowsIcon,
                                             onAction: () => navigate(`/admin/stores/${merchant.id}`)
                                         },
                                         {
                                             content: 'Search',
-                                            icon: SearchMinor,
+                                            icon: SearchIcon,
                                             onAction: () => {
                                                 console.log('Search action');
                                             }
                                         },
                                         {
-                                            content: 'Metadata', 
-                                            icon: MetafieldsMinor,
+                                            content: 'Metadata',
+                                            icon: MetafieldsIcon,
                                             onAction: () => {
                                                 console.log('Metadata action');
                                             }
                                         },
                                         {
                                             content: 'Page Speed',
-                                            icon: DiscountsFilledMinor,
+                                            icon: DiscountFilledIcon,
                                             onAction: () => {
                                                 console.log('Page Speed Action');
                                             }
                                         },
                                         {
                                             content: 'Instant Page',
-                                            icon: MagicMinor,
+                                            icon: MagicIcon,
                                             onAction: () => {
                                                 console.log("Instant Page Action");
                                             }
@@ -125,7 +125,7 @@ export default function Admin() {
             <p>{error.message}</p>
         )
     }
-    
+
 
     return (
         <Page title="Merchants List">

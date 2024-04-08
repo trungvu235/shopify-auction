@@ -1,7 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
-import { SearchMinor, MetafieldsMinor, DiscountsFilledMinor, MagicMinor, StoreDetailsMinor } from '@shopify/polaris-icons';
-import { ActionList, Button, Card, Form, FormLayout, IndexTable, Layout, LegacyCard, Page, Popover, Text, TextField, VerticalStack } from "@shopify/polaris";
+import { SearchIcon, MetafieldsIcon, DiscountFilledIcon, MagicIcon, TextInRowsIcon } from '@shopify/polaris-icons';
+import { ActionList, Button, Card, Form, FormLayout, IndexTable, Layout, LegacyCard, Page, Popover, Text, TextField, BlockStack } from "@shopify/polaris";
 import indexStyles from "./_index/style.css";
 import { useEffect, useState } from "react";
 import StoreServer from "~/server/store.server";
@@ -21,7 +21,7 @@ export default function Admin() {
     const [admin, setAdmin] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    
+
     const [formState, setFormState] = useState({
         username: '',
         email: '',
@@ -44,7 +44,7 @@ export default function Admin() {
 
     return (
         <Page
-            backAction={{content: 'Settings', url: '/admin/management'}} 
+            backAction={{content: 'Settings', url: '/admin/management'}}
             title={"Create new admin"}
             primaryAction={
                 <Button
@@ -61,14 +61,14 @@ export default function Admin() {
             }
             <Layout>
                 <Layout.Section>
-                    <VerticalStack gap="5">
+                    <BlockStack gap="5">
                         <Card>
                             {/* {
                                 typeof error === "string" ? (
                                     <p style={{textAlign: 'center', color: 'red'}}>{error}</p>
                                 ) : null
                             } */}
-                            <VerticalStack gap="5">
+                            <BlockStack gap="5">
                                 <TextField
                                     label="Username"
                                     value={formState?.username ?? ''}
@@ -98,9 +98,9 @@ export default function Admin() {
                                     onChange={(confirmedPassword) => setFormState({ ...formState, confirmedPassword })}
                                     autoComplete="password"
                                 />
-                            </VerticalStack>
+                            </BlockStack>
                         </Card>
-                    </VerticalStack>
+                    </BlockStack>
                 </Layout.Section>
             </Layout>
         </Page>
