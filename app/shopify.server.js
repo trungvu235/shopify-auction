@@ -39,7 +39,7 @@ const shopify = shopifyApp({
     : {}),
 });
 
-const dbConnectionString = 'mongodb://localhost:27017/tapita_training';
+const dbConnectionString = 'mongodb+srv://trungvt4697:20194697@cluster0.vikgmv5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 mongoose.set('debug', true);
 mongoose.set('debug', { color: true });
 mongoose.connect(dbConnectionString).then(result => {
