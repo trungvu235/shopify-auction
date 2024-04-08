@@ -7,54 +7,76 @@ import {
   Page,
   Text,
   BlockStack,
+  ResourceList,
+  Avatar,
+  ResourceItem,
+  Icon,
 } from "@shopify/polaris";
+import React from 'react';
+import {
+  ViewIcon
+} from '@shopify/polaris-icons';
 
 export default function AdditionalPage() {
   return (
-    <Page>
-      <ui-title-bar title="Additional page" />
+    <Page fullWidth>
+      <ui-title-bar title="Auctions" />
       <Layout>
         <Layout.Section>
           <Card>
-            <BlockStack gap="3">
-              <Text as="p" variant="bodyMd">
-                The app template comes with an additional page which
-                demonstrates how to create multiple pages within app navigation
-                using{" "}
-                <Link
-                  url="https://shopify.dev/docs/apps/tools/app-bridge"
-                  target="_blank"
-                >
-                  App Bridge
-                </Link>
-                .
-              </Text>
-              <Text as="p" variant="bodyMd">
-                To create your own page and have it show up in the app
-                navigation, add a page inside <Code>app/routes</Code>, and a
-                link to it in the <Code>&lt;ui-nav-menu&gt;</Code> component
-                found in <Code>app/routes/app.jsx</Code>.
-              </Text>
-            </BlockStack>
-          </Card>
-        </Layout.Section>
-        <Layout.Section secondary>
-          <Card>
-            <BlockStack gap="2">
-              <Text as="h2" variant="headingMd">
-                Resources
-              </Text>
-              <List spacing="extraTight">
-                <List.Item>
-                  <Link
-                    url="https://shopify.dev/docs/apps/design-guidelines/navigation#app-nav"
-                    target="_blank"
+            <ResourceList
+              resourceName={{singular: 'customer', plural: 'customers'}}
+              items={[
+                {
+                  id: '110',
+                  url: '#',
+                  name: 'Mae Jemison',
+                  location: 'Decatur, USA',
+                  latestOrderUrl: '#',
+                },
+                {
+                  id: '210',
+                  url: '#',
+                  name: 'Ellen Ochoa',
+                  location: 'Los Angeles, USA',
+                  latestOrderUrl: '#',
+                },
+              ]}
+              renderItem={(item) => {
+                const {id, url, name, location, latestOrderUrl} = item;
+                const media = <Avatar customer size="md" name={name} />;
+                const shortcutActions = latestOrderUrl
+                  ? [
+                    {
+                      content: 'View latest order',
+                      accessibilityLabel: `View ${name}’s latest order`,
+                      url: latestOrderUrl,
+                    },
+                    {
+                      content: 'View latest order',
+                      accessibilityLabel: `View ${name}’s latest order`,
+                      url: latestOrderUrl,
+                    },
+                  ]
+                  : undefined;
+
+                return (
+                  <ResourceItem
+                    id={id}
+                    url={url}
+                    media={media}
+                    accessibilityLabel={`View details for ${name}`}
+                    shortcutActions={shortcutActions}
+                    persistActions
                   >
-                    App nav best practices
-                  </Link>
-                </List.Item>
-              </List>
-            </BlockStack>
+                    <Text variant="bodyMd" fontWeight="bold" as="h3">
+                      {name}
+                    </Text>
+                    <div>{location}</div>
+                  </ResourceItem>
+                );
+              }}
+            />
           </Card>
         </Layout.Section>
       </Layout>
