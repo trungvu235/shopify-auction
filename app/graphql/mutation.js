@@ -17,7 +17,7 @@ export const DELETE_ADMIN = gql`
             email
         }
     }
-`
+`;
 
 export const UPDATE_ADMIN = gql`
     mutation UpdateAdmin($input: UpdateAdminInput) {
@@ -38,3 +38,35 @@ export const CREATE_ADMIN = gql`
         }
     }
 `;
+export const CREATE_TEMPLATE = gql`
+    mutation CreateTemplate($input: CreateTemplateInput) {
+        createTemplate(input: $input) {
+            id
+            name
+            image
+            data
+            status
+            store_id
+        }
+    }
+`;
+
+export const UPDATE_TEMPLATE = gql`
+    mutation UpdateTemplate($input: UpdateTemplateInput) {
+        updateTemplate(input: $input) {
+            id
+            name
+            image
+            data
+            status
+        }
+    }
+`;
+
+export const DELETE_TEMPLATE = gql`
+    mutation DeleteTemplate($input: DeleteTemplateInput) {
+        deleteTemplate(input: $input) {
+            id
+        }
+    }
+`

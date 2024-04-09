@@ -16,46 +16,6 @@ body {
   padding: 1rem;
 }
 
-.center-form {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.Polaris-FormLayout__Item {
-  display: flex;
-  justify-content: center; 
-}
-
-.Polaris-TopBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.Polaris-TopBar-UserMenu__Details {
-  display: none;
-}
-
-.Polaris-TopBar__RightContent {
-  display: flex;
-}
-
-.Polaris-Box.Polaris-Box--listReset {
-  background-color: #fff;
-  border-radius: 10px;
-}
-
-.Polaris-Box--listReset {
-  display: flex;
-  flex-direction: column;
-}
-
-p.Polaris-Text--root.Polaris-Text--headingXs {
-  padding-bottom: 0;
-}
-
 h1,
 p {
   padding: 0;
@@ -103,8 +63,6 @@ ul {
   margin: 0;
   display: flex;
   gap: 2rem;
-  row-gap: 0;
-  column-gap: 0;
 }
 
 li {
