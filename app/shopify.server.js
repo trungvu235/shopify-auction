@@ -42,7 +42,7 @@ const shopify = shopifyApp({
 });
 
 
-const dbConnectionString = "mongodb+srv://admin:20194677@cluster0.tytl7jo.mongodb.net/gr3-thanhnt?retryWrites=true&w=majority";
+const dbConnectionString = "mongodb+srv://trungvt4697:20194697@cluster0.vikgmv5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.set("debug", true);
 mongoose.set("debug", { color: true });
 mongoose
