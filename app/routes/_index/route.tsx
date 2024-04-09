@@ -1,96 +1,58 @@
-import { redirect } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
-
-import indexStyles from "./style.css";
-import {
-    AppProvider,
-    Button,
-    Page,
-    FormLayout,
-    TextField,
-    Card,
-    Spinner,
-} from "@shopify/polaris";
-import { useState } from "react";
-// @ts-ignore
-import { useMutation } from "@apollo/client";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { LOGIN_MUTATION } from "~/graphql/mutation";
+import { json, redirect } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
 
-export const links = () => [{ rel: "stylesheet", href: indexStyles }];
+import { login } from "../../shopify.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    const url = new URL(request.url);
-    if (url.searchParams.get("shop")) {
-        throw redirect(`/app?${url.searchParams.toString()}`);
-    }
+import styles from "./styles.module.css";
 
-    return null;
-}
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+
+  if (url.searchParams.get("shop")) {
+    throw redirect(`/app?${url.searchParams.toString()}`);
+  }
+
+  return json({ showForm: Boolean(login) });
+};
+
 export default function App() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+  const { showForm } = useLoaderData<typeof loader>();
 
-    const [login] = useMutation(LOGIN_MUTATION);
-
-    const handleLogin = async () => {
-        try {
-            setIsLoading(true);
-            const response = await login({
-                variables: {
-                    input: {
-                        username,
-                        password,
-                    }
-                }
-            });
-            setIsLoading(false);
-            if (response.data.login) {
-                localStorage.setItem('accessToken', response.data.login);
-                navigate('/admin');
-            } else {
-                throw new Error('Some error occured');
-            }
-        } catch (err: any) {
-            setError(err);
-            setIsLoading(false);
-        }
-    }
-
-    return (
-        <AppProvider i18n={require('@shopify/polaris/locales/en.json')}>
-            <div className="center-form">
-                <Page>
-                    <Card>
-                        {
-                            error ? (
-                                <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>
-                            ) : null
-                        }
-                        {
-                            isLoading ? (<p style={{ textAlign: 'center', color: 'red' }}>
-                                <Spinner />
-                            </p>) : null
-                        }
-                        <FormLayout>
-                            <TextField label="Username" value={username} onChange={(e) => setUsername(e)} autoComplete="off" />
-                            <TextField
-                                type="password"
-                                value={password}
-                                label="Password"
-                                onChange={(e) => setPassword(e)}
-                                autoComplete="off"
-                            />
-                            <Button onClick={handleLogin}>
-                                Login
-                            </Button>
-                        </FormLayout>
-                    </Card>
-                </Page>
-            </div>
-        </AppProvider >
-    )
+  return (
+    <div className={styles.index}>
+      <div className={styles.content}>
+        <h1 className={styles.heading}>A short heading about [your app]</h1>
+        <p className={styles.text}>
+          A tagline about [your app] that describes your value proposition.
+        </p>
+        {showForm && (
+          <Form className={styles.form} method="post" action="/auth/login">
+            <label className={styles.label}>
+              <span>Shop domain</span>
+              <input className={styles.input} type="text" name="shop" />
+              <span>e.g: my-shop-domain.myshopify.com</span>
+            </label>
+            <button className={styles.button} type="submit">
+              Log in
+            </button>
+          </Form>
+        )}
+        <ul className={styles.list}>
+          <li>
+            <strong>Product feature</strong>. Some detail about your feature and
+            its benefit to your customer.
+          </li>
+          <li>
+            <strong>Product feature</strong>. Some detail about your feature and
+            its benefit to your customer.
+          </li>
+          <li>
+            <strong>Product feature</strong>. Some detail about your feature and
+            its benefit to your customer.
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
 }
