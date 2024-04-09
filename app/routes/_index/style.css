@@ -1,0 +1,123 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  line-height: 1.6;
+}
+
+.index {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+}
+
+.center-form {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Polaris-FormLayout__Item {
+  display: flex;
+  justify-content: center; 
+}
+
+.Polaris-TopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Polaris-TopBar-UserMenu__Details {
+  display: none;
+}
+
+.Polaris-TopBar__RightContent {
+  display: flex;
+}
+
+.Polaris-Box.Polaris-Box--listReset {
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.Polaris-Box--listReset {
+  display: flex;
+  flex-direction: column;
+}
+
+p.Polaris-Text--root.Polaris-Text--headingXs {
+  padding-bottom: 0;
+}
+
+h1,
+p {
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  font-size: 1.2rem;
+  padding-bottom: 2rem;
+}
+
+.content {
+  display: grid;
+  gap: 2rem;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.2rem;
+  max-width: 20rem;
+  text-align: left;
+  font-size: 1rem;
+}
+
+input[type="text"] {
+  padding: 0.4rem;
+}
+
+button {
+  padding: 0.4rem;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  padding-top: 3rem;
+  margin: 0;
+  display: flex;
+  gap: 2rem;
+  row-gap: 0;
+  column-gap: 0;
+}
+
+li {
+  max-width: 20rem;
+  text-align: left;
+}
+
+@media only screen and (max-width: 50rem) {
+  ul {
+    display: block;
+  }
+
+  li {
+    padding-bottom: 1rem;
+  }
+}
