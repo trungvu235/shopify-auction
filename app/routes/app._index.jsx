@@ -3,7 +3,7 @@ import {
     useLoaderData,
 } from "@remix-run/react";
 import {
-    Card, InlineGrid,
+    Card, InlineGrid, Grid, CalloutCard, Bleed, Box, Image, Text, BlockStack, Page, LegacyCard, InlineStack, Button
 } from "@shopify/polaris";
 
 import {authenticate} from "../shopify.server";
@@ -106,12 +106,101 @@ export default function Index() {
 
 
     return (
-        <Card>
-            <InlineGrid gap="400" columns={3}>
-                <Placeholder height="320px"/>
-                <Placeholder height="320px"/>
-                <Placeholder height="320px"/>
-            </InlineGrid>
-        </Card>
+        <Page
+            title="Dashboard"
+            primaryAction={{content: 'Create Auction', disabled: false}}
+        >
+            {/*<InlineGrid gap="400" columns={3}>*/}
+            {/*    <Placeholder height="320px"/>*/}
+            {/*    <Placeholder height="320px"/>*/}
+            {/*    <Placeholder height="320px"/>*/}
+            {/*</InlineGrid>*/}
+            <Grid>
+                <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 8}}>
+                    <Card>
+                        <Box paddingBlockStart="500" paddingBlockEnd="1600" paddingInlineStart="0" paddingInlineEnd="0">
+                            <BlockStack inlineAlign="center">
+                                <img
+                                    src={"https://app.auctionplusapp.com/images/emptystate-product.png"}
+                                    alt={"a sheet with purple and orange stripes"}
+                                    style={{maxWidth: "250px"}}
+                                />
+                                <Box maxWidth="400px">
+                                    <BlockStack align="center">
+                                        <Box paddingBlockEnd="400">
+                                            <Box paddingBlockEnd="150">
+                                                <Text variant="headingMd" fontWeight="bold" alignment="center">
+                                                    You have 1 running auction
+                                                </Text>
+                                            </Box>
+                                            <InlineStack align="center" gap="500" wrap={false}>
+                                                <Button variant="primary">View Auctions</Button>
+                                            </InlineStack>
+                                        </Box>
+                                    </BlockStack>
+                                </Box>
+                            </BlockStack>
+                        </Box>
+                    </Card>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 4}}>
+                    <div>
+                        <LegacyCard title="Auction Details" sectioned>
+                            <BlockStack inlineAlign="center">
+                                <InlineStack gap="500" wrap={false}>
+                                    <BlockStack>
+                                        <Text variant="subdued">TOTAL NUMBER OF AUCTIONS</Text>
+                                        <Text variant="headingXl" fontWeight="bold" alignment="center">6</Text>
+                                    </BlockStack>
+                                </InlineStack>
+                            </BlockStack>
+                            <p>View a summary of your online store’s orders.</p>
+                            <BlockStack inlineAlign="center">
+                                <InlineStack gap="500" wrap={false}>
+                                    <Box>
+                                        <BlockStack>
+                                            <Text variant="headingXl" fontWeight="bold" alignment="center">1</Text>
+                                            <Text variant="subdued">ACTIVE</Text>
+                                        </BlockStack>
+                                    </Box>
+                                    <Box>
+                                        <BlockStack>
+                                            <Text variant="headingXl" fontWeight="bold" alignment="center">2</Text>
+                                            <Text variant="subdued">SCHEDULED</Text>
+                                        </BlockStack>
+                                    </Box>
+                                    <Box>
+                                        <BlockStack>
+                                            <Text variant="headingXl" fontWeight="bold" alignment="center">3</Text>
+                                            <Text variant="subdued">COMPLETED</Text>
+                                        </BlockStack>
+                                    </Box>
+                                </InlineStack>
+                            </BlockStack>
+                        </LegacyCard>
+                    </div>
+                    <div style={{marginTop: "10px"}}>
+                        <LegacyCard title="Order Details" sectioned>
+                            <BlockStack inlineAlign="center">
+                                <InlineStack gap="500" wrap={false}>
+                                    <Box>
+                                        <BlockStack>
+                                            <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
+                                            <Text variant="subdued">PAID</Text>
+                                        </BlockStack>
+                                    </Box>
+                                    <Box>
+                                        <BlockStack>
+                                            <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
+                                            <Text variant="subdued">UNFULFILLED</Text>
+                                        </BlockStack>
+                                    </Box>
+                                </InlineStack>
+                            </BlockStack>
+                        </LegacyCard>
+                    </div>
+                </Grid.Cell>
+            </Grid>
+        </Page>
     );
 }

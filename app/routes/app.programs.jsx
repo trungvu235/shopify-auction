@@ -8,7 +8,7 @@ export default function Programs() {
 
     const navigate = useNavigate();
     return (
-        <Page title="Programs">
+        <Page title="Auctions List">
             <InlineGrid gap="400" columns={2}>
                 <div>
                     <MediaCard
