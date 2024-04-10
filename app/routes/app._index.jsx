@@ -11,6 +11,7 @@ import axios from "axios";
 import PointModel from "../models/point.model";
 import EarnPointModel from "../models/earnPoint.model";
 import {forEach} from "lodash";
+import {useNavigate} from "@remix-run/react";
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
@@ -103,12 +104,18 @@ export default function Index() {
     // useEffect(() => {
     //     window.storeData = shop;
     // }, [shop])
-
+    const navigate = useNavigate();
 
     return (
         <Page
             title="Dashboard"
-            primaryAction={{content: 'Create Auction', disabled: false}}
+            primaryAction={{
+                content: 'Create Auction',
+                disabled: false,
+                onAction: () => {
+                    navigate('../point_program');
+                },
+            }}
         >
             {/*<InlineGrid gap="400" columns={3}>*/}
             {/*    <Placeholder height="320px"/>*/}
@@ -134,7 +141,11 @@ export default function Index() {
                                                 </Text>
                                             </Box>
                                             <InlineStack align="center" gap="500" wrap={false}>
-                                                <Button variant="primary">View Auctions</Button>
+                                                <Button
+                                                    variant="primary"
+                                                >
+                                                    View Auctions
+                                                </Button>
                                             </InlineStack>
                                         </Box>
                                     </BlockStack>
