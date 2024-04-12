@@ -4,7 +4,7 @@ import { Link, Outlet, useLoaderData, useRouteError } from "@remix-run/react";
 import { AppProvider as PolarisAppProvider } from "@shopify/polaris";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css";
 import { boundary } from "@shopify/shopify-app-remix";
-
+// import DefaultLayout from "../components/layout/DefaultLayout";
 import { authenticate } from "../shopify.server";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
@@ -30,11 +30,16 @@ export default function App() {
             <ui-nav-menu>
                 <Link to="/app" rel="home">Home</Link>
                 <Link to="/app/auctions">Auctions</Link>
+                <Link to="/app/point_program">Settings</Link>
             </ui-nav-menu>
+
             <PolarisAppProvider
                 i18n={polarisTranslations}
                 linkComponent={RemixPolarisLink}
             >
+                {/*<DefaultLayout handleLogout={handleLogout} shop={shop}>*/}
+                {/*    <Outlet />*/}
+                {/*</DefaultLayout>*/}
                 <Outlet />
             </PolarisAppProvider>
         </>
