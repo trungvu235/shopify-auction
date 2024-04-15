@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a9896d72741bd015197b16bab41f472c"
+name = "auction-app"
+handle = "auction-app-23"
+application_url = "https://parish-seriously-austin-realtor.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "trungvt-store.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_files,read_products,read_themes,write_customers,write_files,write_products,write_themes"
+
+[auth]
+redirect_urls = [
+  "https://parish-seriously-austin-realtor.trycloudflare.com/auth/callback",
+  "https://parish-seriously-austin-realtor.trycloudflare.com/auth/shopify/callback",
+  "https://parish-seriously-austin-realtor.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-04"
+
+[pos]
+embedded = false

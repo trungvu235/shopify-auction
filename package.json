@@ -1,5 +1,5 @@
 {
-  "name": "loyalty-rewards-app",
+  "name": "shopify-auction-app",
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production remix build",
@@ -72,5 +72,5 @@
     "web/frontend",
     "extensions/*"
   ],
-  "author": "sstrikess"
+  "author": "trungvu"
 }
