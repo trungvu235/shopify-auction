@@ -30,6 +30,8 @@
     "@remix-run/react": "^2.0.0",
     "@remix-run/serve": "^2.0.0",
     "@shopify/app": "^3.51.0",
+    "@shopify/app-bridge": "^2.3.1",
+    "@shopify/app-bridge-react": "^2.3.1",
     "@shopify/app-bridge-types": "^0.0.3",
     "@shopify/cli": "^3.51.0",
     "@shopify/polaris": "^12.25.0",

@@ -3,29 +3,24 @@ import React from 'react';
 import {
     Page,
     Card,
-    Tabs,
-    LegacyCard,
-    useBreakpoints,
     Text,
-    IndexTable,
     InlineStack,
     Icon,
     Button,
-    LegacyStack,
-    RadioButton,
     Layout,
     BlockStack,
     List,
     TextField,
     Select,
-    DatePicker
+    ResourceList,
+    Thumbnail,
+    ResourceItem
 } from '@shopify/polaris';
 import { useNavigate } from '@remix-run/react';
 import {
-    ThemeEditIcon,
-    ViewIcon,
     ProductIcon,
-    CalendarTimeIcon
+    CalendarTimeIcon,
+    XIcon
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -52,6 +47,8 @@ export default function AuctionForm() {
     const [startPrice, setStartPrice] = useState(null);
     const [bidIncrement, setBidIncrement] = useState(null);
     const [selectValue, setSelectValue] = useState('kg');
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const addProductImage = "/add-product.png";
 
     const handleNameChange = useCallback(
         (newValue) => setName(newValue),
@@ -71,6 +68,37 @@ export default function AuctionForm() {
     );
 
     const placeholderText = selectValue === 'fixed' ? '$ 0' : '% 0';
+
+    const handleResourcePicker = async () => {
+        const products = await window.shopify.resourcePicker({
+            type: "product",
+            action: "select",
+            multiple: 3,
+        });
+        if(products){
+            const selectedProducts = products.map(product => {
+                const {images, id, variants, title, handle} = product;
+                return variants.map(variant => {
+                    return {
+                        productId: id,
+                        productVariantId: variant.id,
+                        productTitle: title,
+                        productHandle: handle,
+                        productAlt: images[0]?.altText,
+                        productImage: images[0]?.originalSrc,
+                        variantTitle: variant.title,
+                        variantPrice: variant.price,
+                        variantSKU: variant.sku,
+                    };
+                });
+            });
+            setSelectedProducts(selectedProducts.flat());
+        }
+    };
+
+    const removeItemFromFormState = useCallback(() => {
+
+    }, []);
 
     return (
         <Page
@@ -163,15 +191,75 @@ export default function AuctionForm() {
                         <BlockStack inlineAlign="start" gap="200">
                             <InlineStack gap="400">
                                 <Icon source={ProductIcon}/>
-                                <Text as="h2" variant="headingSm">
-                                    Products
-                                </Text>
+                                <Text as="h2" variant="headingSm">Selected products</Text>
                             </InlineStack>
-                            <List>
-                                <List.Item>Socks</List.Item>
-                                <List.Item>Super Shoes</List.Item>
-                            </List>
                         </BlockStack>
+                        <BlockStack inlineAlign="center" gap="200">
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <img
+                                    src={addProductImage}
+                                    alt="add product"
+                                    style={{maxWidth: "300px"}}
+                                />
+                                <p style={{ marginBottom: "10px" }}>Select one or more existing products in your store.</p>
+                                <Button variant="primary" onClick={handleResourcePicker}>Select products</Button>
+                            </div>
+                        </BlockStack>
+                        <BlockStack inlineAlign="start" gap="200">
+                            <List type="none">
+                                {selectedProducts.map((product) => (
+                                    <List.Item key={product.productId}>
+                                        <InlineStack gap="300">
+                                            <Thumbnail
+                                                source = {product.productImage || ""}
+                                                alt={product.productAlt}
+                                            />
+                                            <BlockStack>
+                                                <Text variant="bodyMd" fontWeight="bold" as="h3">
+                                                    {product.productTitle} - {product.variantTitle}
+                                                </Text>
+                                                <span>Price: ${product.variantPrice}</span>
+                                            </BlockStack>
+                                            <Icon
+                                                source={XIcon}
+                                                tone="base"
+                                            />
+                                        </InlineStack>
+                                    </List.Item>
+                                ))}
+                            </List>
+                            <ResourceList
+                                resourceName={{singular: 'customer', plural: 'customers'}}
+                                items={selectedProducts}
+                                renderItem={(item) => {
+                                    const shortcutActions = [
+                                        {
+                                            content: "Remove",
+                                            onAction: () => removeItemFromFormState(),
+                                        }
+                                    ];
+
+                                    return (
+                                        <ResourceItem
+                                            id={item.productId}
+                                            media={<Thumbnail
+                                                source = {item.productImage || ""}
+                                                alt={item.productAlt}
+                                            />}
+                                            shortcutActions={shortcutActions}
+                                        >
+                                            <Text variant="bodyMd" fontWeight="bold" as="h3">
+                                                {item.productTitle} - {item.variantTitle}
+                                            </Text>
+                                            <span>Price: ${item.variantPrice}</span>
+                                        </ResourceItem>
+                                    );
+                                }
+                                }
+                            />
+                            <Button variant="primary" onClick={handleResourcePicker}>Add Another Products</Button>
+                        </BlockStack>
+
                     </Card>
                 </Layout.Section>
             </Layout>

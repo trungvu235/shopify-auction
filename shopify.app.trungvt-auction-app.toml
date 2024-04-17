@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://parish-seriously-austin-realtor.trycloudflare.com"
+application_url = "https://learners-consistency-respondents-paintings.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_files,read_products,read_themes,write_customers,wr
 
 [auth]
 redirect_urls = [
-  "https://parish-seriously-austin-realtor.trycloudflare.com/auth/callback",
-  "https://parish-seriously-austin-realtor.trycloudflare.com/auth/shopify/callback",
-  "https://parish-seriously-austin-realtor.trycloudflare.com/api/auth/callback"
+  "https://learners-consistency-respondents-paintings.trycloudflare.com/auth/callback",
+  "https://learners-consistency-respondents-paintings.trycloudflare.com/auth/shopify/callback",
+  "https://learners-consistency-respondents-paintings.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
