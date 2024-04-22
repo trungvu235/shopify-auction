@@ -30,7 +30,7 @@ export default function App() {
             <ui-nav-menu>
                 <Link to="/app" rel="home">Home</Link>
                 <Link to="/app/auctions">Auctions</Link>
-                <Link to="/app/point_program">Settings</Link>
+                <Link to="/app/settings">Settings</Link>
             </ui-nav-menu>
 
             <PolarisAppProvider

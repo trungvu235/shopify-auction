@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import {useState, useCallback} from 'react';
 import React from 'react';
 import {
     Page,
@@ -9,22 +9,25 @@ import {
     Button,
     Layout,
     BlockStack,
-    List,
     TextField,
     Select,
     ResourceList,
     Thumbnail,
-    ResourceItem
+    ResourceItem,
+    FormLayout,
+    Checkbox,
+    Pagination,
 } from '@shopify/polaris';
-import { useNavigate } from '@remix-run/react';
+import {useNavigate} from '@remix-run/react';
 import {
     ProductIcon,
-    CalendarTimeIcon,
-    XIcon
+    CalendarIcon,
+    SettingsIcon
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
+
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
@@ -33,12 +36,18 @@ export const loader = async ({request}) => {
             "X-Shopify-Access-Token": session.accessToken,
             "Accept-Encoding": "application/json",
         },
-        params :{
+        params: {
             limit: 100
         }
     });
+    let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
+        headers: {
+            "X-Shopify-Access-Token": session.accessToken, "Accept-Encoding": "application/json",
+        },
+    });
+    store = store.data.shop;
 
-    return null;
+    return json({session: session, shop: store});
 }
 
 export default function AuctionForm() {
@@ -46,9 +55,35 @@ export default function AuctionForm() {
     const [name, setName] = useState(null);
     const [startPrice, setStartPrice] = useState(null);
     const [bidIncrement, setBidIncrement] = useState(null);
-    const [selectValue, setSelectValue] = useState('kg');
+    const [selectValue, setSelectValue] = useState('fixed');
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const itemsPerPage = 5;
+    const [currentPage, setCurrentPage] = useState(1);
     const addProductImage = "/add-product.png";
+    const [reservePriceChecked, setReservePriceChecked] = useState(false);
+    const [reservePriceDisplay, setReservePriceDisplay] = useState(false);
+    const [reservePrice, setReservePrice] = useState(null);
+    const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(false);
+    const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(false);
+    const [buyoutPrice, setBuyoutPrice] = useState(null);
+    const placeholderText = selectValue === 'percentage' ? '% 0' : '$ 0';
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
+
+    const handleStartDateChange = (value) => {
+        setStartDate(value);
+    };
+    const handleEndDateChange = (value) => {
+        setEndDate(value);
+    };
+    const handleStartTimeChange = (value) => {
+        setStartTime(value);
+    };
+    const handleEndTimeChange = (value) => {
+        setEndTime(value);
+    };
 
     const handleNameChange = useCallback(
         (newValue) => setName(newValue),
@@ -67,7 +102,39 @@ export default function AuctionForm() {
         [],
     );
 
-    const placeholderText = selectValue === 'fixed' ? '$ 0' : '% 0';
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+    const paginatedItems = selectedProducts.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+
+    const handleReservePrice = useCallback(
+        (newChecked) => setReservePriceChecked(newChecked),
+        [],
+    );
+    const handleReservePriceDisplay = useCallback(
+        (newChecked) => setReservePriceDisplay(newChecked),
+        [],
+    );
+    const handleReservePriceChange = useCallback(
+        (value) => setReservePrice(value),
+        [],
+    );
+    const handleBuyoutPrice = useCallback(
+        (newChecked) => setBuyoutPriceChecked(newChecked),
+        [],
+    );
+    const handleBuyoutPriceDisplay = useCallback(
+        (newChecked) => setBuyoutPriceDisplay(newChecked),
+        [],
+    );
+    const handleBuyoutPriceChange = useCallback(
+        (value) => setBuyoutPrice(value),
+        [],
+    );
 
     const handleResourcePicker = async () => {
         const products = await window.shopify.resourcePicker({
@@ -75,7 +142,7 @@ export default function AuctionForm() {
             action: "select",
             multiple: 3,
         });
-        if(products){
+        if (products) {
             const selectedProducts = products.map(product => {
                 const {images, id, variants, title, handle} = product;
                 return variants.map(variant => {
@@ -95,9 +162,40 @@ export default function AuctionForm() {
             setSelectedProducts(selectedProducts.flat());
         }
     };
+    const handleCreateAuction = () => {
+        const auction = {
+            variables: {
+                input: {
+                    general: {
+                        name: name,
+                        start_price: startPrice,
+                        bid_increment: bidIncrement,
+                    },
+                    selected_product: selectedProducts,
+                    settings: {
+                        has_reserve_price: reservePriceChecked,
+                        reserve_price_display: reservePriceDisplay,
+                        reserve_price: reservePrice,
+                        has_buyout_price: buyoutPriceChecked,
+                        buyout_price_display: buyoutPriceDisplay,
+                        buyout_price: buyoutPrice,
+                    },
+                    active_dates: {
+                        start_date: startDate,
+                        start_time: startTime,
+                        end_date: endDate,
+                        end_time: endTime,
+                    }
+                }
+            }
+        };
+        console.log(auction);
+    };
 
-    const removeItemFromFormState = useCallback(() => {
-
+    const removeItemFromFormState = useCallback((productIdToDelete) => {
+        setSelectedProducts(prevProducts => {
+            return prevProducts.filter(product => product.productVariantId !== productIdToDelete);
+        });
     }, []);
 
     return (
@@ -107,7 +205,8 @@ export default function AuctionForm() {
                 content: 'Create',
                 disabled: false,
                 onAction: () => {
-                    navigate('../point_program');
+                    // navigate('../auctions');
+                    handleCreateAuction();
                 },
             }}
         >
@@ -156,32 +255,58 @@ export default function AuctionForm() {
                     </div>
                     <div style={{marginTop: "10px"}}>
                         <Card>
-                            <BlockStack gap="200">
-                                <Text as="h2" variant="headingSm">
-                                    Active dates
-                                </Text>
-                                <TextField
-                                    label="Start at"
-                                    value={name}
-                                    onChange={handleNameChange}
-                                    autoComplete="off"
-                                />
-                                <TextField
-                                    label="End at must after Start at"
-                                    value={startPrice}
-                                    onChange={handleStartPriceChange}
-                                    autoComplete="off"
-                                />
-                                <TextField
-                                    label="label"
-                                    value=""
-                                    autoComplete="off"
-                                    onChange={() => {}}
-                                    prefix={<Icon source={CalendarTimeIcon} />}
-                                    onFocus={() => {
-                                        // show Datepicker component
-                                    }}
-                                />
+                            <BlockStack inlineAlign="start" gap="200">
+                                <InlineStack gap="400">
+                                    <Icon
+                                        source={CalendarIcon}
+                                        tone="base"
+                                    />
+                                    <Text as="h2" variant="headingSm">
+                                        Active dates
+                                    </Text>
+                                </InlineStack>
+                                <BlockStack>
+                                    <Text as="h3" variant="headingSm">
+                                        Start at
+                                    </Text>
+                                    <InlineStack gap="400">
+                                        <TextField
+                                            label="Start Date"
+                                            type="date"
+                                            value={startDate}
+                                            onChange={handleStartDateChange}
+                                            autoComplete="off"
+                                        />
+                                        <TextField
+                                            label="Start Date"
+                                            type="time"
+                                            value={startTime}
+                                            onChange={handleStartTimeChange}
+                                            autoComplete="off"
+                                        />
+                                    </InlineStack>
+                                </BlockStack>
+                                <BlockStack>
+                                    <Text as="h3" variant="headingSm">
+                                        End at
+                                    </Text>
+                                    <InlineStack gap="400">
+                                        <TextField
+                                            label="End Date"
+                                            type="date"
+                                            value={endDate}
+                                            onChange={handleEndDateChange}
+                                            autoComplete="off"
+                                        />
+                                        <TextField
+                                            label="End Date"
+                                            type="time"
+                                            value={endTime}
+                                            onChange={handleEndTimeChange}
+                                            autoComplete="off"
+                                        />
+                                    </InlineStack>
+                                </BlockStack>
                             </BlockStack>
                         </Card>
                     </div>
@@ -194,73 +319,143 @@ export default function AuctionForm() {
                                 <Text as="h2" variant="headingSm">Selected products</Text>
                             </InlineStack>
                         </BlockStack>
-                        <BlockStack inlineAlign="center" gap="200">
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <img
-                                    src={addProductImage}
-                                    alt="add product"
-                                    style={{maxWidth: "300px"}}
-                                />
-                                <p style={{ marginBottom: "10px" }}>Select one or more existing products in your store.</p>
-                                <Button variant="primary" onClick={handleResourcePicker}>Select products</Button>
-                            </div>
-                        </BlockStack>
-                        <BlockStack inlineAlign="start" gap="200">
-                            <List type="none">
-                                {selectedProducts.map((product) => (
-                                    <List.Item key={product.productId}>
-                                        <InlineStack gap="300">
-                                            <Thumbnail
-                                                source = {product.productImage || ""}
-                                                alt={product.productAlt}
-                                            />
-                                            <BlockStack>
-                                                <Text variant="bodyMd" fontWeight="bold" as="h3">
-                                                    {product.productTitle} - {product.variantTitle}
-                                                </Text>
-                                                <span>Price: ${product.variantPrice}</span>
-                                            </BlockStack>
-                                            <Icon
-                                                source={XIcon}
-                                                tone="base"
-                                            />
-                                        </InlineStack>
-                                    </List.Item>
-                                ))}
-                            </List>
-                            <ResourceList
-                                resourceName={{singular: 'customer', plural: 'customers'}}
-                                items={selectedProducts}
-                                renderItem={(item) => {
-                                    const shortcutActions = [
-                                        {
-                                            content: "Remove",
-                                            onAction: () => removeItemFromFormState(),
+                        {selectedProducts.length === 0 && (
+                            <BlockStack inlineAlign="center" gap="200">
+                                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <img
+                                        src={addProductImage}
+                                        alt="add product"
+                                        style={{maxWidth: "300px"}}
+                                    />
+                                    <p style={{marginBottom: "10px"}}>Select one or more existing products in your
+                                        store.</p>
+                                    <Button variant="primary" onClick={handleResourcePicker}>Select products</Button>
+                                </div>
+                            </BlockStack>
+                        )}
+                        {selectedProducts.length !== 0 && (
+                            <BlockStack inlineAlign="end" gap="200">
+                                <div style={{width: "100%", marginTop: "10px"}}>
+                                    <ResourceList
+                                        resourceName={{singular: 'customer', plural: 'customers'}}
+                                        items={paginatedItems}
+                                        renderItem={(item) => {
+                                            const shortcutActions = [
+                                                {
+                                                    content: "Remove",
+                                                    onAction: () => removeItemFromFormState(item.productVariantId),
+                                                }
+                                            ];
+
+                                            return (
+                                                <ResourceItem
+                                                    id={item.productId}
+                                                    media={<Thumbnail
+                                                        source={item.productImage || ""}
+                                                        alt={item.productAlt}
+                                                    />}
+                                                    shortcutActions={shortcutActions}
+                                                >
+                                                    <Text variant="bodyMd" fontWeight="bold" as="h3">
+                                                        {item.productTitle} - {item.variantTitle}
+                                                    </Text>
+                                                    <span>Price: ${item.variantPrice}</span>
+                                                </ResourceItem>
+                                            );
                                         }
-                                    ];
-
-                                    return (
-                                        <ResourceItem
-                                            id={item.productId}
-                                            media={<Thumbnail
-                                                source = {item.productImage || ""}
-                                                alt={item.productAlt}
-                                            />}
-                                            shortcutActions={shortcutActions}
-                                        >
-                                            <Text variant="bodyMd" fontWeight="bold" as="h3">
-                                                {item.productTitle} - {item.variantTitle}
-                                            </Text>
-                                            <span>Price: ${item.variantPrice}</span>
-                                        </ResourceItem>
-                                    );
-                                }
-                                }
-                            />
-                            <Button variant="primary" onClick={handleResourcePicker}>Add Another Products</Button>
-                        </BlockStack>
-
+                                        }
+                                    />
+                                    {selectedProducts.length > itemsPerPage && (
+                                        <Pagination
+                                            hasPrevious={currentPage > 1}
+                                            onPrevious={() => handlePageChange(currentPage - 1)}
+                                            hasNext={currentPage * itemsPerPage < selectedProducts.length}
+                                            onNext={() => handlePageChange(currentPage + 1)}
+                                        />
+                                    )}
+                                </div>
+                                <Button variant="primary" onClick={handleResourcePicker}>Add Another Products</Button>
+                            </BlockStack>
+                        )}
                     </Card>
+                    <div style={{marginTop: "10px"}}>
+                        <Card roundedAbove="sm">
+                            <BlockStack inlineAlign="start" gap="200">
+                                <InlineStack gap="400">
+                                    <Icon source={SettingsIcon} tone="base"/>
+                                    <Text as="h2" variant="headingSm">Advanced settings</Text>
+                                </InlineStack>
+                            </BlockStack>
+                            <FormLayout>
+                                <FormLayout.Group>
+                                    <BlockStack inlineAlign="start" gap="200">
+                                        <div className="reserve-price" style={{display: "flex"}}>
+                                            <div style={{marginRight: '10px'}}>
+                                                <Checkbox
+                                                    label="Reserve price"
+                                                    helpText="No winning bidder if closing price is below reserve price."
+                                                    checked={reservePriceChecked}
+                                                    onChange={handleReservePrice}
+                                                />
+                                            </div>
+                                            {reservePriceChecked && (
+                                                <div style={{width: "45%"}}>
+                                                    <Checkbox
+                                                        label="Show on front store"
+                                                        checked={reservePriceDisplay}
+                                                        onChange={handleReservePriceDisplay}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        {reservePriceChecked && (
+                                            <TextField
+                                                label="Reserve price"
+                                                type="number"
+                                                value={reservePrice}
+                                                onChange={handleReservePriceChange}
+                                                autoComplete="off"
+                                                placeholder="$ 0"
+                                            />
+                                        )}
+                                    </BlockStack>
+                                </FormLayout.Group>
+                                <FormLayout.Group>
+                                    <BlockStack inlineAlign="start" gap="200">
+                                        <div className="buyout-price" style={{display: "flex"}}>
+                                            <div style={{marginRight: '10px'}}>
+                                                <Checkbox
+                                                    label="Buyout price"
+                                                    helpText="Automatically close the auction when a customer bids the buyout price."
+                                                    checked={buyoutPriceChecked}
+                                                    onChange={handleBuyoutPrice}
+                                                />
+                                            </div>
+                                            {buyoutPriceChecked && (
+                                                <div style={{width: "45%"}}>
+                                                    <Checkbox
+                                                        label="Show on front store"
+                                                        checked={buyoutPriceDisplay}
+                                                        onChange={handleBuyoutPriceDisplay}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        {buyoutPriceChecked && (
+                                            <TextField
+                                                label="Buyout price"
+                                                type="number"
+                                                value={buyoutPrice}
+                                                onChange={handleBuyoutPriceChange}
+                                                autoComplete="off"
+                                                placeholder="$ 0"
+                                            />
+                                        )}
+                                    </BlockStack>
+                                </FormLayout.Group>
+                            </FormLayout>
+                        </Card>
+                    </div>
                 </Layout.Section>
             </Layout>
         </Page>

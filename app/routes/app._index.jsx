@@ -3,7 +3,15 @@ import {
     useLoaderData,
 } from "@remix-run/react";
 import {
-    Card, InlineGrid, Grid, CalloutCard, Bleed, Box, Image, Text, BlockStack, Page, LegacyCard, InlineStack, Button
+    Card,
+    Grid,
+    Box,
+    Text,
+    BlockStack,
+    Page,
+    LegacyCard,
+    InlineStack,
+    Button
 } from "@shopify/polaris";
 
 import {authenticate} from "../shopify.server";
@@ -113,15 +121,10 @@ export default function Index() {
                 content: 'Create Auction',
                 disabled: false,
                 onAction: () => {
-                    navigate('../point_program');
+                    navigate('../app/auction');
                 },
             }}
         >
-            {/*<InlineGrid gap="400" columns={3}>*/}
-            {/*    <Placeholder height="320px"/>*/}
-            {/*    <Placeholder height="320px"/>*/}
-            {/*    <Placeholder height="320px"/>*/}
-            {/*</InlineGrid>*/}
             <Grid>
                 <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 8}}>
                     <Card>
