@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://recipe-germany-normal-nm.trycloudflare.com"
+application_url = "https://thoroughly-smooth-studios-cookies.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_files,read_products,read_themes,write_customers,wr
 
 [auth]
 redirect_urls = [
-  "https://recipe-germany-normal-nm.trycloudflare.com/auth/callback",
-  "https://recipe-germany-normal-nm.trycloudflare.com/auth/shopify/callback",
-  "https://recipe-germany-normal-nm.trycloudflare.com/api/auth/callback"
+  "https://thoroughly-smooth-studios-cookies.trycloudflare.com/auth/callback",
+  "https://thoroughly-smooth-studios-cookies.trycloudflare.com/auth/shopify/callback",
+  "https://thoroughly-smooth-studios-cookies.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
