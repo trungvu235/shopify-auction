@@ -9,9 +9,9 @@ import {
     Text,
     BlockStack,
     Page,
-    LegacyCard,
     InlineStack,
-    Button
+    Button,
+    Icon
 } from "@shopify/polaris";
 
 import {authenticate} from "../shopify.server";
@@ -20,6 +20,8 @@ import PointModel from "../models/point.model";
 import EarnPointModel from "../models/earnPoint.model";
 import {forEach} from "lodash";
 import {useNavigate} from "@remix-run/react";
+import {ProductIcon, OrderIcon} from "@shopify/polaris-icons";
+import React from "react";
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
@@ -144,9 +146,7 @@ export default function Index() {
                                                 </Text>
                                             </Box>
                                             <InlineStack align="center" gap="500" wrap={false}>
-                                                <Button
-                                                    variant="primary"
-                                                >
+                                                <Button variant="primary" onClick={() => navigate('../app/auctions')}>
                                                     View Auctions
                                                 </Button>
                                             </InlineStack>
@@ -159,59 +159,77 @@ export default function Index() {
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 4}}>
                     <div>
-                        <LegacyCard title="Auction Details" sectioned>
-                            <BlockStack inlineAlign="center">
-                                <InlineStack gap="500" wrap={false}>
-                                    <BlockStack>
-                                        <Text variant="subdued">TOTAL NUMBER OF AUCTIONS</Text>
-                                        <Text variant="headingXl" fontWeight="bold" alignment="center">6</Text>
-                                    </BlockStack>
-                                </InlineStack>
+                        <Card sectioned>
+                            <BlockStack gap="300">
+                                <BlockStack inlineAlign="start" gap="200">
+                                    <InlineStack gap="400">
+                                        <Icon source={ProductIcon}/>
+                                        <Text as="h2" variant="headingSm">Auction Details</Text>
+                                    </InlineStack>
+                                </BlockStack>
+                                <BlockStack inlineAlign="center">
+                                    <InlineStack gap="500" wrap={false}>
+                                        <BlockStack>
+                                            <Text variant="subdued">TOTAL NUMBER OF AUCTIONS</Text>
+                                            <Text variant="headingXl" fontWeight="bold" alignment="center">6</Text>
+                                        </BlockStack>
+                                    </InlineStack>
+                                    <p>View a summary of your online store’s orders.</p>
+                                </BlockStack>
+                                <BlockStack inlineAlign="center">
+                                    <InlineStack gap="500" wrap={false}>
+                                        <Box>
+                                            <BlockStack>
+                                                <Text variant="headingXl" fontWeight="bold" alignment="center">1</Text>
+                                                <Text variant="subdued">ACTIVE</Text>
+                                            </BlockStack>
+                                        </Box>
+                                        <Box>
+                                            <BlockStack>
+                                                <Text variant="headingXl" fontWeight="bold" alignment="center">2</Text>
+                                                <Text variant="subdued">SCHEDULED</Text>
+                                            </BlockStack>
+                                        </Box>
+                                        <Box>
+                                            <BlockStack>
+                                                <Text variant="headingXl" fontWeight="bold" alignment="center">3</Text>
+                                                <Text variant="subdued">COMPLETED</Text>
+                                            </BlockStack>
+                                        </Box>
+                                    </InlineStack>
+                                </BlockStack>
                             </BlockStack>
-                            <p>View a summary of your online store’s orders.</p>
-                            <BlockStack inlineAlign="center">
-                                <InlineStack gap="500" wrap={false}>
-                                    <Box>
-                                        <BlockStack>
-                                            <Text variant="headingXl" fontWeight="bold" alignment="center">1</Text>
-                                            <Text variant="subdued">ACTIVE</Text>
-                                        </BlockStack>
-                                    </Box>
-                                    <Box>
-                                        <BlockStack>
-                                            <Text variant="headingXl" fontWeight="bold" alignment="center">2</Text>
-                                            <Text variant="subdued">SCHEDULED</Text>
-                                        </BlockStack>
-                                    </Box>
-                                    <Box>
-                                        <BlockStack>
-                                            <Text variant="headingXl" fontWeight="bold" alignment="center">3</Text>
-                                            <Text variant="subdued">COMPLETED</Text>
-                                        </BlockStack>
-                                    </Box>
-                                </InlineStack>
-                            </BlockStack>
-                        </LegacyCard>
+
+                        </Card>
                     </div>
                     <div style={{marginTop: "10px"}}>
-                        <LegacyCard title="Order Details" sectioned>
-                            <BlockStack inlineAlign="center">
-                                <InlineStack gap="500" wrap={false}>
-                                    <Box>
-                                        <BlockStack>
-                                            <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
-                                            <Text variant="subdued">PAID</Text>
-                                        </BlockStack>
-                                    </Box>
-                                    <Box>
-                                        <BlockStack>
-                                            <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
-                                            <Text variant="subdued">UNFULFILLED</Text>
-                                        </BlockStack>
-                                    </Box>
-                                </InlineStack>
+                        <Card sectioned>
+                            <BlockStack gap="300">
+                                <BlockStack inlineAlign="start" gap="200">
+                                    <InlineStack gap="400">
+                                        <Icon source={OrderIcon}/>
+                                        <Text as="h2" variant="headingSm">Order Details</Text>
+                                    </InlineStack>
+                                </BlockStack>
+                                <BlockStack inlineAlign="center">
+                                    <InlineStack gap="500" wrap={false}>
+                                        <Box>
+                                            <BlockStack>
+                                                <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
+                                                <Text variant="subdued">PAID</Text>
+                                            </BlockStack>
+                                        </Box>
+                                        <Box>
+                                            <BlockStack>
+                                                <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
+                                                <Text variant="subdued">UNFULFILLED</Text>
+                                            </BlockStack>
+                                        </Box>
+                                    </InlineStack>
+                                </BlockStack>
                             </BlockStack>
-                        </LegacyCard>
+
+                        </Card>
                     </div>
                 </Grid.Cell>
             </Grid>

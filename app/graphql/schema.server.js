@@ -13,6 +13,12 @@ export const schema = buildSchema(`
         id: String
     }
 
+    input GetAuctionInput {
+        id: String,
+        key: String
+    }
+
+
     input UpdateEarnPointInput{
         id: String,
         key: String,
@@ -39,6 +45,26 @@ export const schema = buildSchema(`
         updatedAt: Date
     }
 
+    type AuctionSchema {
+        id: String,
+        key: String,
+        name: String,
+        product_id: String,
+        status: Boolean,
+        start_date: String,
+        end_date: String,
+        start_price: Int,
+        bid_increment: Int,
+        end_price: Int,
+        is_reverse_price: Boolean,
+        is_reverse_price_display: Boolean,
+        reserve_price: Int,
+        is_buyout_price: Boolean,
+        is_buyout_price_display: Boolean,
+        buyout_price: Int,
+        createdAt: Date,
+    }
+
     type PointProgram {
         id: String,
         point_currency: PointCurrencySchema,
@@ -52,6 +78,8 @@ export const schema = buildSchema(`
         getEarnPoint(input: GetEarnPointInput): EarnPointSchema
         getEarnPoints(input: GetEarnPointInput): [EarnPointSchema]
         getPointProgram(input: GetPointProgramInput): PointProgram
+        getAuction(input: GetAuctionInput): AuctionSchema
+        getAuctions(input: GetAuctionInput): AuctionSchema
     }
 
     type Mutation {

@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import PointModel from "~/models/point.model";
 import EarnPointModel from "~/models/earnPoint.model";
+import AuctionModel from "~/models/auction.model";
 
 export const verifyToken = async (bearerToken) => {
     if (!bearerToken) {
@@ -33,6 +34,17 @@ export const resolver = {
     },
     getPointProgram: async ({input}, request) => {
         return PointModel.findOne({id: input.id}, null, {returnDocument: "after", new: true}).lean();
+    },
+    getAuction: async ({input}, request) => {
+        return AuctionModel.findOne({id: input.id, key: input.key}, null, {
+            returnDocument: "after",
+            new: true
+        }).lean();
+    },
+    getAuctions: async ({input}, request) => {
+        return AuctionModel.find({id: input.id}, null, {
+            new: true
+        });
     },
     updateEarnPoint: async ({input}, request) => {
         const {id, key, name, type, reward_points, status} = input;

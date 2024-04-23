@@ -1,5 +1,19 @@
-import { useState, useCallback } from 'react';
-import {Page, Card, Tabs, LegacyCard, Badge, useBreakpoints, Text, IndexTable, InlineStack, Icon, Button} from '@shopify/polaris';
+import React, { useState, useCallback } from 'react';
+import {
+    Page,
+    Card,
+    Tabs,
+    LegacyCard,
+    Badge,
+    useBreakpoints,
+    Text,
+    IndexTable,
+    InlineStack,
+    Icon,
+    Button,
+    Pagination,
+    BlockStack
+} from '@shopify/polaris';
 import { useNavigate } from '@remix-run/react';
 import {
     ThemeEditIcon,
@@ -9,16 +23,17 @@ import {
 export default function Programs() {
     const [selected, setSelected] = useState(0);
     const navigate = useNavigate();
+    const itemsPerPage = 5;
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const handleTabChange = useCallback(
-        (selectedTabIndex) => setSelected(selectedTabIndex),
-        [],
-    );
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
     const orders = [
         [
             {
                 id: '1020',
-                product:'A Star Is Born Sheer Midaxi Skirt - Limited',
+                product:'test 1',
                 url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
                 date: 'Jul 20 at 4:34pm',
                 total: '$969.44',
@@ -27,7 +42,7 @@ export default function Programs() {
             },
             {
                 id: '1019',
-                product:'A Star Is Born Sheer Midaxi Skirt - Limited',
+                product:'test 2',
                 url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
                 date: 'Jul 20 at 3:46pm',
                 total: '$701.19',
@@ -35,8 +50,8 @@ export default function Programs() {
                 productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
             },
             {
-                id: '1020',
-                product:'A Star Is Born Sheer Midaxi Skirt - Limited',
+                id: '1018',
+                product:'test 3',
                 url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
                 date: 'Jul 20 at 4:34pm',
                 total: '$969.44',
@@ -44,7 +59,47 @@ export default function Programs() {
                 productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
             },
             {
-                id: '1019',
+                id: '1017',
+                product:'test 4',
+                url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
+                date: 'Jul 20 at 3:46pm',
+                total: '$701.19',
+                editUrl: '#',
+                productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            },
+            {
+                id: '1016',
+                product:'test 5',
+                url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
+                date: 'Jul 20 at 4:34pm',
+                total: '$969.44',
+                editUrl: '#',
+                productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            },
+            {
+                id: '1015',
+                product:'test 6',
+                url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
+                date: 'Jul 20 at 3:46pm',
+                total: '$701.19',
+                editUrl: '#',
+                productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            }
+        ],
+        [
+            {
+                id: '1014',
+                product:'A Star Is Born Sheer Midaxi Skirt - Limited',
+                url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
+                date: 'Jul 20 at 3.44pm',
+                total: '$798.24',
+                editUrl: '#',
+                productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            }
+        ],
+        [
+            {
+                id: '1013',
                 product:'A Star Is Born Sheer Midaxi Skirt - Limited',
                 url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
                 date: 'Jul 20 at 3:46pm',
@@ -53,34 +108,27 @@ export default function Programs() {
                 productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
             }
         ],
-        [{
-            id: '1018',
-            product:'A Star Is Born Sheer Midaxi Skirt - Limited',
-            url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-            date: 'Jul 20 at 3.44pm',
-            total: '$798.24',
-            editUrl: '#',
-            productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-        }],
-        [{
-            id: '1019',
-            product:'A Star Is Born Sheer Midaxi Skirt - Limited',
-            url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-            date: 'Jul 20 at 3:46pm',
-            total: '$701.19',
-            editUrl: '#',
-            productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-        }],
-        [{
-            id: '1019',
-            product:'A Star Is Born Sheer Midaxi Skirt - Limited',
-            url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-            date: 'Jul 20 at 3:46pm',
-            total: '$701.19',
-            editUrl: '#',
-            productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-        }],
+        [
+            {
+                id: '1012',
+                product:'A Star Is Born Sheer Midaxi Skirt - Limited',
+                url:'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
+                date: 'Jul 20 at 3:46pm',
+                total: '$701.19',
+                editUrl: '#',
+                productUrl:'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            }
+        ],
     ];
+    const paginatedItems = orders[selected].slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+    const handleTabChange = useCallback((selectedTabIndex) => {
+        setSelected(selectedTabIndex);
+        setCurrentPage(1);
+    }, []);
+
     const tabs = [
         {
             id: 'all',
@@ -107,7 +155,7 @@ export default function Programs() {
         singular: 'order',
         plural: 'orders',
     };
-    const rowMarkup = orders[selected].map(
+    const rowMarkup = paginatedItems.map(
         (
             {id,product,url, date, total},
             index,
@@ -153,19 +201,19 @@ export default function Programs() {
                 content: 'Create Auction',
                 disabled: false,
                 onAction: () => {
-                    navigate('../point_program');
+                    navigate('../auction');
                 },
             }}
         >
             <Card>
-                <div style={{minHeight:"400px"}}>
+                <div style={{minHeight:"500px"}}>
                     <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange} fitted>
                         <LegacyCard.Section>
                             <p style={{padding:"10px" , fontSize:"14px"}}>{orders[selected].length} auctions found</p>
                             <IndexTable
                                 condensed={useBreakpoints().smDown}
                                 resourceName={resourceName}
-                                itemCount={orders.length}
+                                itemCount={orders[selected].length}
                                 headings={[
                                     {title: 'Product'},
                                     {title: 'Date'},
@@ -175,7 +223,20 @@ export default function Programs() {
                                 selectable={false}
                             >
                                 {rowMarkup}
+
                             </IndexTable>
+                            {orders[selected].length > itemsPerPage && (
+                                <div style={{width: "100%", position:"absolute", bottom:"12px"}}>
+                                    <BlockStack inlineAlign="center">
+                                        <Pagination
+                                            hasPrevious={currentPage > 1}
+                                            onPrevious={() => handlePageChange(currentPage - 1)}
+                                            hasNext={currentPage * itemsPerPage < orders[selected].length}
+                                            onNext={() => handlePageChange(currentPage + 1)}
+                                        />
+                                    </BlockStack>
+                                </div>
+                            )}
                         </LegacyCard.Section>
                     </Tabs>
                 </div>

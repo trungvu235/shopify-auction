@@ -69,20 +69,12 @@ export default function AuctionForm() {
     const placeholderText = selectValue === 'percentage' ? '% 0' : '$ 0';
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [startTime, setStartTime] = useState(null);
-    const [endTime, setEndTime] = useState(null);
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
     };
     const handleEndDateChange = (value) => {
         setEndDate(value);
-    };
-    const handleStartTimeChange = (value) => {
-        setStartTime(value);
-    };
-    const handleEndTimeChange = (value) => {
-        setEndTime(value);
     };
 
     const handleNameChange = useCallback(
@@ -182,9 +174,7 @@ export default function AuctionForm() {
                     },
                     active_dates: {
                         start_date: startDate,
-                        start_time: startTime,
                         end_date: endDate,
-                        end_time: endTime,
                     }
                 }
             }
@@ -266,43 +256,23 @@ export default function AuctionForm() {
                                     </Text>
                                 </InlineStack>
                                 <BlockStack>
-                                    <Text as="h3" variant="headingSm">
-                                        Start at
-                                    </Text>
                                     <InlineStack gap="400">
                                         <TextField
-                                            label="Start Date"
-                                            type="date"
+                                            label="Start At"
+                                            type="datetime-local"
                                             value={startDate}
                                             onChange={handleStartDateChange}
-                                            autoComplete="off"
-                                        />
-                                        <TextField
-                                            label="Start Date"
-                                            type="time"
-                                            value={startTime}
-                                            onChange={handleStartTimeChange}
                                             autoComplete="off"
                                         />
                                     </InlineStack>
                                 </BlockStack>
                                 <BlockStack>
-                                    <Text as="h3" variant="headingSm">
-                                        End at
-                                    </Text>
                                     <InlineStack gap="400">
                                         <TextField
-                                            label="End Date"
-                                            type="date"
+                                            label="End At"
+                                            type="datetime-local"
                                             value={endDate}
                                             onChange={handleEndDateChange}
-                                            autoComplete="off"
-                                        />
-                                        <TextField
-                                            label="End Date"
-                                            type="time"
-                                            value={endTime}
-                                            onChange={handleEndTimeChange}
                                             autoComplete="off"
                                         />
                                     </InlineStack>

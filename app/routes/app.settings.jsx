@@ -5,11 +5,21 @@ import {
     Checkbox,
     TextField,
     Button,
-    Select
+    Select,
+    Text,
+    BlockStack,
+    Card,
+    Tabs
 } from '@shopify/polaris';
-import {useState, useCallback} from 'react';
+import React, {
+    useState,
+    useCallback,
+} from 'react';
 import axios from "axios";
 import {json} from "@remix-run/node";
+import {
+    useLoaderData,
+} from "@remix-run/react";
 import {authenticate} from "../shopify.server";
 
 export const loader = async ({request}) => {
@@ -26,29 +36,59 @@ export const loader = async ({request}) => {
     return json({session: session, shop: store});
 }
 function FormOnSubmitExample() {
-    const [newsletter, setNewsletter] = useState(false);
-    const [email, setEmail] = useState('');
-    const [timezone, setTimezone] = useState('today');
+    const {shop} = useLoaderData();
+    const [email, setEmail] = useState(shop.email);
+    const [isTimeout, setIsTimeout] = useState(false);
+    const [timeoutOption, setTimeoutOption] = useState(1);
+    const [selectedTab, setSelectedTab] = useState(0);
+
+    const handleTabChange = useCallback(
+        (selectedTabIndex) => setSelectedTab(selectedTabIndex),
+        [],
+    );
     const handleSubmit = useCallback(() => {
         setEmail('');
-        setNewsletter(false);
     }, []);
 
-    const handleSelectChange = useCallback(
-        (value) => setTimezone(value),
+    const handleEmailChange = useCallback(
+        (value) => setEmail(value),
         [],
     );
-    const handleNewsLetterChange = useCallback(
-        (value) => setNewsletter(value),
+    const handleIsTimeout = useCallback(
+        (checked) => setIsTimeout(checked),
+        [],
+    );
+    const handleTimeoutOption = useCallback(
+        (value) => setTimeoutOption(value),
         [],
     );
 
-    const handleEmailChange = useCallback((value) => setEmail(value), []);
+    const timeoutOptions = [
+        {
+            label: "1 day",
+            value: "1"
+        },
+        {
+            label: "2 days",
+            value: "2"
+        },
+        {
+            label: "3 days",
+            value: "3"
+        }
+    ];
 
-    const options = [
-        {label: 'Today', value: 'today'},
-        {label: 'Yesterday', value: 'yesterday'},
-        {label: 'Last 7 days', value: 'lastWeek'},
+    const tabs = [
+        {
+            id: 'general',
+            content: <span style={{ fontSize: '14px' }}>General</span>,
+            panelID: 'general-settings',
+        },
+        {
+            id: 'display',
+            content: <span style={{ fontSize: '14px' }}>Display</span>,
+            panelID: 'display-settings',
+        },
     ];
 
     return (
@@ -62,33 +102,65 @@ function FormOnSubmitExample() {
                 },
             }}
         >
-            <Form onSubmit={handleSubmit}>
-                <div style={{fontSize: "14px"}}>
-                    <FormLayout>
-                        <Select
-                            label="Timezone"
-                            options={options}
-                            onChange={handleSelectChange}
-                            value={timezone}
-                        />
-                        <TextField
-                            value={email}
-                            onChange={handleEmailChange}
-                            label="Email"
-                            type="email"
-                            autoComplete="email"
-                            helpText={
-                                <span>
-                                We’ll use this email address to inform you on future changes to
-                                Polaris.
-                            </span>
-                            }
-                        />
+            <Card>
+                <Form onSubmit={handleSubmit}>
+                    <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange} fitted>
+                        <FormLayout>
+                            {selectedTab === 0 && (
+                                <BlockStack>
+                                    <TextField
+                                        label="Timezone"
+                                        value={shop.timezone}
+                                        helpText={
+                                            <span>
+                                        We will use your store's timezone as the default.
+                                    </span>
+                                        }
+                                    />
+                                    <TextField
+                                        label="Admin emails"
+                                        type="email"
+                                        value={email}
+                                        onChange={handleEmailChange}
+                                        helpText={
+                                            <span>
+                                        This email is utilized for sending notification emails to customers.
+                                    </span>
+                                        }
+                                    />
+                                    <div style={{marginTop: "10px"}}>
+                                        <BlockStack>
+                                            <Checkbox
+                                                label="Set pricing timeout"
+                                                helpText="No winning bidder if closing price is below reserve price."
+                                                checked={isTimeout}
+                                                onChange={handleIsTimeout}
+                                            />
+                                            {isTimeout && (
+                                                <div style={{width: "45%"}}>
+                                                    <Select
+                                                        label="Choose pricing period"
+                                                        options={timeoutOptions}
+                                                        value={timeoutOption}
+                                                        onChange={handleTimeoutOption}
+                                                    />
+                                                </div>
+                                            )}
+                                        </BlockStack>
+                                    </div>
+                                </BlockStack>
+                            )}
+                            {selectedTab === 1 && (
+                                <div>test</div>
+                            )}
+                            <Button variant="primary" submit>Submit</Button>
+                        </FormLayout>
+                    </Tabs>
 
-                        <Button submit>Submit</Button>
-                    </FormLayout>
-                </div>
-            </Form>
+
+
+                </Form>
+            </Card>
         </Page>
     );
 }
