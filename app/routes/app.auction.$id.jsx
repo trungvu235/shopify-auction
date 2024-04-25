@@ -22,7 +22,8 @@ import {useNavigate} from '@remix-run/react';
 import {
     ProductIcon,
     CalendarIcon,
-    SettingsIcon
+    SettingsIcon,
+    ClockIcon
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -97,7 +98,6 @@ export default function AuctionForm() {
     const [startDate, setStartDate] = useState(sampleAuction.start_date);
     const [endDate, setEndDate] = useState(sampleAuction.end_date);
 
-
     const handleStartDateChange = (value) => {
         setStartDate(value);
     };
@@ -152,32 +152,6 @@ export default function AuctionForm() {
         [],
     );
 
-    const handleResourcePicker = async () => {
-        const products = await window.shopify.resourcePicker({
-            type: "product",
-            action: "select",
-            multiple: 3,
-        });
-        if (products) {
-            const selectedProducts = products.map(product => {
-                const {images, id, variants, title, handle} = product;
-                return variants.map(variant => {
-                    return {
-                        productId: id,
-                        productVariantId: variant.id,
-                        productTitle: title,
-                        productHandle: handle,
-                        productAlt: images[0]?.altText,
-                        productImage: images[0]?.originalSrc,
-                        variantTitle: variant.title,
-                        variantPrice: variant.price,
-                        variantSKU: variant.sku,
-                    };
-                });
-            });
-            setSelectedProducts(selectedProducts.flat());
-        }
-    };
     const handleCreateAuction = () => {
         const auction = {
             variables: {
@@ -207,14 +181,11 @@ export default function AuctionForm() {
         console.log(product);
     };
     const Completionist = () => <span>You are good to go!</span>;
-    const endTime = new Date(sampleAuction.end_date);
+    const endTime = new Date(endDate);
+    const startTime = new Date(startDate);
     const timeRemaining = endTime.getTime() - Date.now();
+    const startIn = startTime.getTime() - Date.now();
 
-    const removeItemFromFormState = useCallback((productIdToDelete) => {
-        setSelectedProducts(prevProducts => {
-            return prevProducts.filter(product => product.productVariantId !== productIdToDelete);
-        });
-    }, []);
 
     return (
         <Page
@@ -283,28 +254,25 @@ export default function AuctionForm() {
                                         Active dates
                                     </Text>
                                 </InlineStack>
-                                <BlockStack>
-                                    <InlineStack gap="400">
-                                        <TextField
-                                            label="Start At"
-                                            type="datetime-local"
-                                            value={startDate}
-                                            onChange={handleStartDateChange}
-                                            autoComplete="off"
-                                        />
-                                    </InlineStack>
+
+                                <BlockStack gap="300">
+                                    <TextField
+                                        label="Start at"
+                                        type="datetime-local"
+                                        value={startDate}
+                                        onChange={handleStartDateChange}
+                                        autoComplete="off"
+                                    />
+                                    <TextField
+                                        label="End at"
+                                        type="datetime-local"
+                                        value={endDate}
+                                        onChange={handleEndDateChange}
+                                        autoComplete="off"
+                                    />
                                 </BlockStack>
-                                <BlockStack>
-                                    <InlineStack gap="400">
-                                        <TextField
-                                            label="End At"
-                                            type="datetime-local"
-                                            value={endDate}
-                                            onChange={handleEndDateChange}
-                                            autoComplete="off"
-                                        />
-                                    </InlineStack>
-                                </BlockStack>
+
+
                             </BlockStack>
                         </Card>
                     </div>
@@ -339,16 +307,24 @@ export default function AuctionForm() {
                             }
                             }
                         />
-
-
-                        <div style={{fontSize:"14px"}}>
-                            <Countdown
-                                date={Date.now() + timeRemaining}
-                            >
-                                <Completionist />
-                            </Countdown>
+                        <div style={{fontSize: '16px', fontWeight: 'bold'}}>
+                            {startTime < Date.now() && (
+                                <div>
+                                    <Text as="h2">Time remain:</Text>
+                                    <Countdown date={Date.now() + timeRemaining}>
+                                        <Completionist/>
+                                    </Countdown>
+                                </div>
+                            )}
+                            {startTime > Date.now() && (
+                                <div>
+                                    <Text as="h2">Start in:</Text>
+                                    <Countdown date={Date.now() + startIn}>
+                                        <Completionist/>
+                                    </Countdown>
+                                </div>
+                            )}
                         </div>
-
                     </Card>
                     <div style={{marginTop: "10px"}}>
                         <Card roundedAbove="sm">

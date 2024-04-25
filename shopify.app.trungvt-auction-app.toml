@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://idea-marking-comp-fill.trycloudflare.com"
+application_url = "https://okay-questionnaire-bored-involve.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_files,read_products,read_themes,write_customers,wr
 
 [auth]
 redirect_urls = [
-  "https://idea-marking-comp-fill.trycloudflare.com/auth/callback",
-  "https://idea-marking-comp-fill.trycloudflare.com/auth/shopify/callback",
-  "https://idea-marking-comp-fill.trycloudflare.com/api/auth/callback"
+  "https://okay-questionnaire-bored-involve.trycloudflare.com/auth/callback",
+  "https://okay-questionnaire-bored-involve.trycloudflare.com/auth/shopify/callback",
+  "https://okay-questionnaire-bored-involve.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
