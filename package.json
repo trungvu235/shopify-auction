@@ -55,6 +55,7 @@
     "postgres": "^3.4.3",
     "prisma": "^4.13.0",
     "react": "^18.2.0",
+    "react-countdown": "^2.3.5",
     "react-dom": "^18.2.0",
     "remix-auth": "^3.5.1",
     "ulid": "^2.3.0"
