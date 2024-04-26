@@ -181,10 +181,40 @@ export default function AuctionForm() {
         console.log(product);
     };
     const Completionist = () => <span>You are good to go!</span>;
+    const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
+
     const endTime = new Date(endDate);
     const startTime = new Date(startDate);
     const timeRemaining = endTime.getTime() - Date.now();
     const startIn = startTime.getTime() - Date.now();
+
+    const renderer = ({ days, hours, minutes, seconds, completed }) => {
+        if (completed) {
+            return <Completionist />;
+        } else {
+            // Render a countdown
+            return (
+                <InlineStack gap="300">
+                    <BlockStack inlineAlign="center">
+                        <span>{days}</span>
+                        <span>Days</span>
+                    </BlockStack>
+                    <BlockStack inlineAlign="center">
+                        <span>{hours}</span>
+                        <span>Hours</span>
+                    </BlockStack>
+                    <BlockStack inlineAlign="center">
+                        <span>{minutes}</span>
+                        <span>Minutes</span>
+                    </BlockStack>
+                    <BlockStack inlineAlign="center">
+                        <span>{seconds}</span>
+                        <span>Seconds</span>
+                    </BlockStack>
+                </InlineStack>
+            );
+        }
+    };
 
 
     return (
@@ -309,18 +339,18 @@ export default function AuctionForm() {
                         />
                         <div style={{fontSize: '16px', fontWeight: 'bold'}}>
                             {startTime < Date.now() && (
-                                <div>
+                                <InlineStack blockAlign='center' gap='300'>
                                     <Text as="h2">Time remain:</Text>
-                                    <Countdown date={Date.now() + timeRemaining}>
+                                    <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
                                         <Completionist/>
                                     </Countdown>
-                                </div>
+                                </InlineStack>
                             )}
                             {startTime > Date.now() && (
                                 <div>
-                                    <Text as="h2">Start in:</Text>
+                                <Text as="h2">Start in:</Text>
                                     <Countdown date={Date.now() + startIn}>
-                                        <Completionist/>
+                                        <StartedMessage/>
                                     </Countdown>
                                 </div>
                             )}
