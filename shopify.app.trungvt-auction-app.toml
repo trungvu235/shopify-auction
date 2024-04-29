@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://photographer-ski-basics-detective.trycloudflare.com"
+application_url = "https://adsl-fears-radical-machine.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_files,read_products,read_themes,write_customers,wr
 
 [auth]
 redirect_urls = [
-  "https://photographer-ski-basics-detective.trycloudflare.com/auth/callback",
-  "https://photographer-ski-basics-detective.trycloudflare.com/auth/shopify/callback",
-  "https://photographer-ski-basics-detective.trycloudflare.com/api/auth/callback"
+  "https://adsl-fears-radical-machine.trycloudflare.com/auth/callback",
+  "https://adsl-fears-radical-machine.trycloudflare.com/auth/shopify/callback",
+  "https://adsl-fears-radical-machine.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

@@ -16,14 +16,15 @@ import {
     ResourceItem,
     FormLayout,
     Checkbox,
-    Pagination,
+    Link,
 } from '@shopify/polaris';
 import {useNavigate} from '@remix-run/react';
 import {
     ProductIcon,
     CalendarIcon,
     SettingsIcon,
-    ClockIcon
+    ClockIcon,
+    ExternalIcon,
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -60,7 +61,7 @@ export const loader = async ({request}) => {
         },
     });
     store = store.data.shop;
-
+    console.log(store);
     return json({session: session, shop: store, product: product.data.product});
 }
 
@@ -75,8 +76,8 @@ export default function AuctionForm() {
         reserve_price_display: false,
         has_buyout_price: false,
         buyout_price_display: false,
-        start_date: "2024-04-10T16:21",
-        end_date: "2024-04-27T16:21",
+        start_date: "2024-04-29T18:21",
+        end_date: "2024-05-01T16:21",
     };
 
     const navigate = useNavigate();
@@ -86,15 +87,13 @@ export default function AuctionForm() {
     const [bidIncrement, setBidIncrement] = useState(sampleAuction.bid_increment);
     const [selectValue, setSelectValue] = useState('fixed');
     const [selectedProducts, setSelectedProducts] = useState([]);
-    const itemsPerPage = 5;
-    const [currentPage, setCurrentPage] = useState(1);
     const [reservePriceChecked, setReservePriceChecked] = useState(sampleAuction.has_reserve_price);
     const [reservePriceDisplay, setReservePriceDisplay] = useState(sampleAuction.reserve_price_display);
     const [reservePrice, setReservePrice] = useState(null);
     const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(sampleAuction.has_buyout_price);
     const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(sampleAuction.buyout_price_display);
     const [buyoutPrice, setBuyoutPrice] = useState(null);
-    const placeholderText = selectValue === 'percentage' ? '% 0' : '$ 0';
+    const placeholderText = selectValue === 'percentage' ? '%' : '$';
     const [startDate, setStartDate] = useState(sampleAuction.start_date);
     const [endDate, setEndDate] = useState(sampleAuction.end_date);
 
@@ -105,11 +104,11 @@ export default function AuctionForm() {
         setEndDate(value);
     };
     const handleNameChange = useCallback(
-        (newValue) => setName(newValue),
+        (value) => setName(value),
         [],
     );
     const handleStartPriceChange = useCallback(
-        (newValue) => setStartPrice(newValue),
+        (value) => setStartPrice(value),
         [],
     );
     const handleBidIncrementChange = useCallback(
@@ -120,19 +119,12 @@ export default function AuctionForm() {
         (value) => setSelectValue(value),
         [],
     );
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
-    const paginatedItems = selectedProducts.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
     const handleReservePrice = useCallback(
-        (newChecked) => setReservePriceChecked(newChecked),
+        (checked) => setReservePriceChecked(checked),
         [],
     );
     const handleReservePriceDisplay = useCallback(
-        (newChecked) => setReservePriceDisplay(newChecked),
+        (checked) => setReservePriceDisplay(checked),
         [],
     );
     const handleReservePriceChange = useCallback(
@@ -140,11 +132,11 @@ export default function AuctionForm() {
         [],
     );
     const handleBuyoutPrice = useCallback(
-        (newChecked) => setBuyoutPriceChecked(newChecked),
+        (checked) => setBuyoutPriceChecked(checked),
         [],
     );
     const handleBuyoutPriceDisplay = useCallback(
-        (newChecked) => setBuyoutPriceDisplay(newChecked),
+        (checked) => setBuyoutPriceDisplay(checked),
         [],
     );
     const handleBuyoutPriceChange = useCallback(
@@ -187,35 +179,34 @@ export default function AuctionForm() {
     const startTime = new Date(startDate);
     const timeRemaining = endTime.getTime() - Date.now();
     const startIn = startTime.getTime() - Date.now();
-
+    const productUrl = shop.domain + '/products/' + product.handle;
     const renderer = ({ days, hours, minutes, seconds, completed }) => {
         if (completed) {
             return <Completionist />;
         } else {
-            // Render a countdown
+
             return (
                 <InlineStack gap="300">
                     <BlockStack inlineAlign="center">
                         <span>{days}</span>
-                        <span>Days</span>
+                        <span>{days < 2 ? "Day" : "Days"}</span>
                     </BlockStack>
                     <BlockStack inlineAlign="center">
                         <span>{hours}</span>
-                        <span>Hours</span>
+                        <span>{hours < 2 ? "Hour" : "Hours"}</span>
                     </BlockStack>
                     <BlockStack inlineAlign="center">
                         <span>{minutes}</span>
-                        <span>Minutes</span>
+                        <span>{minutes < 2 ? "Minute" : "Minutes"}</span>
                     </BlockStack>
                     <BlockStack inlineAlign="center">
                         <span>{seconds}</span>
-                        <span>Seconds</span>
+                        <span>{seconds < 2 ? "Second" : "Seconds"}</span>
                     </BlockStack>
                 </InlineStack>
             );
         }
     };
-
 
     return (
         <Page
@@ -234,9 +225,7 @@ export default function AuctionForm() {
                     <div>
                         <Card>
                             <BlockStack gap="200">
-                                <Text as="h2" variant="headingSm">
-                                    General
-                                </Text>
+                                <Text as="h6" variant="headingMd">General</Text>
                                 <TextField
                                     label="Name"
                                     value={name}
@@ -248,6 +237,7 @@ export default function AuctionForm() {
                                     value={startPrice}
                                     onChange={handleStartPriceChange}
                                     autoComplete="off"
+                                    prefix='$'
                                 />
                                 <TextField
                                     label="Bid increment"
@@ -255,7 +245,7 @@ export default function AuctionForm() {
                                     value={bidIncrement}
                                     onChange={handleBidIncrementChange}
                                     autoComplete="off"
-                                    placeholder={placeholderText}
+                                    prefix={placeholderText}
                                     connectedRight={
                                         <Select
                                             value={selectValue}
@@ -280,11 +270,8 @@ export default function AuctionForm() {
                                         source={CalendarIcon}
                                         tone="base"
                                     />
-                                    <Text as="h2" variant="headingSm">
-                                        Active dates
-                                    </Text>
+                                    <Text as="h6" variant="headingMd">Active dates</Text>
                                 </InlineStack>
-
                                 <BlockStack gap="300">
                                     <TextField
                                         label="Start at"
@@ -301,8 +288,6 @@ export default function AuctionForm() {
                                         autoComplete="off"
                                     />
                                 </BlockStack>
-
-
                             </BlockStack>
                         </Card>
                     </div>
@@ -312,12 +297,13 @@ export default function AuctionForm() {
                         <BlockStack inlineAlign="start" gap="200">
                             <InlineStack gap="400">
                                 <Icon source={ProductIcon}/>
-                                <Text as="h2" variant="headingSm">Selected products</Text>
+                                <Text as="h6" variant="headingMd">Selected products</Text>
                             </InlineStack>
                         </BlockStack>
                         <ResourceList
                             items={[product]}
                             renderItem={(item) => {
+
                                 return (
                                     <ResourceItem
                                         id={item.productId}
@@ -328,10 +314,25 @@ export default function AuctionForm() {
                                             />
                                         }
                                     >
-                                        <Text variant="bodyMd" fontWeight="bold" as="h3">
-                                            {item.title}
-                                        </Text>
-                                        <span>Price: ${item.variants[0].price}</span>
+                                        <div style={{display:'flex'}}>
+                                            <BlockStack>
+                                                <Text variant="headingMd" fontWeight="bold" as="h6">
+                                                    {item.title}
+                                                </Text>
+                                                <span style={{fontSize: '14px'}}>Price: ${item.variants[0].price}</span>
+                                            </BlockStack>
+                                            <div style={{display:'flex', alignItems:'center'}}>
+                                                <a style={{fontSize:'14px', textDecoration:'none'}}
+                                                   href={'https://' + shop.domain + '/products/' + item.handle}
+                                                   target="_blank">
+                                                    <Icon
+                                                        source={ExternalIcon}
+                                                        tone="base"
+                                                    />
+                                                    View
+                                                </a>
+                                            </div>
+                                        </div>
                                     </ResourceItem>
                                 );
                             }
@@ -348,10 +349,12 @@ export default function AuctionForm() {
                             )}
                             {startTime > Date.now() && (
                                 <div>
-                                <Text as="h2">Start in:</Text>
-                                    <Countdown date={Date.now() + startIn}>
-                                        <StartedMessage/>
-                                    </Countdown>
+                                    <InlineStack blockAlign='center' gap='300'>
+                                        <Text as="h2">Start in:</Text>
+                                        <Countdown date={Date.now() + startIn} renderer={renderer}>
+                                            <StartedMessage/>
+                                        </Countdown>
+                                    </InlineStack>
                                 </div>
                             )}
                         </div>
@@ -361,7 +364,7 @@ export default function AuctionForm() {
                             <BlockStack inlineAlign="start" gap="200">
                                 <InlineStack gap="400">
                                     <Icon source={SettingsIcon} tone="base"/>
-                                    <Text as="h2" variant="headingSm">Advanced settings</Text>
+                                    <Text as="h6" variant="headingMd">Advanced settings</Text>
                                 </InlineStack>
                             </BlockStack>
                             <FormLayout>
