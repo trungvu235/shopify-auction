@@ -15,3 +15,36 @@ export const UPDATE_EARN_POINT = gql`
         }
     }
 `;
+
+export const CREATE_AUCTION = gql`
+    mutation UpdateEarnPoint($input : UpdateEarnPointInput) {
+        updateEarnPoint(input : $input) {
+            id
+            key
+            name
+            reward_points
+            limit
+            requirement
+            status
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+
+export const UPDATE_AUCTION = gql`
+    mutation UpdateEarnPoint($input : UpdateEarnPointInput) {
+        updateEarnPoint(input : $input) {
+            id
+            key
+            name
+            reward_points
+            limit
+            requirement
+            status
+            createdAt
+            updatedAt
+        }
+    }
+`;

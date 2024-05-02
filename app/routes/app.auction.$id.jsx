@@ -5,25 +5,16 @@ import {
     Card,
     Text,
     InlineStack,
-    Icon,
-    Button,
     Layout,
     BlockStack,
-    TextField,
-    Select,
     ResourceList,
     Thumbnail,
     ResourceItem,
-    FormLayout,
-    Checkbox,
     Link,
+    DescriptionList, Box
 } from '@shopify/polaris';
-import {useNavigate} from '@remix-run/react';
+import {useHref, useNavigate} from '@remix-run/react';
 import {
-    ProductIcon,
-    CalendarIcon,
-    SettingsIcon,
-    ClockIcon,
     ExternalIcon,
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
@@ -62,6 +53,7 @@ export const loader = async ({request}) => {
     });
     store = store.data.shop;
     console.log(store);
+
     return json({session: session, shop: store, product: product.data.product});
 }
 
@@ -71,107 +63,24 @@ export default function AuctionForm() {
         name: 'test auction',
         start_price: 100,
         bid_increment: 10,
-        product_id: '1020',
-        has_reserve_price: false,
+        end_price: 150,
+        product_id: '11052470370622',
+        has_reserve_price: true,
         reserve_price_display: false,
+        reserve_price: 300,
         has_buyout_price: false,
         buyout_price_display: false,
+        buyout_price: null,
         start_date: "2024-04-29T18:21",
-        end_date: "2024-05-01T16:21",
+        end_date: "2024-05-10T16:21",
     };
 
     const navigate = useNavigate();
     const {session, shop, product} = useLoaderData();
-    const [name, setName] = useState(sampleAuction.name);
-    const [startPrice, setStartPrice] = useState(sampleAuction.start_price);
-    const [bidIncrement, setBidIncrement] = useState(sampleAuction.bid_increment);
-    const [selectValue, setSelectValue] = useState('fixed');
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [reservePriceChecked, setReservePriceChecked] = useState(sampleAuction.has_reserve_price);
-    const [reservePriceDisplay, setReservePriceDisplay] = useState(sampleAuction.reserve_price_display);
-    const [reservePrice, setReservePrice] = useState(null);
-    const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(sampleAuction.has_buyout_price);
-    const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(sampleAuction.buyout_price_display);
-    const [buyoutPrice, setBuyoutPrice] = useState(null);
-    const placeholderText = selectValue === 'percentage' ? '%' : '$';
+
     const [startDate, setStartDate] = useState(sampleAuction.start_date);
     const [endDate, setEndDate] = useState(sampleAuction.end_date);
 
-    const handleStartDateChange = (value) => {
-        setStartDate(value);
-    };
-    const handleEndDateChange = (value) => {
-        setEndDate(value);
-    };
-    const handleNameChange = useCallback(
-        (value) => setName(value),
-        [],
-    );
-    const handleStartPriceChange = useCallback(
-        (value) => setStartPrice(value),
-        [],
-    );
-    const handleBidIncrementChange = useCallback(
-        (value) => setBidIncrement(value),
-        [],
-    );
-    const handleSelectChange = useCallback(
-        (value) => setSelectValue(value),
-        [],
-    );
-    const handleReservePrice = useCallback(
-        (checked) => setReservePriceChecked(checked),
-        [],
-    );
-    const handleReservePriceDisplay = useCallback(
-        (checked) => setReservePriceDisplay(checked),
-        [],
-    );
-    const handleReservePriceChange = useCallback(
-        (value) => setReservePrice(value),
-        [],
-    );
-    const handleBuyoutPrice = useCallback(
-        (checked) => setBuyoutPriceChecked(checked),
-        [],
-    );
-    const handleBuyoutPriceDisplay = useCallback(
-        (checked) => setBuyoutPriceDisplay(checked),
-        [],
-    );
-    const handleBuyoutPriceChange = useCallback(
-        (value) => setBuyoutPrice(value),
-        [],
-    );
-
-    const handleCreateAuction = () => {
-        const auction = {
-            variables: {
-                input: {
-                    general: {
-                        name: name,
-                        start_price: startPrice,
-                        bid_increment: bidIncrement,
-                    },
-                    selected_product: selectedProducts,
-                    settings: {
-                        has_reserve_price: reservePriceChecked,
-                        reserve_price_display: reservePriceDisplay,
-                        reserve_price: reservePrice,
-                        has_buyout_price: buyoutPriceChecked,
-                        buyout_price_display: buyoutPriceDisplay,
-                        buyout_price: buyoutPrice,
-                    },
-                    active_dates: {
-                        start_date: startDate,
-                        end_date: endDate,
-                    }
-                }
-            }
-        };
-        console.log(auction);
-        console.log(product);
-    };
     const Completionist = () => <span>You are good to go!</span>;
     const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
 
@@ -179,7 +88,6 @@ export default function AuctionForm() {
     const startTime = new Date(startDate);
     const timeRemaining = endTime.getTime() - Date.now();
     const startIn = startTime.getTime() - Date.now();
-    const productUrl = shop.domain + '/products/' + product.handle;
     const renderer = ({ days, hours, minutes, seconds, completed }) => {
         if (completed) {
             return <Completionist />;
@@ -187,21 +95,24 @@ export default function AuctionForm() {
 
             return (
                 <InlineStack gap="300">
-                    <BlockStack inlineAlign="center">
+                    <BlockStack inlineAlign="center" gap="300">
                         <span>{days}</span>
-                        <span>{days < 2 ? "Day" : "Days"}</span>
+                        <Text as='h2' tone='subdued' variant='bodyLg'>Days</Text>
                     </BlockStack>
-                    <BlockStack inlineAlign="center">
+                    <span>:</span>
+                    <BlockStack inlineAlign="center" gap="300">
                         <span>{hours}</span>
-                        <span>{hours < 2 ? "Hour" : "Hours"}</span>
+                        <Text as='h2' tone='subdued' variant='bodyLg'>Hours</Text>
                     </BlockStack>
-                    <BlockStack inlineAlign="center">
+                    <span>:</span>
+                    <BlockStack inlineAlign="center" gap="300">
                         <span>{minutes}</span>
-                        <span>{minutes < 2 ? "Minute" : "Minutes"}</span>
+                        <Text as='h2' tone='subdued' variant='bodyLg'>Minutes</Text>
                     </BlockStack>
-                    <BlockStack inlineAlign="center">
+                    <span>:</span>
+                    <BlockStack inlineAlign="center" gap="300">
                         <span>{seconds}</span>
-                        <span>{seconds < 2 ? "Second" : "Seconds"}</span>
+                        <Text as='h2' tone='subdued' variant='bodyLg'>Seconds</Text>
                     </BlockStack>
                 </InlineStack>
             );
@@ -210,95 +121,60 @@ export default function AuctionForm() {
 
     return (
         <Page
-            title="Edit auctions"
+            title={sampleAuction.name}
+            backAction={
+                {
+                    content: 'Auctions',
+                    onAction: () => {
+                        navigate('../auctions');
+                    },
+                }
+            }
             primaryAction={{
-                content: 'Save',
+                content: 'Edit',
                 disabled: false,
                 onAction: () => {
-                    // navigate('../auctions');
-                    handleCreateAuction();
+                    navigate('../auction/edit/' + sampleAuction.id);
                 },
             }}
+            actionGroups=
+            {[
+                {
+                    title: 'More actions',
+                    actions: [
+                        {
+                            content: 'Cancel order',
+                            destructive: true,
+                            onAction: () => {
+                                handleCreateAuction();
+                                // navigate('../auctions');
+                            },
+                        },
+                        {
+                            content: 'View product in store',
+                            icon: ExternalIcon,
+                            onAction: () => {
+                                const url = 'https://${shop.domain}/products/${product.handle}';
+                                window.open(url, '_blank');
+                            },
+                        },
+                        {
+                            content: 'Edit product',
+                            icon: ExternalIcon,
+                            onAction: () => {
+                                const url ='https://admin.shopify.com/store/' + shop.name + '/products/' + sampleAuction.product_id;
+                                window.open(url, '_blank');
+                            },
+                        }
+                    ],
+                },
+            ]}
         >
             <Layout>
-                <Layout.Section variant="oneThird" gap="200">
-                    <div>
-                        <Card>
-                            <BlockStack gap="200">
-                                <Text as="h6" variant="headingMd">General</Text>
-                                <TextField
-                                    label="Name"
-                                    value={name}
-                                    onChange={handleNameChange}
-                                    autoComplete="off"
-                                />
-                                <TextField
-                                    label="Start price"
-                                    value={startPrice}
-                                    onChange={handleStartPriceChange}
-                                    autoComplete="off"
-                                    prefix='$'
-                                />
-                                <TextField
-                                    label="Bid increment"
-                                    type="number"
-                                    value={bidIncrement}
-                                    onChange={handleBidIncrementChange}
-                                    autoComplete="off"
-                                    prefix={placeholderText}
-                                    connectedRight={
-                                        <Select
-                                            value={selectValue}
-                                            label="Bid increment options"
-                                            onChange={handleSelectChange}
-                                            labelHidden
-                                            options={[
-                                                {value: 'fixed', label: 'Fixed'},
-                                                {value: 'percentage', label: 'Percentage'},
-                                            ]}
-                                        />
-                                    }
-                                />
-                            </BlockStack>
-                        </Card>
-                    </div>
-                    <div style={{marginTop: "10px"}}>
-                        <Card>
-                            <BlockStack inlineAlign="start" gap="200">
-                                <InlineStack gap="400">
-                                    <Icon
-                                        source={CalendarIcon}
-                                        tone="base"
-                                    />
-                                    <Text as="h6" variant="headingMd">Active dates</Text>
-                                </InlineStack>
-                                <BlockStack gap="300">
-                                    <TextField
-                                        label="Start at"
-                                        type="datetime-local"
-                                        value={startDate}
-                                        onChange={handleStartDateChange}
-                                        autoComplete="off"
-                                    />
-                                    <TextField
-                                        label="End at"
-                                        type="datetime-local"
-                                        value={endDate}
-                                        onChange={handleEndDateChange}
-                                        autoComplete="off"
-                                    />
-                                </BlockStack>
-                            </BlockStack>
-                        </Card>
-                    </div>
-                </Layout.Section>
                 <Layout.Section>
                     <Card roundedAbove="sm">
                         <BlockStack inlineAlign="start" gap="200">
-                            <InlineStack gap="400">
-                                <Icon source={ProductIcon}/>
-                                <Text as="h6" variant="headingMd">Selected products</Text>
-                            </InlineStack>
+                            <Text as="h2" variant="headingMd">Auction information</Text>
                         </BlockStack>
                         <ResourceList
                             items={[product]}
@@ -314,127 +190,114 @@ export default function AuctionForm() {
                                             />
                                         }
                                     >
-                                        <div style={{display:'flex'}}>
+                                        <div style={{display:'flex', justifyContent:'center'}}>
                                             <BlockStack>
-                                                <Text variant="headingMd" fontWeight="bold" as="h6">
-                                                    {item.title}
+                                                <Text as="h2" variant="headingMd">
+                                                    <Link url={'https://' + shop.domain + '/products/' + item.handle} target='_blank'>
+                                                        {item.title}
+                                                    </Link>
                                                 </Text>
-                                                <span style={{fontSize: '14px'}}>Price: ${item.variants[0].price}</span>
+                                                <span style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
                                             </BlockStack>
-                                            <div style={{display:'flex', alignItems:'center'}}>
-                                                <a style={{fontSize:'14px', textDecoration:'none'}}
-                                                   href={'https://' + shop.domain + '/products/' + item.handle}
-                                                   target="_blank">
-                                                    <Icon
-                                                        source={ExternalIcon}
-                                                        tone="base"
-                                                    />
-                                                    View
-                                                </a>
-                                            </div>
+
                                         </div>
                                     </ResourceItem>
                                 );
                             }
                             }
                         />
-                        <div style={{fontSize: '16px', fontWeight: 'bold'}}>
+                        <DescriptionList
+                            items={[
+                                {
+                                    term: 'Auction ID',
+                                    description: '#' + sampleAuction.id,
+                                },
+                                {
+                                    term: 'Start Date',
+                                    description: startTime.toLocaleString(),
+                                },
+                                {
+                                    term: 'End Date',
+                                    description: endTime.toLocaleString(),
+                                },
+                                {
+                                    term: 'Current Bids',
+                                    description: sampleAuction.end_price + ' ' + shop.currency,
+                                },
+                                {
+                                    term: 'Reserve Price',
+                                    description: sampleAuction.reserve_price ? sampleAuction.reserve_price + ' ' + shop.currency : '',
+                                },
+                                {
+                                    term: 'Buyout Price',
+                                    description: sampleAuction.has_buyout_price ? sampleAuction.buyout_price + ' ' + shop.currency : '',
+                                },
+                            ]}
+                        />
+                    </Card>
+                </Layout.Section>
+                <Layout.Section variant="oneThird" gap="200">
+                    <div>
+                        <Card>
                             {startTime < Date.now() && (
-                                <InlineStack blockAlign='center' gap='300'>
-                                    <Text as="h2">Time remain:</Text>
-                                    <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
-                                        <Completionist/>
-                                    </Countdown>
-                                </InlineStack>
+                                <BlockStack gap="200">
+                                    <Text as="h2" variant="headingMd">Time remain</Text>
+                                    <div style={{
+                                        fontSize: '20px',
+                                        fontWeight: 'bold',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        padding:'15px 0',
+                                    }}>
+                                        <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
+                                            <Completionist/>
+                                        </Countdown>
+                                    </div>
+                                </BlockStack>
                             )}
                             {startTime > Date.now() && (
-                                <div>
-                                    <InlineStack blockAlign='center' gap='300'>
-                                        <Text as="h2">Start in:</Text>
+                                <BlockStack gap="200">
+                                    <Text as="h2" variant="headingMd">Start in</Text>
+                                    <div style={{
+                                        fontSize: '20px',
+                                        fontWeight: 'bold',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        padding:'15px 0',
+                                    }}>
                                         <Countdown date={Date.now() + startIn} renderer={renderer}>
                                             <StartedMessage/>
                                         </Countdown>
-                                    </InlineStack>
-                                </div>
+                                    </div>
+                                </BlockStack>
                             )}
-                        </div>
-                    </Card>
+                        </Card>
+                    </div>
                     <div style={{marginTop: "10px"}}>
-                        <Card roundedAbove="sm">
+                        <Card>
                             <BlockStack inlineAlign="start" gap="200">
-                                <InlineStack gap="400">
-                                    <Icon source={SettingsIcon} tone="base"/>
-                                    <Text as="h6" variant="headingMd">Advanced settings</Text>
-                                </InlineStack>
+                                <Text as="h2" variant="headingMd">Bid Details</Text>
+                                <div style={{width:'100%'}}>
+                                    <BlockStack gap="300">
+                                        <InlineStack gap="1000" align="center" >
+                                            <BlockStack>
+                                                <Text variant="subdued">START PRICE</Text>
+                                                <Text variant="headingLg" fontWeight="bold" alignment="center">{sampleAuction.start_price} {shop.currency}</Text>
+                                            </BlockStack>
+                                            <BlockStack>
+                                                <Text variant="subdued">BID INCREMENT</Text>
+                                                <Text variant="headingLg" fontWeight="bold" alignment="center">{sampleAuction.bid_increment} {shop.currency}</Text>
+                                            </BlockStack>
+                                        </InlineStack>
+                                        <InlineStack gap="1000" align="center" >
+                                            <BlockStack>
+                                                <Text variant="subdued">CURRENT BIDS</Text>
+                                                <Text variant="headingLg" fontWeight="bold" alignment="center">{sampleAuction.end_price} {shop.currency}</Text>
+                                            </BlockStack>
+                                        </InlineStack>
+                                    </BlockStack>
+                                </div>
                             </BlockStack>
-                            <FormLayout>
-                                <FormLayout.Group>
-                                    <BlockStack inlineAlign="start" gap="200">
-                                        <div className="reserve-price" style={{display: "flex"}}>
-                                            <div style={{marginRight: '10px'}}>
-                                                <Checkbox
-                                                    label="Reserve price"
-                                                    helpText="No winning bidder if closing price is below reserve price."
-                                                    checked={reservePriceChecked}
-                                                    onChange={handleReservePrice}
-                                                />
-                                            </div>
-                                            {reservePriceChecked && (
-                                                <div style={{width: "45%"}}>
-                                                    <Checkbox
-                                                        label="Show on front store"
-                                                        checked={reservePriceDisplay}
-                                                        onChange={handleReservePriceDisplay}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        {reservePriceChecked && (
-                                            <TextField
-                                                label="Reserve price"
-                                                type="number"
-                                                value={reservePrice}
-                                                onChange={handleReservePriceChange}
-                                                autoComplete="off"
-                                                placeholder="$ 0"
-                                            />
-                                        )}
-                                    </BlockStack>
-                                </FormLayout.Group>
-                                <FormLayout.Group>
-                                    <BlockStack inlineAlign="start" gap="200">
-                                        <div className="buyout-price" style={{display: "flex"}}>
-                                            <div style={{marginRight: '10px'}}>
-                                                <Checkbox
-                                                    label="Buyout price"
-                                                    helpText="Automatically close the auction when a customer bids the buyout price."
-                                                    checked={buyoutPriceChecked}
-                                                    onChange={handleBuyoutPrice}
-                                                />
-                                            </div>
-                                            {buyoutPriceChecked && (
-                                                <div style={{width: "45%"}}>
-                                                    <Checkbox
-                                                        label="Show on front store"
-                                                        checked={buyoutPriceDisplay}
-                                                        onChange={handleBuyoutPriceDisplay}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        {buyoutPriceChecked && (
-                                            <TextField
-                                                label="Buyout price"
-                                                type="number"
-                                                value={buyoutPrice}
-                                                onChange={handleBuyoutPriceChange}
-                                                autoComplete="off"
-                                                placeholder="$ 0"
-                                            />
-                                        )}
-                                    </BlockStack>
-                                </FormLayout.Group>
-                            </FormLayout>
                         </Card>
                     </div>
                 </Layout.Section>

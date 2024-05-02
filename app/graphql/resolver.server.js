@@ -46,6 +46,21 @@ export const resolver = {
             new: true
         });
     },
+    updateAuction: async ({input}, request) => {
+        const {id, key, name, type, reward_points, status} = input;
+        return EarnPointModel.findOneAndUpdate({
+            id: id,
+            key: key
+        }, {
+            type: type,
+            name: name,
+            product_id: reward_points,
+            status: status,
+        }, {
+            returnDocument: "after",
+            new: true
+        })
+    },
     updateEarnPoint: async ({input}, request) => {
         const {id, key, name, type, reward_points, status} = input;
         return EarnPointModel.findOneAndUpdate({
