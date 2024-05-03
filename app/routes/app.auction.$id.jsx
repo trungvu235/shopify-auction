@@ -11,18 +11,14 @@ import {
     Thumbnail,
     ResourceItem,
     Link,
-    DescriptionList, Box
+    DescriptionList
 } from '@shopify/polaris';
-import {useHref, useNavigate} from '@remix-run/react';
-import {
-    ExternalIcon,
-} from '@shopify/polaris-icons';
+import {useNavigate} from '@remix-run/react';
+import { ExternalIcon } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
-import {
-    useLoaderData,
-} from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import Countdown from 'react-countdown';
 
 export const loader = async ({request}) => {
@@ -71,7 +67,7 @@ export default function AuctionForm() {
         has_buyout_price: false,
         buyout_price_display: false,
         buyout_price: null,
-        start_date: "2024-04-29T18:21",
+        start_date: "2024-04-04T18:21",
         end_date: "2024-05-10T16:21",
     };
 
@@ -81,7 +77,7 @@ export default function AuctionForm() {
     const [startDate, setStartDate] = useState(sampleAuction.start_date);
     const [endDate, setEndDate] = useState(sampleAuction.end_date);
 
-    const Completionist = () => <span>You are good to go!</span>;
+    const Completionist = () => <span>The auction was finished</span>;
     const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
 
     const endTime = new Date(endDate);
@@ -146,7 +142,7 @@ export default function AuctionForm() {
                             content: 'Cancel order',
                             destructive: true,
                             onAction: () => {
-                                handleCreateAuction();
+                                // handleCreateAuction();
                                 // navigate('../auctions');
                             },
                         },

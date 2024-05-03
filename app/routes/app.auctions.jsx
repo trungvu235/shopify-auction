@@ -3,124 +3,451 @@ import {
     Page,
     Card,
     Tabs,
-    LegacyCard,
-    Badge,
     useBreakpoints,
-    Text,
     IndexTable,
     InlineStack,
     Icon,
     Button,
     Pagination,
-    BlockStack
+    BlockStack,
+    Text,
+    Badge
 } from '@shopify/polaris';
 import {useNavigate} from '@remix-run/react';
 import {
     ThemeEditIcon,
     ViewIcon
 } from '@shopify/polaris-icons';
+import Countdown from "react-countdown";
 
 export default function Programs() {
     const [selected, setSelected] = useState(0);
     const navigate = useNavigate();
-    const itemsPerPage = 5;
+    const itemsPerPage = 8;
     const [currentPage, setCurrentPage] = useState(1);
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
     };
-    const orders = [
+    const auctions = [
         [
             {
-                id: '1020',
-                product: 'test 1',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 4:34pm',
-                total: '$969.44',
-                editUrl: '#',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-            },
-            {
-                id: '1019',
-                product: 'test 2',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 3:46pm',
-                total: '$701.19',
-                editUrl: '#',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-            },
-            {
                 id: '1018',
-                product: 'test 3',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 4:34pm',
-                total: '$969.44',
-                editUrl: '#',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 3',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-05-10T16:21",
             },
             {
                 id: '1017',
-                product: 'test 4',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 3:46pm',
-                total: '$701.19',
-                editUrl: '#',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 4',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-05-10T16:21",
             },
             {
-                id: '1016',
-                product: 'test 5',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 4:34pm',
-                total: '$969.44',
-                editUrl: '#',
+                id: '1014',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 7',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-05-10T16:21",
+            }
+        ],
+        [
+            {
+                id: '1020',
+                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 1',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-05-04T18:21",
+                end_date: "2024-05-10T16:21",
+            },
+            {
+                id: '1019',
+                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 2',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-05-04T18:21",
+                end_date: "2024-05-10T16:21",
+            },
+            {
+                id: '1013',
+                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 8',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-05-04T18:21",
+                end_date: "2024-05-10T16:21",
+            }
+        ],
+        [
+            {
+                id: '1016',
+                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 5',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-04-10T16:21",
             },
             {
                 id: '1015',
-                product: 'test 6',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 3:46pm',
-                total: '$701.19',
-                editUrl: '#',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-            }
-        ],
-        [
+                name: 'test auction 6',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-04-10T16:21",
+            },
             {
-                id: '1014',
-                product: 'A Star Is Born Sheer Midaxi Skirt - Limited',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 3.44pm',
-                total: '$798.24',
-                editUrl: '#',
+                id: '1011',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-            }
-        ],
-        [
+                name: 'test auction 10',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-04-10T16:21",
+            },
             {
-                id: '1013',
-                product: 'A Star Is Born Sheer Midaxi Skirt - Limited',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 3:46pm',
-                total: '$701.19',
-                editUrl: '#',
+                id: '1010',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-            }
-        ],
-        [
+                name: 'test auction 11',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-04-10T16:21",
+            },
+            {
+                id: '1009',
+                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 12',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-04-10T16:21",
+            },
             {
                 id: '1012',
-                product: 'A Star Is Born Sheer Midaxi Skirt - Limited',
-                url: 'https://cdn.shopify.com/s/files/1/0744/0089/1198/products/star-skirt.jpg?v=1710257304',
-                date: 'Jul 20 at 3:46pm',
-                total: '$701.19',
-                editUrl: '#',
                 productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+                name: 'test auction 9',
+                start_price: 100,
+                bid_increment: 10,
+                end_price: 150,
+                product_id: '11052470370622',
+                has_reserve_price: true,
+                reserve_price_display: false,
+                reserve_price: 300,
+                has_buyout_price: false,
+                buyout_price_display: false,
+                buyout_price: null,
+                start_date: "2024-04-04T18:21",
+                end_date: "2024-04-10T16:21",
             }
         ],
     ];
-    const paginatedItems = orders[selected].slice(
+    const auctionsList = [
+        {
+            id: '1020',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 1',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-05-04T18:21",
+            end_date: "2024-05-10T16:21",
+        },
+        {
+            id: '1019',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 2',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-05-04T18:21",
+            end_date: "2024-05-10T16:21",
+        },
+        {
+            id: '1018',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 3',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-05-10T16:21",
+        },
+        {
+            id: '1017',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 4',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-05-10T16:21",
+        },
+        {
+            id: '1016',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 5',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-04-10T16:21",
+        },
+        {
+            id: '1015',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 6',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-04-10T16:21",
+        },
+        {
+            id: '1011',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 10',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-04-10T16:21",
+        },
+        {
+            id: '1010',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 11',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-04-10T16:21",
+        },
+        {
+            id: '1009',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 12',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-04-10T16:21",
+        },
+        {
+            id: '1014',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 7',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-05-10T16:21",
+        },
+        {
+            id: '1013',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 8',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-05-04T18:21",
+            end_date: "2024-05-10T16:21",
+        },
+        {
+            id: '1012',
+            productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
+            name: 'test auction 9',
+            start_price: 100,
+            bid_increment: 10,
+            end_price: 150,
+            product_id: '11052470370622',
+            has_reserve_price: true,
+            reserve_price_display: false,
+            reserve_price: 300,
+            has_buyout_price: false,
+            buyout_price_display: false,
+            buyout_price: null,
+            start_date: "2024-04-04T18:21",
+            end_date: "2024-04-10T16:21",
+        }
+    ];
+    const paginatedItems = auctions[selected].slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -130,11 +457,6 @@ export default function Programs() {
     }, []);
 
     const tabs = [
-        {
-            id: 'all',
-            content: <span style={{fontSize: '16px'}}>All</span>,
-            panelID: 'all-content-1',
-        },
         {
             id: 'active-auction',
             content: <span style={{fontSize: '16px'}}>Active auctions</span>,
@@ -152,46 +474,58 @@ export default function Programs() {
         },
     ];
     const resourceName = {
-        singular: 'order',
-        plural: 'orders',
+        singular: 'auctions',
+        plural: 'auctions',
     };
     const rowMarkup = paginatedItems.map(
         (
-            {id, product, url, date, total},
-            index,
-        ) => (
-            <IndexTable.Row id={id} key={id} position={index}>
-                <IndexTable.Cell>
-                    <InlineStack wrap={false}>
-                        <img
-                            src={url}
-                            alt={"a sheet with purple and orange stripes"}
-                            style={{width: "40px", height: "60px"}}
-                        />
-                        <span style={{textAlign: "center", padding: "20px", fontSize: "14px"}}>{product}</span>
-                    </InlineStack>
-                </IndexTable.Cell>
-                <IndexTable.Cell><span style={{fontSize: "14px"}}>{date}</span></IndexTable.Cell>
-                <IndexTable.Cell><span style={{fontSize: "14px"}}>{total}</span></IndexTable.Cell>
-                <IndexTable.Cell>
-                    <InlineStack align='center' gap="400" wrap={false}>
-                        <Button onClick={() => navigate('../auction/' + id)}>
-                            <Icon
-                                source={ThemeEditIcon}
-                                tone="base"
-                            />
-                        </Button>
-                        <Button>
-                            <Icon
-                                source={ViewIcon}
-                                tone="base"
-                            />
-                        </Button>
+            { id, name, start_price, bid_increment, end_price, start_date, end_date },
+            index
+        ) => {
+            const startDate = new Date(start_date);
+            const endDate = new Date(end_date);
 
-                    </InlineStack>
-                </IndexTable.Cell>
-            </IndexTable.Row>
-        ),
+            return (
+                <IndexTable.Row id={id} key={id} position={index}>
+                    <IndexTable.Cell>
+                        <Text as="h5" variant="bodyMd">#{id}</Text>
+                    </IndexTable.Cell>
+                    <IndexTable.Cell><span>{name}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>${end_price}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>${bid_increment}</span></IndexTable.Cell>
+                    <IndexTable.Cell>
+                        {startDate > Date.now() &&(
+                            <Badge tone="info">Scheduled</Badge>
+                        )}
+                        {startDate < Date.now() && endDate > Date.now() &&(
+                            <Badge tone="success">Running</Badge>
+                        )}
+                        {endDate < Date.now() &&(
+                            <Badge tone="attention">Finished</Badge>
+                        )}
+                    </IndexTable.Cell>
+                    <IndexTable.Cell><span>{startDate.toLocaleString()}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{endDate.toLocaleString()}</span></IndexTable.Cell>
+                    <IndexTable.Cell>
+                        <InlineStack align='center' gap="400" wrap={false}>
+                            <Button onClick={() => navigate('../auction/edit/' + id)}>
+                                <Icon
+                                    source={ThemeEditIcon}
+                                    tone="base"
+                                />
+                            </Button>
+                            <Button onClick={() => navigate('../auction/' + id)}>
+                                <Icon
+                                    source={ViewIcon}
+                                    tone="base"
+                                />
+                            </Button>
+
+                        </InlineStack>
+                    </IndexTable.Cell>
+                </IndexTable.Row>
+            );
+        }
     );
 
     return (
@@ -208,28 +542,32 @@ export default function Programs() {
             <Card>
                 <div style={{minHeight: "510px"}}>
                     <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange} fitted>
-                        <p style={{padding: "10px", fontSize: "14px"}}>{orders[selected].length} auctions found</p>
+                        <p style={{padding: "10px", fontSize: "14px"}}>{auctions[selected].length} auctions found</p>
                         <IndexTable
                             condensed={useBreakpoints().smDown}
                             resourceName={resourceName}
-                            itemCount={orders[selected].length}
+                            itemCount={auctions[selected].length}
                             headings={[
-                                {title: 'Product'},
-                                {title: 'Date'},
+                                {title: 'ID'},
+                                {title: 'Name'},
                                 {title: 'Bids'},
+                                {title: 'Bid increment'},
+                                {title: 'Status', alignment: 'center'},
+                                {title: 'Start at'},
+                                {title: 'End at'},
                                 {title: 'Actions', alignment: 'center'},
                             ]}
                             selectable={false}
                         >
                             {rowMarkup}
                         </IndexTable>
-                        {orders[selected].length > itemsPerPage && (
+                        {auctions[selected].length > itemsPerPage && (
                             <div style={{width: "100%", position: "absolute", bottom: "12px"}}>
                                 <BlockStack inlineAlign="center">
                                     <Pagination
                                         hasPrevious={currentPage > 1}
                                         onPrevious={() => handlePageChange(currentPage - 1)}
-                                        hasNext={currentPage * itemsPerPage < orders[selected].length}
+                                        hasNext={currentPage * itemsPerPage < auctions[selected].length}
                                         onNext={() => handlePageChange(currentPage + 1)}
                                     />
                                 </BlockStack>

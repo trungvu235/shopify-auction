@@ -16,9 +16,6 @@ import {
 
 import {authenticate} from "../shopify.server";
 import axios from "axios";
-import PointModel from "../models/point.model";
-import EarnPointModel from "../models/earnPoint.model";
-import {forEach} from "lodash";
 import {useNavigate} from "@remix-run/react";
 import {ProductIcon, OrderIcon} from "@shopify/polaris-icons";
 import React from "react";
@@ -36,78 +33,10 @@ export const loader = async ({request}) => {
     );
     store = store.data.shop;
 
-    const StoreID = await PointModel.exists({id: store.id});
-    if (!StoreID) {
-        const earn_point_default = [
-            {
-                id: store.id,
-                key: 'Order',
-                type: 0,
-                name: 'Complete an order',
-                reward_points: 100,
-                requirement: null,
-                limit: 0,
-                status: true,
-            },
-            {
-                id: store.id,
-                key: 'FB_Share',
-                type: 0,
-                name: 'Share on Facebook',
-                reward_points: 100,
-                requirement: null,
-                limit: 0,
-                status: false,
-            },
-            {
-                id: store.id,
-                key: 'DoB',
-                type: 0,
-                name: 'Happy Birthday',
-                reward_points: 100,
-                requirement: null,
-                limit: 0,
-                status: false,
-            },
-            {
-                id: store.id,
-                key: 'SignIn',
-                type: 0,
-                name: 'Sign In',
-                reward_points: 100,
-                requirement: null,
-                limit: 0,
-                status: false,
-            }
-        ];
-        await PointModel.create({
-            id: store.id,
-            point_currency: {
-                singular: 'point',
-                plural: 'points',
-            },
-            status: true,
-        })
-        forEach(earn_point_default, async (value) => {
-            await EarnPointModel.create(value)
-        })
-    }
 
     return json({shop: store});
 };
 
-const Placeholder = ({height = 'auto', width = 'auto'}) => {
-    return (
-        <div
-            style={{
-                display: 'inherit',
-                background: 'var(--p-color-text-info)',
-                height: height ?? undefined,
-                width: width ?? undefined,
-            }}
-        />
-    );
-};
 export default function Index() {
     const {shop} = useLoaderData();
     //
@@ -123,7 +52,7 @@ export default function Index() {
                 content: 'Create Auction',
                 disabled: false,
                 onAction: () => {
-                    navigate('../app/auction');
+                    navigate('../app/auction/create');
                 },
             }}
         >
@@ -141,7 +70,7 @@ export default function Index() {
                                     <BlockStack align="center">
                                         <Box paddingBlockEnd="400">
                                             <Box paddingBlockEnd="150">
-                                                <Text variant="headingMd" fontWeight="bold" alignment="center">
+                                                <Text as="h2" variant="headingMd" fontWeight="bold" alignment="center">
                                                     You have 1 running auction
                                                 </Text>
                                             </Box>
