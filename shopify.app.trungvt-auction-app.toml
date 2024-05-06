@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://legislature-bath-unlikely-yen.trycloudflare.com"
+application_url = "https://attended-mental-american-corporations.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_files,read_products,read_themes,write_customers,wr
 
 [auth]
 redirect_urls = [
-  "https://legislature-bath-unlikely-yen.trycloudflare.com/auth/callback",
-  "https://legislature-bath-unlikely-yen.trycloudflare.com/auth/shopify/callback",
-  "https://legislature-bath-unlikely-yen.trycloudflare.com/api/auth/callback"
+  "https://attended-mental-american-corporations.trycloudflare.com/auth/callback",
+  "https://attended-mental-american-corporations.trycloudflare.com/auth/shopify/callback",
+  "https://attended-mental-american-corporations.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
