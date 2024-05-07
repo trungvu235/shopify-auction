@@ -6,7 +6,6 @@ import {
     Text,
     InlineStack,
     Icon,
-    Button,
     Layout,
     BlockStack,
     TextField,
@@ -16,7 +15,6 @@ import {
     ResourceItem,
     FormLayout,
     Checkbox,
-    Link,
 } from '@shopify/polaris';
 import {useNavigate} from '@remix-run/react';
 import {

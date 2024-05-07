@@ -18,6 +18,7 @@ import {
     ThemeEditIcon,
     ViewIcon
 } from '@shopify/polaris-icons';
+import { GET_AUCTIONS } from "../graphql/query";
 
 export default function Programs() {
     const [selected, setSelected] = useState(0);
@@ -29,216 +30,7 @@ export default function Programs() {
         setCurrentPage(newPage);
     };
     const auctions = [
-        [
-            {
-                id: '1018',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 3',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-05-10T16:21",
-            },
-            {
-                id: '1017',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 4',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-05-10T16:21",
-            },
-            {
-                id: '1014',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 7',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-05-10T16:21",
-            }
-        ],
-        [
-            {
-                id: '1020',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 1',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-05-04T18:21",
-                end_date: "2024-05-10T16:21",
-            },
-            {
-                id: '1019',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 2',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-05-04T18:21",
-                end_date: "2024-05-10T16:21",
-            },
-            {
-                id: '1013',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 8',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-05-04T18:21",
-                end_date: "2024-05-10T16:21",
-            }
-        ],
-        [
-            {
-                id: '1016',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 5',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-04-10T16:21",
-            },
-            {
-                id: '1015',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 6',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-04-10T16:21",
-            },
-            {
-                id: '1011',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 10',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-04-10T16:21",
-            },
-            {
-                id: '1010',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 11',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-04-10T16:21",
-            },
-            {
-                id: '1009',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 12',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-04-10T16:21",
-            },
-            {
-                id: '1012',
-                productUrl: 'https://trungvt-store.myshopify.com/products/a-star-is-born-sheer-midaxi-skirt',
-                name: 'test auction 9',
-                start_price: 100,
-                bid_increment: 10,
-                end_price: 150,
-                product_id: '11052470370622',
-                has_reserve_price: true,
-                reserve_price_display: false,
-                reserve_price: 300,
-                has_buyout_price: false,
-                buyout_price_display: false,
-                buyout_price: null,
-                start_date: "2024-04-04T18:21",
-                end_date: "2024-04-10T16:21",
-            }
-        ],
+        [], [], [],
     ];
     const auctionsList = [
         {
@@ -255,8 +47,8 @@ export default function Programs() {
             has_buyout_price: false,
             buyout_price_display: false,
             buyout_price: null,
-            start_date: "2024-05-04T18:21",
-            end_date: "2024-05-10T16:21",
+            start_date: "2024-06-04T18:21",
+            end_date: "2024-06-10T16:21",
         },
         {
             id: '1019',
@@ -272,8 +64,8 @@ export default function Programs() {
             has_buyout_price: false,
             buyout_price_display: false,
             buyout_price: null,
-            start_date: "2024-05-04T18:21",
-            end_date: "2024-05-10T16:21",
+            start_date: "2024-06-04T18:21",
+            end_date: "2024-06-10T16:21",
         },
         {
             id: '1018',
@@ -446,6 +238,89 @@ export default function Programs() {
             end_date: "2024-04-10T16:21",
         }
     ];
+    const auctionListTest = [[], [], []];
+    auctionsList.map(
+        (
+            {
+                id,
+                name,
+                start_price,
+                bid_increment,
+                end_price,
+                product_id,
+                has_reserve_price,
+                reserve_price_display,
+                reserve_price,
+                has_buyout_price,
+                buyout_price_display,
+                buyout_price,
+                start_date,
+                end_date ,
+            },
+            index
+        ) => {
+            const startDate = new Date(start_date);
+            const endDate = new Date(end_date);
+            if (startDate > Date.now()) {
+                auctions[1].push(
+                    {
+                        id,
+                        name,
+                        start_price,
+                        bid_increment,
+                        end_price,
+                        product_id,
+                        has_reserve_price,
+                        reserve_price_display,
+                        reserve_price,
+                        has_buyout_price,
+                        buyout_price_display,
+                        buyout_price,
+                        start_date,
+                        end_date
+                    }
+                );
+            }else if( startDate < Date.now() && endDate > Date.now()){
+                auctions[0].push(
+                    {
+                        id,
+                        name,
+                        start_price,
+                        bid_increment,
+                        end_price,
+                        product_id,
+                        has_reserve_price,
+                        reserve_price_display,
+                        reserve_price,
+                        has_buyout_price,
+                        buyout_price_display,
+                        buyout_price,
+                        start_date,
+                        end_date
+                    }
+                );
+            }else {
+                auctions[2].push(
+                    {
+                        id,
+                        name,
+                        start_price,
+                        bid_increment,
+                        end_price,
+                        product_id,
+                        has_reserve_price,
+                        reserve_price_display,
+                        reserve_price,
+                        has_buyout_price,
+                        buyout_price_display,
+                        buyout_price,
+                        start_date,
+                        end_date
+                    }
+                );
+            }
+        }
+    );
     const paginatedItems = auctions[selected].slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
@@ -453,6 +328,7 @@ export default function Programs() {
     const handleTabChange = useCallback((selectedTabIndex) => {
         setSelected(selectedTabIndex);
         setCurrentPage(1);
+        console.log(auctions);
     }, []);
 
     const tabs = [

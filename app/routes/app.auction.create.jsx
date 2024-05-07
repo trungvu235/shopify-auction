@@ -29,7 +29,7 @@ import axios from "axios";
 import {json} from "@remix-run/node";
 import { useMutation } from "@apollo/client";
 import { CREATE_AUCTION } from "../graphql/mutation";
-
+import { ulid } from 'ulid';
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
@@ -157,11 +157,12 @@ export default function AuctionForm() {
         }
     };
 
-    const [createAuction] = useMutation(CREATE_AUCTION);
+    // const [createAuction] = useMutation(CREATE_AUCTION);
     const handleCreateAuction = async () => {
         const auction = {
             variables: {
                 input: {
+                    id: ulid(),
                     store_id: shop.id,
                     general: {
                         name: name,
@@ -185,46 +186,46 @@ export default function AuctionForm() {
             }
         };
         console.log(auction);
-        try {
-            const createPromise = await createAuction({
-                variables: {
-                    input: {
-                        id: `${shop.id}`,
-                        key: '1024',
-                        name: name,
-                        product_id: selectedProducts[0].productVariantId,
-                        status: true,
-                        start_date: startDate,
-                        end_date: endDate,
-                        start_price: startPrice,
-                        bid_increment: bidIncrement,
-                        end_price: null,
-                        is_reverse_price: reservePriceChecked,
-                        is_reverse_price_display: reservePriceDisplay,
-                        reserve_price: reservePrice,
-                        is_buyout_price: buyoutPriceChecked,
-                        is_buyout_price_display: buyoutPriceDisplay,
-                        buyout_price: buyoutPrice,
-                    }
-                }
-            });
-
-            const timeoutPromise = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    reject(new Error('Update program timed out'));
-                }, 10000);
-            });
-
-            await Promise.race([createPromise, timeoutPromise]);
-
-            shopify.toast.show('Updated successfully');
-
-        } catch (error) {
-            console.error('Error:', error.message);
-            shopify.toast.show('Connection timeout', {
-                isError: true,
-            });
-        }
+        // try {
+        //     const createPromise = await createAuction({
+        //         variables: {
+        //             input: {
+        //                 id: `${shop.id}`,
+        //                 key: ulid(),
+        //                 name: name,
+        //                 product_id: selectedProducts[0].productVariantId,
+        //                 status: true,
+        //                 start_date: startDate,
+        //                 end_date: endDate,
+        //                 start_price: startPrice,
+        //                 bid_increment: bidIncrement,
+        //                 end_price: null,
+        //                 is_reverse_price: reservePriceChecked,
+        //                 is_reverse_price_display: reservePriceDisplay,
+        //                 reserve_price: reservePrice,
+        //                 is_buyout_price: buyoutPriceChecked,
+        //                 is_buyout_price_display: buyoutPriceDisplay,
+        //                 buyout_price: buyoutPrice,
+        //             }
+        //         }
+        //     });
+        //
+        //     const timeoutPromise = new Promise((resolve, reject) => {
+        //         setTimeout(() => {
+        //             reject(new Error('Update program timed out'));
+        //         }, 10000);
+        //     });
+        //
+        //     await Promise.race([createPromise, timeoutPromise]);
+        //
+        //     shopify.toast.show('Updated successfully');
+        //
+        // } catch (error) {
+        //     console.error('Error:', error.message);
+        //     shopify.toast.show('Connection timeout', {
+        //         isError: true,
+        //     });
+        // }
     };
 
     const removeItemFromFormState = useCallback((productIdToDelete) => {

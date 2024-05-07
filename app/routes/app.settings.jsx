@@ -9,12 +9,10 @@ import {
     Text,
     BlockStack,
     Card,
-    Tabs
+    Tabs,
+    ChoiceList
 } from '@shopify/polaris';
-import React, {
-    useState,
-    useCallback,
-} from 'react';
+import React, { useState, useCallback } from 'react';
 import axios from "axios";
 import {json} from "@remix-run/node";
 import {
@@ -41,6 +39,11 @@ function FormOnSubmitExample() {
     const [isTimeout, setIsTimeout] = useState(false);
     const [timeoutOption, setTimeoutOption] = useState(1);
     const [selectedTab, setSelectedTab] = useState(0);
+    const [checked, setChecked] = useState(false);
+    const handleChange = useCallback(
+        (newChecked) => setChecked(newChecked),
+        [],
+    );
 
     const handleTabChange = useCallback(
         (selectedTabIndex) => setSelectedTab(selectedTabIndex),
@@ -69,12 +72,16 @@ function FormOnSubmitExample() {
             value: "1"
         },
         {
-            label: "2 days",
-            value: "2"
-        },
-        {
             label: "3 days",
             value: "3"
+        },
+        {
+            label: "5 days",
+            value: "5"
+        },
+        {
+            label: "1 week",
+            value: "7"
         }
     ];
 
@@ -113,8 +120,8 @@ function FormOnSubmitExample() {
                                         value={shop.timezone}
                                         helpText={
                                             <span>
-                                        We will use your store's timezone as the default.
-                                    </span>
+                                                We will use your store's timezone as the default.
+                                            </span>
                                         }
                                     />
                                     <TextField
@@ -124,8 +131,8 @@ function FormOnSubmitExample() {
                                         onChange={handleEmailChange}
                                         helpText={
                                             <span>
-                                        This email is utilized for sending notification emails to customers.
-                                    </span>
+                                                This email is utilized for sending notification emails to customers.
+                                            </span>
                                         }
                                     />
                                     <div style={{marginTop: "10px"}}>
@@ -151,14 +158,17 @@ function FormOnSubmitExample() {
                                 </BlockStack>
                             )}
                             {selectedTab === 1 && (
-                                <div>test</div>
+                                <Checkbox
+                                    label="Basic checkbox"
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    tone="magic"
+                                    bleed
+                                />
                             )}
                             <Button variant="primary" submit>Submit</Button>
                         </FormLayout>
                     </Tabs>
-
-
-
                 </Form>
             </Card>
         </Page>

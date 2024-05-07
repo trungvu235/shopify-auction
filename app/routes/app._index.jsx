@@ -108,20 +108,20 @@ export default function Index() {
                                     <InlineStack gap="500" wrap={false}>
                                         <Box>
                                             <BlockStack>
-                                                <Text variant="headingXl" fontWeight="bold" alignment="center">1</Text>
-                                                <Text variant="subdued">ACTIVE</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">1</Text>
+                                                <Text as="h2" variant="subdued">ACTIVE</Text>
                                             </BlockStack>
                                         </Box>
                                         <Box>
                                             <BlockStack>
-                                                <Text variant="headingXl" fontWeight="bold" alignment="center">2</Text>
-                                                <Text variant="subdued">SCHEDULED</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">2</Text>
+                                                <Text as="h2" variant="subdued">SCHEDULED</Text>
                                             </BlockStack>
                                         </Box>
                                         <Box>
                                             <BlockStack>
-                                                <Text variant="headingXl" fontWeight="bold" alignment="center">3</Text>
-                                                <Text variant="subdued">COMPLETED</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">3</Text>
+                                                <Text as="h2" variant="subdued">COMPLETED</Text>
                                             </BlockStack>
                                         </Box>
                                     </InlineStack>
@@ -143,20 +143,19 @@ export default function Index() {
                                     <InlineStack gap="500" wrap={false}>
                                         <Box>
                                             <BlockStack>
-                                                <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
-                                                <Text variant="subdued">PAID</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">0</Text>
+                                                <Text as="h2" variant="subdued">PAID</Text>
                                             </BlockStack>
                                         </Box>
                                         <Box>
                                             <BlockStack>
-                                                <Text variant="headingXl" fontWeight="bold" alignment="center">0</Text>
-                                                <Text variant="subdued">UNFULFILLED</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">0</Text>
+                                                <Text as="h2" variant="subdued">UNFULFILLED</Text>
                                             </BlockStack>
                                         </Box>
                                     </InlineStack>
                                 </BlockStack>
                             </BlockStack>
-
                         </Card>
                     </div>
                 </Grid.Cell>
