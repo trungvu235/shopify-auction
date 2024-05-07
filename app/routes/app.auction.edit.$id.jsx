@@ -23,7 +23,6 @@ import {
     ProductIcon,
     CalendarIcon,
     SettingsIcon,
-    ClockIcon,
     ExternalIcon,
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";

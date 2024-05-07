@@ -1,50 +1,50 @@
 import {gql} from "@apollo/client";
 
-export const UPDATE_EARN_POINT = gql`
-    mutation UpdateEarnPoint($input : UpdateEarnPointInput) {
-        updateEarnPoint(input : $input) {
-            id
-            key
-            name
-            reward_points
-            limit
-            requirement
-            status
-            createdAt
-            updatedAt
-        }
-    }
-`;
-
-export const CREATE_AUCTION = gql`
-    mutation UpdateEarnPoint($input : UpdateEarnPointInput) {
-        updateEarnPoint(input : $input) {
-            id
-            key
-            name
-            reward_points
-            limit
-            requirement
-            status
-            createdAt
-            updatedAt
-        }
-    }
-`;
-
-
 export const UPDATE_AUCTION = gql`
-    mutation UpdateEarnPoint($input : UpdateEarnPointInput) {
-        updateEarnPoint(input : $input) {
+    mutation UpdateAuction($input : UpdateAuctionInput) {
+        updateAuction(input : $input) {
             id
             key
             name
-            reward_points
-            limit
-            requirement
+            product_id
             status
+            start_date
+            end_date
+            start_price
+            bid_increment
+            end_price
+            is_reverse_price
+            is_reverse_price_display
+            reserve_price
+            is_buyout_price
+            is_buyout_price_display
+            buyout_price
             createdAt
             updatedAt
         }
     }
 `;
+export const CREATE_AUCTION = gql`
+    mutation CreateAuction($input : CreateAuctionInput) {
+        createAuction(input : $input) {
+            id
+            key
+            name
+            product_id
+            status
+            start_date
+            end_date
+            start_price
+            bid_increment
+            end_price
+            is_reverse_price
+            is_reverse_price_display
+            reserve_price
+            is_buyout_price
+            is_buyout_price_display
+            buyout_price
+        }
+    }
+`;
+
+

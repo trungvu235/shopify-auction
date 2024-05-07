@@ -18,7 +18,6 @@ import {
     ThemeEditIcon,
     ViewIcon
 } from '@shopify/polaris-icons';
-import Countdown from "react-countdown";
 
 export default function Programs() {
     const [selected, setSelected] = useState(0);

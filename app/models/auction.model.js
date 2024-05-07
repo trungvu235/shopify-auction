@@ -67,10 +67,6 @@ const auctionSchema = new Schema({
         type: Number,
         require: false,
     },
-    created_at: {
-        type: String,
-        required: true,
-    },
 }, {
     timestamps: true
 });

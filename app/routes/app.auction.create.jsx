@@ -18,7 +18,7 @@ import {
     Checkbox,
     Pagination,
 } from '@shopify/polaris';
-import {useNavigate} from '@remix-run/react';
+import {useNavigate, useLoaderData} from '@remix-run/react';
 import {
     ProductIcon,
     CalendarIcon,
@@ -27,6 +27,8 @@ import {
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
+import { useMutation } from "@apollo/client";
+import { CREATE_AUCTION } from "../graphql/mutation";
 
 
 export const loader = async ({request}) => {
@@ -69,6 +71,7 @@ export default function AuctionForm() {
     const placeholderText = selectValue === 'percentage' ? '% 0' : '$ 0';
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const {session, shop} = useLoaderData();
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
@@ -82,11 +85,11 @@ export default function AuctionForm() {
         [],
     );
     const handleStartPriceChange = useCallback(
-        (newValue) => setStartPrice(newValue),
+        (value) => setStartPrice(parseInt(value, 10)),
         [],
     );
     const handleBidIncrementChange = useCallback(
-        (value) => setBidIncrement(value),
+        (value) => setBidIncrement(parseInt(value, 10)),
         [],
     );
     const handleSelectChange = useCallback(
@@ -102,7 +105,6 @@ export default function AuctionForm() {
         currentPage * itemsPerPage
     );
 
-
     const handleReservePrice = useCallback(
         (newChecked) => setReservePriceChecked(newChecked),
         [],
@@ -112,7 +114,7 @@ export default function AuctionForm() {
         [],
     );
     const handleReservePriceChange = useCallback(
-        (value) => setReservePrice(value),
+        (value) => setReservePrice(parseInt(value, 10)),
         [],
     );
     const handleBuyoutPrice = useCallback(
@@ -124,7 +126,7 @@ export default function AuctionForm() {
         [],
     );
     const handleBuyoutPriceChange = useCallback(
-        (value) => setBuyoutPrice(value),
+        (value) => setBuyoutPrice(parseInt(value, 10)),
         [],
     );
 
@@ -132,7 +134,7 @@ export default function AuctionForm() {
         const products = await window.shopify.resourcePicker({
             type: "product",
             action: "select",
-            multiple: 3,
+            multiple: 1,
         });
         if (products) {
             const selectedProducts = products.map(product => {
@@ -154,16 +156,19 @@ export default function AuctionForm() {
             setSelectedProducts(selectedProducts.flat());
         }
     };
-    const handleCreateAuction = () => {
+
+    const [createAuction] = useMutation(CREATE_AUCTION);
+    const handleCreateAuction = async () => {
         const auction = {
             variables: {
                 input: {
+                    store_id: shop.id,
                     general: {
                         name: name,
                         start_price: startPrice,
                         bid_increment: bidIncrement,
                     },
-                    selected_product: selectedProducts,
+                    selected_product: selectedProducts ? selectedProducts[0].productVariantId : null,
                     settings: {
                         has_reserve_price: reservePriceChecked,
                         reserve_price_display: reservePriceDisplay,
@@ -180,6 +185,46 @@ export default function AuctionForm() {
             }
         };
         console.log(auction);
+        try {
+            const createPromise = await createAuction({
+                variables: {
+                    input: {
+                        id: `${shop.id}`,
+                        key: '1024',
+                        name: name,
+                        product_id: selectedProducts[0].productVariantId,
+                        status: true,
+                        start_date: startDate,
+                        end_date: endDate,
+                        start_price: startPrice,
+                        bid_increment: bidIncrement,
+                        end_price: null,
+                        is_reverse_price: reservePriceChecked,
+                        is_reverse_price_display: reservePriceDisplay,
+                        reserve_price: reservePrice,
+                        is_buyout_price: buyoutPriceChecked,
+                        is_buyout_price_display: buyoutPriceDisplay,
+                        buyout_price: buyoutPrice,
+                    }
+                }
+            });
+
+            const timeoutPromise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject(new Error('Update program timed out'));
+                }, 10000);
+            });
+
+            await Promise.race([createPromise, timeoutPromise]);
+
+            shopify.toast.show('Updated successfully');
+
+        } catch (error) {
+            console.error('Error:', error.message);
+            shopify.toast.show('Connection timeout', {
+                isError: true,
+            });
+        }
     };
 
     const removeItemFromFormState = useCallback((productIdToDelete) => {
@@ -219,6 +264,8 @@ export default function AuctionForm() {
                                     value={startPrice}
                                     onChange={handleStartPriceChange}
                                     autoComplete="off"
+                                    type="number"
+                                    prefix='$'
                                 />
                                 <TextField
                                     label="Bid increment"
@@ -344,7 +391,7 @@ export default function AuctionForm() {
                                         />
                                     )}
                                 </div>
-                                <Button variant="primary" onClick={handleResourcePicker}>Add Another Products</Button>
+                                <Button variant="primary" onClick={handleResourcePicker}>Choose Another Products</Button>
                             </BlockStack>
                         )}
                     </Card>
@@ -385,7 +432,7 @@ export default function AuctionForm() {
                                                 value={reservePrice}
                                                 onChange={handleReservePriceChange}
                                                 autoComplete="off"
-                                                placeholder="$ 0"
+                                                prefix='$'
                                             />
                                         )}
                                     </BlockStack>
@@ -418,7 +465,7 @@ export default function AuctionForm() {
                                                 value={buyoutPrice}
                                                 onChange={handleBuyoutPriceChange}
                                                 autoComplete="off"
-                                                placeholder="$ 0"
+                                                prefix='$'
                                             />
                                         )}
                                     </BlockStack>

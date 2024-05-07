@@ -13,7 +13,6 @@ import {
     Button,
     Icon
 } from "@shopify/polaris";
-
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {useNavigate} from "@remix-run/react";

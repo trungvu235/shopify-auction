@@ -1,6 +1,4 @@
 import jwt from "jsonwebtoken";
-import PointModel from "~/models/point.model";
-import EarnPointModel from "~/models/earnPoint.model";
 import AuctionModel from "~/models/auction.model";
 
 export const verifyToken = async (bearerToken) => {
@@ -21,20 +19,6 @@ export const resolver = {
     hello: () => {
         return "Hello World";
     },
-    getEarnPoint: async ({input}, request) => {
-        return EarnPointModel.findOne({id: input.id, key: input.key}, null, {
-            returnDocument: "after",
-            new: true
-        }).lean();
-    },
-    getEarnPoints: async ({input}, request) => {
-        return EarnPointModel.find({id: input.id}, null, {
-            new: true
-        });
-    },
-    getPointProgram: async ({input}, request) => {
-        return PointModel.findOne({id: input.id}, null, {returnDocument: "after", new: true}).lean();
-    },
     getAuction: async ({input}, request) => {
         return AuctionModel.findOne({id: input.id, key: input.key}, null, {
             returnDocument: "after",
@@ -46,34 +30,77 @@ export const resolver = {
             new: true
         });
     },
+    createAuction: async ({ input }, request) => {
+        const {
+            id,
+            key,
+            name,
+            product_id,
+            status,
+            start_date,
+            end_date,
+            start_price,
+            bid_increment,
+            end_price,
+            is_reverse_price,
+            is_reverse_price_display,
+            reserve_price,
+            is_buyout_price,
+            is_buyout_price_display,
+            buyout_price
+        } = input;
+
+        return await AuctionModel.create({
+            id: id,
+            key: key,
+            name: name,
+            product_id: product_id,
+            status: status,
+            start_date: start_date,
+            end_date: end_date,
+            start_price: start_price,
+            bid_increment: bid_increment,
+            end_price: end_price,
+            is_reverse_price: is_reverse_price,
+            is_reverse_price_display: is_buyout_price_display,
+            reserve_price: reserve_price,
+            is_buyout_price: is_buyout_price,
+            is_buyout_price_display: is_buyout_price_display,
+            buyout_price: buyout_price,
+        });
+    },
     updateAuction: async ({input}, request) => {
-        const {id, key, name, type, reward_points, status} = input;
-        return EarnPointModel.findOneAndUpdate({
+        const {
+            id,
+            key,
+            name,
+            product_id,
+            status,
+            start_date,
+            end_date,
+            start_price,
+            bid_increment,
+            end_price,
+            is_reverse_price,
+            is_reverse_price_display,
+            reserve_price,
+            is_buyout_price,
+            is_buyout_price_display,
+            buyout_price
+        } = input;
+        return AuctionModel.findOneAndUpdate({
             id: id,
             key: key
         }, {
-            type: type,
             name: name,
-            product_id: reward_points,
+            product_id: product_id,
             status: status,
+            start_date: start_date,
+            end_date: end_date,
         }, {
             returnDocument: "after",
             new: true
         })
     },
-    updateEarnPoint: async ({input}, request) => {
-        const {id, key, name, type, reward_points, status} = input;
-        return EarnPointModel.findOneAndUpdate({
-            id: id,
-            key: key
-        }, {
-            type: type,
-            name: name,
-            reward_points: reward_points,
-            status: status,
-        }, {
-            returnDocument: "after",
-            new: true
-        })
-    }
+
 }
