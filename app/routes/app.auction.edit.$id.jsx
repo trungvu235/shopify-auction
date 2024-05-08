@@ -206,6 +206,14 @@ export default function AuctionForm() {
     return (
         <Page
             title="Edit auctions"
+            backAction={
+                {
+                    content: 'Auctions',
+                    onAction: () => {
+                        navigate('../auctions');
+                    },
+                }
+            }
             primaryAction={{
                 content: 'Save',
                 disabled: false,

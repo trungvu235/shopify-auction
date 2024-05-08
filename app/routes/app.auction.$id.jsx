@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import React from 'react';
 import {
     Page,
@@ -20,19 +20,13 @@ import axios from "axios";
 import {json} from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Countdown from 'react-countdown';
+import {useQuery} from "@apollo/client";
+import {GET_AUCTION} from "../graphql/query";
+import ReactLoading from "react-loading";
 
-export const loader = async ({request}) => {
+export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
     const productId = "11052470370622";
-    let products = await axios.get(`https://${session.shop}/admin/api/2024-04/products.json`, {
-        headers: {
-            "X-Shopify-Access-Token": session.accessToken,
-            "Accept-Encoding": "application/json",
-        },
-        params: {
-            limit: 100
-        }
-    });
     let product = await axios.get(`https://${session.shop}/admin/api/2024-04/products/${productId}.json`, {
         headers: {
             "X-Shopify-Access-Token": session.accessToken,
@@ -48,12 +42,12 @@ export const loader = async ({request}) => {
         },
     });
     store = store.data.shop;
-    console.log(store);
 
-    return json({session: session, shop: store, product: product.data.product});
+    return json({session: session, shop: store, product: product.data.product , key: params.id});
 }
 
 export default function AuctionForm() {
+    const navigate = useNavigate();
     const sampleAuction = {
         id: '1020',
         name: 'test auction',
@@ -70,20 +64,38 @@ export default function AuctionForm() {
         start_date: "2024-04-04T18:21",
         end_date: "2024-05-10T16:21",
     };
+    const {session, shop, product, key} = useLoaderData();
 
-    const navigate = useNavigate();
-    const {session, shop, product} = useLoaderData();
+    const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
+        variables: {
+            input: {
+                id: `${shop.id}`, key: `${key}`
+            }
+        },
+        onSuccess: (data) => {
+            debugger;
+        }
+    })
+
+    let auctionDetail;
+    if (dataError) {
+        console.log(dataError);
+    } else if (!auctionsQueryLoading) {
+        auctionDetail = auctionsQuery.getAuction;
+        console.log(auctionDetail);
+    }
 
     const [startDate, setStartDate] = useState(sampleAuction.start_date);
     const [endDate, setEndDate] = useState(sampleAuction.end_date);
 
-    const Completionist = () => <span>The auction was finished</span>;
-    const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
 
     const endTime = new Date(endDate);
     const startTime = new Date(startDate);
     const timeRemaining = endTime.getTime() - Date.now();
     const startIn = startTime.getTime() - Date.now();
+    const Completionist = () => <span>The auction was finished</span>;
+    const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
+
     const renderer = ({ days, hours, minutes, seconds, completed }) => {
         if (completed) {
             return <Completionist />;
@@ -206,7 +218,7 @@ export default function AuctionForm() {
                             items={[
                                 {
                                     term: 'Auction ID',
-                                    description: '#' + sampleAuction.id,
+                                    description: auctionDetail? '#' + auctionDetail.key : '',
                                 },
                                 {
                                     term: 'Start Date',
@@ -218,15 +230,15 @@ export default function AuctionForm() {
                                 },
                                 {
                                     term: 'Current Bids',
-                                    description: sampleAuction.end_price + ' ' + shop.currency,
+                                    description: auctionDetail? auctionDetail.end_price + ' ' + shop.currency : '',
                                 },
                                 {
                                     term: 'Reserve Price',
-                                    description: sampleAuction.reserve_price ? sampleAuction.reserve_price + ' ' + shop.currency : '',
+                                    description: auctionDetail ? auctionDetail.reserve_price + ' ' + shop.currency : '',
                                 },
                                 {
                                     term: 'Buyout Price',
-                                    description: sampleAuction.has_buyout_price ? sampleAuction.buyout_price + ' ' + shop.currency : '',
+                                    description: auctionDetail ? auctionDetail.buyout_price + ' ' + shop.currency : '',
                                 },
                             ]}
                         />
@@ -235,7 +247,12 @@ export default function AuctionForm() {
                 <Layout.Section variant="oneThird" gap="200">
                     <div>
                         <Card>
-                            {startTime < Date.now() && (
+                            {auctionsQueryLoading && (
+                                <div style={{width: '100%', display:'flex', justifyContent:'center'}}>
+                                    <ReactLoading type="spinningBubbles" color="#9E9E9E" />
+                                </div>
+                            )}
+                            {!auctionsQueryLoading && startTime < Date.now() && (
                                 <BlockStack gap="200">
                                     <Text as="h2" variant="headingMd">Time remain</Text>
                                     <div style={{

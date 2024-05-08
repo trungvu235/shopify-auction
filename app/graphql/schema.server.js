@@ -79,7 +79,7 @@ export const schema = buildSchema(`
     type Query {
         hello: String
         getAuction(input: GetAuctionInput): AuctionSchema
-        getAuctions(input: GetAuctionsListInput): AuctionsList
+        getAuctions(input: GetAuctionsListInput): [AuctionSchema]
     }
 
     type Mutation {

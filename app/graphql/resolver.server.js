@@ -27,12 +27,10 @@ export const resolver = {
     },
     getAuctions: async ({input}, request) => {
         const auctions = await AuctionModel.find({
-            store_id: input.store_id,
+            id: input.id,
         });
 
-        return {
-            auctions: auctions,
-        }
+        return auctions;
     },
 
     createAuction: async ({ input }, request) => {
