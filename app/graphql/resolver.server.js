@@ -26,10 +26,15 @@ export const resolver = {
         }).lean();
     },
     getAuctions: async ({input}, request) => {
-        return AuctionModel.find({id: input.id}, null, {
-            new: true
+        const auctions = await AuctionModel.find({
+            store_id: input.store_id,
         });
+
+        return {
+            auctions: auctions,
+        }
     },
+
     createAuction: async ({ input }, request) => {
         const {
             id,
@@ -62,7 +67,7 @@ export const resolver = {
             bid_increment: bid_increment,
             end_price: end_price,
             is_reverse_price: is_reverse_price,
-            is_reverse_price_display: is_buyout_price_display,
+            is_reverse_price_display: is_reverse_price_display,
             reserve_price: reserve_price,
             is_buyout_price: is_buyout_price,
             is_buyout_price_display: is_buyout_price_display,
@@ -88,6 +93,7 @@ export const resolver = {
             is_buyout_price_display,
             buyout_price
         } = input;
+
         return AuctionModel.findOneAndUpdate({
             id: id,
             key: key

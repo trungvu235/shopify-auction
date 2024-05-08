@@ -31,7 +31,7 @@ export const GET_AUCTION = gql`
     }
 `;
 export const GET_AUCTIONS = gql`
-    query GetAuctions($input : GetAuctionInput) {
+    query GetAuctions($input : GetAuctionsListInput) {
         getAuctions(input: $input) {
             id
             key

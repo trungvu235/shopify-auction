@@ -19,11 +19,7 @@ import {
     Pagination,
 } from '@shopify/polaris';
 import {useNavigate, useLoaderData} from '@remix-run/react';
-import {
-    ProductIcon,
-    CalendarIcon,
-    SettingsIcon
-} from '@shopify/polaris-icons';
+import { ProductIcon, CalendarIcon, SettingsIcon } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";

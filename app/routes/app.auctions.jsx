@@ -13,14 +13,31 @@ import {
     Text,
     Badge
 } from '@shopify/polaris';
-import {useNavigate} from '@remix-run/react';
+import {useNavigate, useLoaderData} from '@remix-run/react';
 import {
     ThemeEditIcon,
     ViewIcon
 } from '@shopify/polaris-icons';
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_AUCTIONS } from "../graphql/query";
+import {authenticate} from "../shopify.server";
+import axios from "axios";
+import {json} from "@remix-run/node";
 
-export default function Programs() {
+export const loader = async ({request}) => {
+    const {session} = await authenticate.admin(request);
+    let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
+        headers: {
+            "X-Shopify-Access-Token": session.accessToken, "Accept-Encoding": "application/json",
+        },
+    });
+    store = store.data.shop;
+
+    return json({session: session, shop: store});
+}
+
+export default function AuctionsList() {
+    const {session, shop} = useLoaderData();
     const [selected, setSelected] = useState(0);
     const navigate = useNavigate();
     const itemsPerPage = 8;
@@ -29,6 +46,16 @@ export default function Programs() {
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
     };
+    const { data: custom, loading: customLoading } = useQuery(GET_AUCTIONS, {
+        variables: {
+            input: {
+                id: shop?.id.toString(),
+            }
+        }
+    });
+
+    console.log(custom?.getAuctions);
+
     const auctions = [
         [], [], [],
     ];
@@ -238,7 +265,7 @@ export default function Programs() {
             end_date: "2024-04-10T16:21",
         }
     ];
-    const auctionListTest = [[], [], []];
+
     auctionsList.map(
         (
             {
@@ -328,7 +355,6 @@ export default function Programs() {
     const handleTabChange = useCallback((selectedTabIndex) => {
         setSelected(selectedTabIndex);
         setCurrentPage(1);
-        console.log(auctions);
     }, []);
 
     const tabs = [

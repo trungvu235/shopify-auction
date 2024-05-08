@@ -6,7 +6,11 @@ export const schema = buildSchema(`
 
     input GetAuctionInput {
         id: String,
-        key: String
+        key: String,
+    }
+
+    input GetAuctionsListInput {
+        id: String,
     }
 
     type AuctionSchema {
@@ -30,7 +34,11 @@ export const schema = buildSchema(`
         updatedAt: Date
     }
 
-    input UpdateAuctionInput{
+    type AuctionsList {
+        auctions:[AuctionSchema],
+    }
+
+    input UpdateAuctionInput {
         id: String,
         key: String,
         name: String,
@@ -71,7 +79,7 @@ export const schema = buildSchema(`
     type Query {
         hello: String
         getAuction(input: GetAuctionInput): AuctionSchema
-        getAuctions(input: GetAuctionInput): AuctionSchema
+        getAuctions(input: GetAuctionsListInput): AuctionsList
     }
 
     type Mutation {
