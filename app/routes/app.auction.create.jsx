@@ -135,6 +135,7 @@ export default function AuctionForm() {
         if (products) {
             const selectedProducts = products.map(product => {
                 const {images, id, variants, title, handle} = product;
+                console.log(product);
                 return variants.map(variant => {
                     return {
                         productId: id,
@@ -165,7 +166,7 @@ export default function AuctionForm() {
                         start_price: startPrice,
                         bid_increment: bidIncrement,
                     },
-                    selected_product: selectedProducts ? selectedProducts[0].productVariantId : null,
+                    selected_product: selectedProducts ? selectedProducts[0].productId : null,
                     settings: {
                         has_reserve_price: reservePriceChecked,
                         reserve_price_display: reservePriceDisplay,
@@ -181,7 +182,7 @@ export default function AuctionForm() {
                 }
             }
         };
-        console.log(auction);
+        const productId = selectedProducts[0].productId.replace(/^.*\/(\d+)$/, "$1");
         try {
             const createPromise = await createAuction({
                 variables: {
@@ -189,7 +190,7 @@ export default function AuctionForm() {
                         id: `${shop.id}`,
                         key: ulid(),
                         name: name,
-                        product_id: selectedProducts[0].productVariantId,
+                        product_id: productId,
                         status: true,
                         start_date: startDate,
                         end_date: endDate,

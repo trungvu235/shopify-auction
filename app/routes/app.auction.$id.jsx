@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     BlockStack,
     Card,
@@ -10,10 +10,11 @@ import {
     ResourceItem,
     ResourceList,
     Text,
-    Thumbnail
+    Icon,
+    Thumbnail, Box
 } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
-import {ExternalIcon} from '@shopify/polaris-icons';
+import { ExternalIcon , ImageIcon } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
@@ -23,13 +24,6 @@ import {GET_AUCTION} from "../graphql/query";
 
 export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
-    const productId = "11052470370622";
-    let product = await axios.get(`https://${session.shop}/admin/api/2024-04/products/${productId}.json`, {
-        headers: {
-            "X-Shopify-Access-Token": session.accessToken,
-            "Accept-Encoding": "application/json",
-        }
-    });
 
     let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
         headers: {
@@ -38,7 +32,7 @@ export const loader = async ({request, params}) => {
     });
     store = store.data.shop;
 
-    return json({session: session, shop: store, product: product.data.product , key: params.id});
+    return json({session: session, shop: store, key: params.id});
 }
 
 export default function AuctionForm() {
@@ -60,8 +54,9 @@ export default function AuctionForm() {
         start_date: "2024-04-04T18:21",
         end_date: "2024-05-10T16:21",
     };
-    const {session, shop, product, key} = useLoaderData();
+    const {session, shop, key} = useLoaderData();
     const [auctionDetail, setAuctionDetail] = useState(null);
+    const [productData , setProductData] = useState(null);
 
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
@@ -75,12 +70,22 @@ export default function AuctionForm() {
             } else {
                 setAuctionDetail(auctionsQuery.getAuction);
                 console.log(auctionsQuery.getAuction);
-                fetcher.load(`../../api/product`);
-                console.log(fetcher);
-                console.log(fetcher.data);
             }
         },
-    })
+    });
+
+    useEffect(() => {
+        if (auctionDetail) {
+            fetcher.load(`../../api/product?product=${auctionDetail.product_id}`);
+        }
+    }, [auctionDetail]);
+
+    useEffect(() => {
+        if (fetcher.data) {
+            console.log(fetcher.data);
+            setProductData(fetcher.data);
+        }
+    }, [fetcher.data]);
 
     const endTime = auctionDetail? new Date(auctionDetail.end_date) : new Date(null);
     const startTime = auctionDetail? new Date(auctionDetail.start_date) : new Date(null);
@@ -156,7 +161,7 @@ export default function AuctionForm() {
                             content: 'View product in store',
                             icon: ExternalIcon,
                             onAction: () => {
-                                const url = `https://${shop.domain}/products/${product.handle}`;
+                                const url = `https://${shop.domain}/products/${productData.handle}`;
                                 window.open(url, '_blank');
                             },
                         },
@@ -179,36 +184,47 @@ export default function AuctionForm() {
                             <BlockStack inlineAlign="start" gap="200">
                                 <Text as="h2" variant="headingMd">Auction information</Text>
                             </BlockStack>
-                            <ResourceList
-                                items={[product]}
-                                renderItem={(item) => {
+                            {productData && (
+                                <ResourceList
+                                    items={[productData.product]}
+                                    renderItem={(item) => {
 
-                                    return (
-                                        <ResourceItem
-                                            id={item.productId}
-                                            media={
-                                                <Thumbnail
-                                                    source={item.image.src || ""}
-                                                    alt={item.image.alt}
-                                                />
-                                            }
-                                        >
-                                            <div style={{display:'flex', justifyContent:'center'}}>
-                                                <BlockStack>
-                                                    <Text as="h2" variant="headingMd">
-                                                        <Link url={'https://' + shop.domain + '/products/' + item.handle} target='_blank'>
-                                                            {item.title}
-                                                        </Link>
-                                                    </Text>
-                                                    <span style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
-                                                </BlockStack>
+                                        return (
+                                            <ResourceItem
+                                                id={item.productId}
+                                                media={
+                                                    item.image ? (
+                                                        <Thumbnail
+                                                            source={item.image.src || ""}
+                                                            alt={item.image.alt}
+                                                        />
+                                                    ) : (
+                                                        <Card>
+                                                            <Icon
+                                                                source={ImageIcon}
+                                                                tone="base"
+                                                            />
+                                                        </Card>
+                                                    )
+                                                }
+                                            >
+                                                <div>
+                                                    <BlockStack>
+                                                        <Text as="h2" variant="headingMd">
+                                                            <Link url={'https://' + shop.domain + '/products/' + item.handle} target='_blank'>
+                                                                {item.title}
+                                                            </Link>
+                                                        </Text>
+                                                        <span style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
+                                                    </BlockStack>
 
-                                            </div>
-                                        </ResourceItem>
-                                    );
-                                }
-                                }
-                            />
+                                                </div>
+                                            </ResourceItem>
+                                        );
+                                    }
+                                    }
+                                />
+                            )}
                             {auctionDetail && (
                                 <DescriptionList
                                     items={[

@@ -1,4 +1,4 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import React from 'react';
 import {
     Page,
@@ -16,7 +16,7 @@ import {
     FormLayout,
     Checkbox,
 } from '@shopify/polaris';
-import {useNavigate} from '@remix-run/react';
+import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
 import {
     ProductIcon,
     CalendarIcon,
@@ -26,12 +26,10 @@ import {
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
-import {
-    useLoaderData,
-} from "@remix-run/react";
-import Countdown from 'react-countdown';
+import {useQuery, useMutation} from "@apollo/client";
+import {GET_AUCTION} from "../graphql/query";
 
-export const loader = async ({request}) => {
+export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
     const productId = "11052470370622";
     let products = await axios.get(`https://${session.shop}/admin/api/2024-04/products.json`, {
@@ -57,7 +55,7 @@ export const loader = async ({request}) => {
     });
     store = store.data.shop;
 
-    return json({session: session, shop: store, product: product.data.product});
+    return json({session: session, shop: store, product: product.data.product, key: params.id});
 }
 
 export default function AuctionForm() {
@@ -67,7 +65,7 @@ export default function AuctionForm() {
         start_price: 100,
         bid_increment: 10,
         product_id: '1020',
-        has_reserve_price: false,
+        has_reserve_price: true,
         reserve_price_display: false,
         has_buyout_price: false,
         buyout_price_display: false,
@@ -76,7 +74,8 @@ export default function AuctionForm() {
     };
 
     const navigate = useNavigate();
-    const {session, shop, product} = useLoaderData();
+    const fetcher = useFetcher();
+    const {session, shop, product, key} = useLoaderData();
     const [name, setName] = useState(sampleAuction.name);
     const [startPrice, setStartPrice] = useState(sampleAuction.start_price);
     const [bidIncrement, setBidIncrement] = useState(sampleAuction.bid_increment);
@@ -84,13 +83,15 @@ export default function AuctionForm() {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [reservePriceChecked, setReservePriceChecked] = useState(sampleAuction.has_reserve_price);
     const [reservePriceDisplay, setReservePriceDisplay] = useState(sampleAuction.reserve_price_display);
-    const [reservePrice, setReservePrice] = useState(null);
+    const [reservePrice, setReservePrice] = useState();
     const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(sampleAuction.has_buyout_price);
     const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(sampleAuction.buyout_price_display);
-    const [buyoutPrice, setBuyoutPrice] = useState(null);
+    const [buyoutPrice, setBuyoutPrice] = useState();
     const placeholderText = selectValue === 'percentage' ? '%' : '$';
     const [startDate, setStartDate] = useState(sampleAuction.start_date);
     const [endDate, setEndDate] = useState(sampleAuction.end_date);
+    const [auctionDetail, setAuctionDetail] = useState(null);
+    const [productData , setProductData] = useState(null);
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
@@ -167,41 +168,48 @@ export default function AuctionForm() {
         console.log(auction);
         console.log(product);
     };
-    const Completionist = () => <span>You are good to go!</span>;
-    const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
 
-    const endTime = new Date(endDate);
-    const startTime = new Date(startDate);
-    const timeRemaining = endTime.getTime() - Date.now();
-    const startIn = startTime.getTime() - Date.now();
-    const productUrl = shop.domain + '/products/' + product.handle;
-    const renderer = ({ days, hours, minutes, seconds, completed }) => {
-        if (completed) {
-            return <Completionist />;
-        } else {
+    const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
+        variables: {
+            input: {
+                id: `${shop.id}`, key: `${key}`
+            }
+        },
+        onCompleted: data => {
+            if(dataError) {
+                console.log(dataError);
+            } else {
+                setAuctionDetail(auctionsQuery.getAuction);
+                console.log(auctionsQuery.getAuction);
+            }
+        },
+    });
 
-            return (
-                <InlineStack gap="300">
-                    <BlockStack inlineAlign="center">
-                        <span>{days}</span>
-                        <span>{days < 2 ? "Day" : "Days"}</span>
-                    </BlockStack>
-                    <BlockStack inlineAlign="center">
-                        <span>{hours}</span>
-                        <span>{hours < 2 ? "Hour" : "Hours"}</span>
-                    </BlockStack>
-                    <BlockStack inlineAlign="center">
-                        <span>{minutes}</span>
-                        <span>{minutes < 2 ? "Minute" : "Minutes"}</span>
-                    </BlockStack>
-                    <BlockStack inlineAlign="center">
-                        <span>{seconds}</span>
-                        <span>{seconds < 2 ? "Second" : "Seconds"}</span>
-                    </BlockStack>
-                </InlineStack>
-            );
+    useEffect(() => {
+        if (auctionDetail) {
+            console.log(auctionDetail);
+            setName(auctionDetail.name);
+            setStartPrice(auctionDetail.start_price);
+            setBidIncrement(auctionDetail.bid_increment);
+            setReservePriceChecked(auctionDetail.is_reverse_price);
+            setReservePriceDisplay(auctionDetail.is_reverse_price_display);
+            setReservePrice(auctionDetail.reserve_price);
+            setBuyoutPriceChecked(auctionDetail.is_buyout_price);
+            setBuyoutPriceDisplay(auctionDetail.is_buyout_price_display);
+            setBuyoutPrice(auctionDetail.buyout_price);
+
+            fetcher.load(`../../api/product?product=${auctionDetail.product_id}`);
         }
-    };
+    }, [auctionDetail]);
+
+    useEffect(() => {
+        if (fetcher.data) {
+            console.log(fetcher.data);
+            setProductData(fetcher.data);
+        }
+    }, [fetcher.data]);
+
+    const productUrl = shop.domain + '/products/' + product.handle;
 
     return (
         <Page
@@ -340,26 +348,6 @@ export default function AuctionForm() {
                             }
                             }
                         />
-                        <div style={{fontSize: '16px', fontWeight: 'bold'}}>
-                            {startTime < Date.now() && (
-                                <InlineStack blockAlign='center' gap='300'>
-                                    <Text as="h2">Time remain:</Text>
-                                    <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
-                                        <Completionist/>
-                                    </Countdown>
-                                </InlineStack>
-                            )}
-                            {startTime > Date.now() && (
-                                <div>
-                                    <InlineStack blockAlign='center' gap='300'>
-                                        <Text as="h2">Start in:</Text>
-                                        <Countdown date={Date.now() + startIn} renderer={renderer}>
-                                            <StartedMessage/>
-                                        </Countdown>
-                                    </InlineStack>
-                                </div>
-                            )}
-                        </div>
                     </Card>
                     <div style={{marginTop: "10px"}}>
                         <Card roundedAbove="sm">
