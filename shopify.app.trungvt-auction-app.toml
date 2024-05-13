@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://interracial-basket-dl-designed.trycloudflare.com"
+application_url = "https://man-briefly-several-viewed.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_files,read_products,read_themes,write_customers,wr
 
 [auth]
 redirect_urls = [
-  "https://interracial-basket-dl-designed.trycloudflare.com/auth/callback",
-  "https://interracial-basket-dl-designed.trycloudflare.com/auth/shopify/callback",
-  "https://interracial-basket-dl-designed.trycloudflare.com/api/auth/callback"
+  "https://man-briefly-several-viewed.trycloudflare.com/auth/callback",
+  "https://man-briefly-several-viewed.trycloudflare.com/auth/shopify/callback",
+  "https://man-briefly-several-viewed.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

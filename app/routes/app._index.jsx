@@ -17,7 +17,9 @@ import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {useNavigate} from "@remix-run/react";
 import {ProductIcon, OrderIcon} from "@shopify/polaris-icons";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {useQuery} from "@apollo/client";
+import {GET_AUCTIONS} from "../graphql/query";
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
@@ -32,17 +34,66 @@ export const loader = async ({request}) => {
     );
     store = store.data.shop;
 
-
-    return json({shop: store});
+    return json({session: session, shop: store});
 };
 
 export default function Index() {
-    const {shop} = useLoaderData();
+    const {session, shop} = useLoaderData();
+    const [auctionsList, setAuctionsList] = useState();
     //
     // useEffect(() => {
     //     window.storeData = shop;
     // }, [shop])
     const navigate = useNavigate();
+    const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTIONS, {
+        variables: {
+            input: {
+                id: `${shop.id}`
+            }
+        },
+        onCompleted: data => {
+            if(dataError) {
+                console.log(dataError);
+            } else {
+                setAuctionsList(auctionsQuery.getAuctions);
+            }
+        },
+    })
+
+    const [totalActive, setTotalActive] = useState(0);
+    const [totalScheduled, setTotalScheduled] = useState(0);
+    const [totalCompleted, setTotalCompleted] = useState(0);
+    useEffect(() => {
+        if (auctionsList) {
+            let activeCount = 0;
+            let scheduledCount = 0;
+            let completedCount = 0;
+            auctionsList.map(
+                (
+                    {
+                        id, key, name, product_id, start_date, end_date, start_price, bid_increment, end_price, is_reverse_price,
+                        is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display, buyout_price,
+                    },
+                    index
+                ) => {
+                    const startDate = new Date(start_date);
+                    const endDate = new Date(end_date);
+                    if (startDate > Date.now()) {
+                        scheduledCount += 1;
+                    }else if( startDate < Date.now() && endDate > Date.now()){
+                        activeCount += 1;
+                    }else {
+                        completedCount += 1;
+                    }
+                }
+            );
+
+            setTotalActive(activeCount);
+            setTotalScheduled(scheduledCount);
+            setTotalCompleted(completedCount);
+        }
+    }, [auctionsList]);
+
 
     return (
         <Page
@@ -70,7 +121,7 @@ export default function Index() {
                                         <Box paddingBlockEnd="400">
                                             <Box paddingBlockEnd="150">
                                                 <Text as="h2" variant="headingMd" fontWeight="bold" alignment="center">
-                                                    You have 1 running auction
+                                                    You have {totalActive} running {totalActive > 1? 'auctions' : 'auction'}
                                                 </Text>
                                             </Box>
                                             <InlineStack align="center" gap="500" wrap={false}>
@@ -98,8 +149,12 @@ export default function Index() {
                                 <BlockStack inlineAlign="center">
                                     <InlineStack gap="500" wrap={false}>
                                         <BlockStack>
-                                            <Text variant="subdued">TOTAL NUMBER OF AUCTIONS</Text>
-                                            <Text variant="headingXl" fontWeight="bold" alignment="center">6</Text>
+                                            <Text as="h3" variant="subdued">TOTAL NUMBER OF AUCTIONS</Text>
+                                            {auctionsList && (
+                                                <Text as="h3" variant="headingXl" fontWeight="bold" alignment="center">
+                                                    {auctionsList.length}
+                                                </Text>
+                                            )}
                                         </BlockStack>
                                     </InlineStack>
                                     <p>View a summary of your online store’s orders.</p>
@@ -108,19 +163,19 @@ export default function Index() {
                                     <InlineStack gap="500" wrap={false}>
                                         <Box>
                                             <BlockStack>
-                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">1</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">{totalActive}</Text>
                                                 <Text as="h2" variant="subdued">ACTIVE</Text>
                                             </BlockStack>
                                         </Box>
                                         <Box>
                                             <BlockStack>
-                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">2</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">{totalScheduled}</Text>
                                                 <Text as="h2" variant="subdued">SCHEDULED</Text>
                                             </BlockStack>
                                         </Box>
                                         <Box>
                                             <BlockStack>
-                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">3</Text>
+                                                <Text as="h2" variant="headingXl" fontWeight="bold" alignment="center">{totalCompleted}</Text>
                                                 <Text as="h2" variant="subdued">COMPLETED</Text>
                                             </BlockStack>
                                         </Box>

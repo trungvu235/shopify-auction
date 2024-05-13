@@ -21,6 +21,8 @@ import {json} from "@remix-run/node";
 import Countdown from 'react-countdown';
 import {useQuery} from "@apollo/client";
 import {GET_AUCTION} from "../graphql/query";
+import ReactLoading from "react-loading";
+import PageNotFound from "../components/layout/PageNotFound";
 
 export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
@@ -38,25 +40,10 @@ export const loader = async ({request, params}) => {
 export default function AuctionForm() {
     const navigate = useNavigate();
     const fetcher = useFetcher();
-    const sampleAuction = {
-        id: '1020',
-        name: 'test auction',
-        start_price: 100,
-        bid_increment: 10,
-        end_price: 150,
-        product_id: '11052470370622',
-        has_reserve_price: true,
-        reserve_price_display: false,
-        reserve_price: 300,
-        has_buyout_price: false,
-        buyout_price_display: false,
-        buyout_price: null,
-        start_date: "2024-04-04T18:21",
-        end_date: "2024-05-10T16:21",
-    };
     const {session, shop, key} = useLoaderData();
     const [auctionDetail, setAuctionDetail] = useState(null);
     const [productData , setProductData] = useState(null);
+    const [loadingPage, setLoadingPage] = useState(true);
 
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
@@ -65,11 +52,11 @@ export default function AuctionForm() {
             }
         },
         onCompleted: data => {
+            setLoadingPage(false);
             if(dataError) {
                 console.log(dataError);
             } else {
                 setAuctionDetail(auctionsQuery.getAuction);
-                console.log(auctionsQuery.getAuction);
             }
         },
     });
@@ -82,7 +69,6 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (fetcher.data) {
-            console.log(fetcher.data);
             setProductData(fetcher.data);
         }
     }, [fetcher.data]);
@@ -127,211 +113,224 @@ export default function AuctionForm() {
     };
 
     return (
-        <Page
-            title={auctionDetail ? auctionDetail.name : ''}
-            backAction={
-                {
-                    content: 'Auctions',
-                    onAction: () => {
-                        navigate('../auctions');
-                    },
-                }
-            }
-            primaryAction={{
-                content: 'Edit',
-                disabled: false,
-                onAction: () => {
-                    navigate('../auction/edit/' + key);
-                },
-            }}
-            actionGroups=
-            {[
-                {
-                    title: 'More actions',
-                    actions: [
+        <>
+            {auctionDetail ? (
+                <Page
+                    title={auctionDetail ? auctionDetail.name : ''}
+                    backAction={
                         {
-                            content: 'Cancel order',
-                            destructive: true,
+                            content: 'Auctions',
                             onAction: () => {
-                                // handleCreateAuction();
-                                // navigate('../auctions');
-                            },
-                        },
-                        {
-                            content: 'View product in store',
-                            icon: ExternalIcon,
-                            onAction: () => {
-                                const url = `https://${shop.domain}/products/${productData.handle}`;
-                                window.open(url, '_blank');
-                            },
-                        },
-                        {
-                            content: 'Edit product',
-                            icon: ExternalIcon,
-                            onAction: () => {
-                                const url ='https://admin.shopify.com/store/' + shop.name + '/products/' + sampleAuction.product_id;
-                                window.open(url, '_blank');
+                                navigate('../auctions');
                             },
                         }
-                    ],
-                },
-            ]}
-        >
-            {!auctionsQueryLoading && (
-                <Layout>
-                    <Layout.Section>
-                        <Card roundedAbove="sm">
-                            <BlockStack inlineAlign="start" gap="200">
-                                <Text as="h2" variant="headingMd">Auction information</Text>
-                            </BlockStack>
-                            {productData && (
-                                <ResourceList
-                                    items={[productData.product]}
-                                    renderItem={(item) => {
+                    }
+                    primaryAction={{
+                        content: 'Edit',
+                        onAction: () => {
+                            navigate('../auction/edit/' + key);
+                        },
+                    }}
+                    actionGroups = {
+                        [
+                            {
+                                title: 'More actions',
+                                actions: [
+                                    {
+                                        content: 'Stop auction',
+                                        destructive: true,
+                                        onAction: () => {
+                                            // handleCreateAuction();
+                                            // navigate('../auctions');
+                                        },
+                                    },
+                                    {
+                                        content: 'View product in store',
+                                        icon: ExternalIcon,
+                                        onAction: () => {
+                                            const url = `https://${shop.domain}/products/${productData.product.handle}`;
+                                            window.open(url, '_blank');
+                                        },
+                                    },
+                                    {
+                                        content: 'Edit product',
+                                        icon: ExternalIcon,
+                                        onAction: () => {
+                                            const url ='https://admin.shopify.com/store/' + shop.name + '/products/' + auctionDetail.product_id;
+                                            window.open(url, '_blank');
+                                        },
+                                    }
+                                ],
+                            },
+                        ]
+                    }
+                >
+                    {!auctionsQueryLoading && (
+                        <Layout>
+                            <Layout.Section>
+                                <Card roundedAbove="sm">
+                                    <BlockStack inlineAlign="start" gap="200">
+                                        <Text as="h2" variant="headingMd">Auction information</Text>
+                                    </BlockStack>
+                                    {productData && (
+                                        <ResourceList
+                                            items={[productData.product]}
+                                            renderItem={(item) => {
 
-                                        return (
-                                            <ResourceItem
-                                                id={item.productId}
-                                                media={
-                                                    item.image ? (
-                                                        <Thumbnail
-                                                            source={item.image.src || ""}
-                                                            alt={item.image.alt}
-                                                        />
-                                                    ) : (
-                                                        <Card>
-                                                            <Icon
-                                                                source={ImageIcon}
-                                                                tone="base"
-                                                            />
-                                                        </Card>
-                                                    )
-                                                }
-                                            >
-                                                <div>
-                                                    <BlockStack>
-                                                        <Text as="h2" variant="headingMd">
-                                                            <Link url={'https://' + shop.domain + '/products/' + item.handle} target='_blank'>
-                                                                {item.title}
-                                                            </Link>
-                                                        </Text>
-                                                        <span style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
-                                                    </BlockStack>
+                                                return (
+                                                    <ResourceItem
+                                                        id={item.productId}
+                                                        media={
+                                                            item.image ? (
+                                                                <Thumbnail
+                                                                    source={item.image.src || ""}
+                                                                    alt={item.image.alt}
+                                                                />
+                                                            ) : (
+                                                                <Card>
+                                                                    <Icon
+                                                                        source={ImageIcon}
+                                                                        tone="base"
+                                                                    />
+                                                                </Card>
+                                                            )
+                                                        }
+                                                    >
+                                                        <div>
+                                                            <BlockStack>
+                                                                <Text as="h2" variant="headingMd">
+                                                                    <Link url={'https://' + shop.domain + '/products/' + item.handle} target='_blank'>
+                                                                        {item.title}
+                                                                    </Link>
+                                                                </Text>
+                                                                <span style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
+                                                            </BlockStack>
 
+                                                        </div>
+                                                    </ResourceItem>
+                                                );
+                                            }
+                                            }
+                                        />
+                                    )}
+                                    {auctionDetail && (
+                                        <DescriptionList
+                                            items={[
+                                                {
+                                                    term: 'Auction ID',
+                                                    description: '#' + auctionDetail.key,
+                                                },
+                                                {
+                                                    term: 'Start Date',
+                                                    description: startTime.toLocaleString(),
+                                                },
+                                                {
+                                                    term: 'End Date',
+                                                    description: endTime.toLocaleString(),
+                                                },
+                                                {
+                                                    term: 'Current Bids',
+                                                    description: auctionDetail.end_price? auctionDetail.end_price + ' ' + shop.currency : 'This auction has not yet been bid',
+                                                },
+                                                {
+                                                    term: 'Reserve Price',
+                                                    description: auctionDetail.reserve_price ? auctionDetail.reserve_price + ' ' + shop.currency : '',
+                                                },
+                                                {
+                                                    term: 'Buyout Price',
+                                                    description: auctionDetail.buyout_price ? auctionDetail.buyout_price + ' ' + shop.currency : '',
+                                                },
+                                            ]}
+                                        />
+                                    )}
+                                </Card>
+                            </Layout.Section>
+                            <Layout.Section variant="oneThird" gap="200">
+                                <div>
+                                    <Card>
+                                        {auctionDetail && startTime < Date.now() && (
+                                            <BlockStack gap="200">
+                                                <Text as="h2" variant="headingMd">Time remain</Text>
+                                                <div style={{
+                                                    fontSize: '20px',
+                                                    fontWeight: 'bold',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    padding:'15px 0',
+                                                }}>
+                                                    <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
+                                                        <Completionist/>
+                                                    </Countdown>
                                                 </div>
-                                            </ResourceItem>
-                                        );
-                                    }
-                                    }
-                                />
-                            )}
-                            {auctionDetail && (
-                                <DescriptionList
-                                    items={[
-                                        {
-                                            term: 'Auction ID',
-                                            description: '#' + auctionDetail.key,
-                                        },
-                                        {
-                                            term: 'Start Date',
-                                            description: startTime.toLocaleString(),
-                                        },
-                                        {
-                                            term: 'End Date',
-                                            description: endTime.toLocaleString(),
-                                        },
-                                        {
-                                            term: 'Current Bids',
-                                            description: auctionDetail.end_price? auctionDetail.end_price + ' ' + shop.currency : 'This auction has not yet been bid',
-                                        },
-                                        {
-                                            term: 'Reserve Price',
-                                            description: auctionDetail.reserve_price ? auctionDetail.reserve_price + ' ' + shop.currency : '',
-                                        },
-                                        {
-                                            term: 'Buyout Price',
-                                            description: auctionDetail.buyout_price ? auctionDetail.buyout_price + ' ' + shop.currency : '',
-                                        },
-                                    ]}
-                                />
-                            )}
-                        </Card>
-                    </Layout.Section>
-                    <Layout.Section variant="oneThird" gap="200">
-                        <div>
-                            <Card>
-                                {auctionDetail && startTime < Date.now() && (
-                                    <BlockStack gap="200">
-                                        <Text as="h2" variant="headingMd">Time remain</Text>
-                                        <div style={{
-                                            fontSize: '20px',
-                                            fontWeight: 'bold',
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            padding:'15px 0',
-                                        }}>
-                                            <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
-                                                <Completionist/>
-                                            </Countdown>
-                                        </div>
-                                    </BlockStack>
-                                )}
-                                {auctionDetail && startTime > Date.now() && (
-                                    <BlockStack gap="200">
-                                        <Text as="h2" variant="headingMd">Start in</Text>
-                                        <div style={{
-                                            fontSize: '20px',
-                                            fontWeight: 'bold',
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            padding:'15px 0',
-                                        }}>
-                                            <Countdown date={Date.now() + startIn} renderer={renderer}>
-                                                <StartedMessage/>
-                                            </Countdown>
-                                        </div>
-                                    </BlockStack>
-                                )}
-                            </Card>
-                        </div>
-                        <div style={{marginTop: "10px"}}>
-                            <Card>
-                                <BlockStack inlineAlign="start" gap="200">
-                                    <Text as="h2" variant="headingMd">Bid Details</Text>
-                                    <div style={{width:'100%'}}>
-                                        {auctionDetail && (
-                                            <BlockStack gap="300">
-                                                <InlineStack gap="1000" align="center" >
-                                                    <BlockStack>
-                                                        <Text variant="subdued">START PRICE</Text>
-                                                        <Text variant="headingLg" fontWeight="bold" alignment="center">
-                                                            {auctionDetail.start_price} {shop.currency}
-                                                        </Text>
-                                                    </BlockStack>
-                                                    <BlockStack>
-                                                        <Text variant="subdued">BID INCREMENT</Text>
-                                                        <Text variant="headingLg" fontWeight="bold" alignment="center">
-                                                            {auctionDetail.bid_increment} {shop.currency}
-                                                        </Text>
-                                                    </BlockStack>
-                                                </InlineStack>
-                                                <InlineStack gap="1000" align="center" >
-                                                    <BlockStack>
-                                                        <Text variant="subdued">CURRENT BIDS</Text>
-                                                        <Text variant="headingLg" fontWeight="bold" alignment="center">
-                                                            {auctionDetail.end_price? auctionDetail.end_price + shop.currency: '0'}
-                                                        </Text>
-                                                    </BlockStack>
-                                                </InlineStack>
                                             </BlockStack>
                                         )}
-                                    </div>
-                                </BlockStack>
-                            </Card>
-                        </div>
-                    </Layout.Section>
-                </Layout>
+                                        {auctionDetail && startTime > Date.now() && (
+                                            <BlockStack gap="200">
+                                                <Text as="h2" variant="headingMd">Start in</Text>
+                                                <div style={{
+                                                    fontSize: '20px',
+                                                    fontWeight: 'bold',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    padding:'15px 0',
+                                                }}>
+                                                    <Countdown date={Date.now() + startIn} renderer={renderer}>
+                                                        <StartedMessage/>
+                                                    </Countdown>
+                                                </div>
+                                            </BlockStack>
+                                        )}
+                                    </Card>
+                                </div>
+                                <div style={{marginTop: "10px"}}>
+                                    <Card>
+                                        <BlockStack inlineAlign="start" gap="200">
+                                            <Text as="h2" variant="headingMd">Bid Details</Text>
+                                            <div style={{width:'100%'}}>
+                                                {auctionDetail && (
+                                                    <BlockStack gap="300">
+                                                        <InlineStack gap="1000" align="center" >
+                                                            <BlockStack>
+                                                                <Text variant="subdued">START PRICE</Text>
+                                                                <Text variant="headingLg" fontWeight="bold" alignment="center">
+                                                                    {auctionDetail.start_price} {shop.currency}
+                                                                </Text>
+                                                            </BlockStack>
+                                                            <BlockStack>
+                                                                <Text variant="subdued">BID INCREMENT</Text>
+                                                                <Text variant="headingLg" fontWeight="bold" alignment="center">
+                                                                    {auctionDetail.bid_increment} {shop.currency}
+                                                                </Text>
+                                                            </BlockStack>
+                                                        </InlineStack>
+                                                        <InlineStack gap="1000" align="center" >
+                                                            <BlockStack>
+                                                                <Text variant="subdued">CURRENT BIDS</Text>
+                                                                <Text variant="headingLg" fontWeight="bold" alignment="center">
+                                                                    {auctionDetail.end_price? auctionDetail.end_price + shop.currency: '0'}
+                                                                </Text>
+                                                            </BlockStack>
+                                                        </InlineStack>
+                                                    </BlockStack>
+                                                )}
+                                            </div>
+                                        </BlockStack>
+                                    </Card>
+                                </div>
+                            </Layout.Section>
+                        </Layout>
+                    )}
+                </Page>
+            ) : (
+                <>
+                    {loadingPage && (
+                        <ReactLoading type="spin" color="#000" />
+                    )}
+                    {!loadingPage && (
+                        <PageNotFound/>
+                    )}
+                </>
             )}
-        </Page>
+        </>
     );
 }

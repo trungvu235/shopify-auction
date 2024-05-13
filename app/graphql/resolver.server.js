@@ -35,21 +35,8 @@ export const resolver = {
 
     createAuction: async ({ input }, request) => {
         const {
-            id,
-            key,
-            name,
-            product_id,
-            status,
-            start_date,
-            end_date,
-            start_price,
-            bid_increment,
-            end_price,
-            is_reverse_price,
-            is_reverse_price_display,
-            reserve_price,
-            is_buyout_price,
-            is_buyout_price_display,
+            id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+            is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
             buyout_price
         } = input;
 
@@ -74,21 +61,8 @@ export const resolver = {
     },
     updateAuction: async ({input}, request) => {
         const {
-            id,
-            key,
-            name,
-            product_id,
-            status,
-            start_date,
-            end_date,
-            start_price,
-            bid_increment,
-            end_price,
-            is_reverse_price,
-            is_reverse_price_display,
-            reserve_price,
-            is_buyout_price,
-            is_buyout_price_display,
+            id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+            is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
             buyout_price
         } = input;
 
@@ -101,6 +75,15 @@ export const resolver = {
             status: status,
             start_date: start_date,
             end_date: end_date,
+            start_price: start_price,
+            bid_increment: bid_increment,
+            end_price: end_price,
+            is_reverse_price: is_reverse_price,
+            is_reverse_price_display: is_reverse_price_display,
+            reserve_price: reserve_price,
+            is_buyout_price: is_buyout_price,
+            is_buyout_price_display: is_buyout_price_display,
+            buyout_price: buyout_price
         }, {
             returnDocument: "after",
             new: true

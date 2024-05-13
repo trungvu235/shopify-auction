@@ -50,9 +50,9 @@ export const loader = async ({request}) => {
 
 export default function AuctionForm() {
     const navigate = useNavigate();
-    const [name, setName] = useState(null);
-    const [startPrice, setStartPrice] = useState(null);
-    const [bidIncrement, setBidIncrement] = useState(null);
+    const [name, setName] = useState();
+    const [startPrice, setStartPrice] = useState();
+    const [bidIncrement, setBidIncrement] = useState();
     const [selectValue, setSelectValue] = useState('fixed');
     const [selectedProducts, setSelectedProducts] = useState([]);
     const itemsPerPage = 5;
@@ -63,10 +63,10 @@ export default function AuctionForm() {
     const [reservePrice, setReservePrice] = useState(null);
     const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(false);
     const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(false);
-    const [buyoutPrice, setBuyoutPrice] = useState(null);
+    const [buyoutPrice, setBuyoutPrice] = useState();
     const placeholderText = selectValue === 'percentage' ? '% 0' : '$ 0';
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
     const {session, shop} = useLoaderData();
 
     const handleStartDateChange = (value) => {
@@ -135,7 +135,7 @@ export default function AuctionForm() {
         if (products) {
             const selectedProducts = products.map(product => {
                 const {images, id, variants, title, handle} = product;
-                console.log(product);
+
                 return variants.map(variant => {
                     return {
                         productId: id,
@@ -234,14 +234,24 @@ export default function AuctionForm() {
     return (
         <Page
             title="Create an Auction"
-            primaryAction={{
-                content: 'Create',
-                disabled: false,
-                onAction: () => {
-                    // navigate('../auctions');
-                    handleCreateAuction();
-                },
-            }}
+            backAction={
+                {
+                    content: 'Auctions',
+                    onAction: () => {
+                        navigate('../auctions');
+                    },
+                }
+            }
+            primaryAction={
+                {
+                    content: 'Create',
+                    disabled: false,
+                    onAction: () => {
+                        handleCreateAuction();
+                        // navigate('../auctions');
+                    },
+                }
+            }
         >
             <Layout>
                 <Layout.Section variant="oneThird" gap="200">

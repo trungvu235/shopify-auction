@@ -22,31 +22,17 @@ import {
     CalendarIcon,
     SettingsIcon,
     ExternalIcon,
+    ImageIcon
 } from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
 import {useQuery, useMutation} from "@apollo/client";
 import {GET_AUCTION} from "../graphql/query";
+import { UPDATE_AUCTION } from "../graphql/mutation";
 
 export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
-    const productId = "11052470370622";
-    let products = await axios.get(`https://${session.shop}/admin/api/2024-04/products.json`, {
-        headers: {
-            "X-Shopify-Access-Token": session.accessToken,
-            "Accept-Encoding": "application/json",
-        },
-        params: {
-            limit: 100
-        }
-    });
-    let product = await axios.get(`https://${session.shop}/admin/api/2024-04/products/${productId}.json`, {
-        headers: {
-            "X-Shopify-Access-Token": session.accessToken,
-            "Accept-Encoding": "application/json",
-        }
-    });
 
     let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
         headers: {
@@ -55,7 +41,7 @@ export const loader = async ({request, params}) => {
     });
     store = store.data.shop;
 
-    return json({session: session, shop: store, product: product.data.product, key: params.id});
+    return json({session: session, shop: store , key: params.id});
 }
 
 export default function AuctionForm() {
@@ -75,21 +61,21 @@ export default function AuctionForm() {
 
     const navigate = useNavigate();
     const fetcher = useFetcher();
-    const {session, shop, product, key} = useLoaderData();
-    const [name, setName] = useState(sampleAuction.name);
-    const [startPrice, setStartPrice] = useState(sampleAuction.start_price);
-    const [bidIncrement, setBidIncrement] = useState(sampleAuction.bid_increment);
+    const {session, shop, key} = useLoaderData();
+    const [name, setName] = useState();
+    const [startPrice, setStartPrice] = useState();
+    const [bidIncrement, setBidIncrement] = useState();
     const [selectValue, setSelectValue] = useState('fixed');
     const [selectedProducts, setSelectedProducts] = useState([]);
-    const [reservePriceChecked, setReservePriceChecked] = useState(sampleAuction.has_reserve_price);
-    const [reservePriceDisplay, setReservePriceDisplay] = useState(sampleAuction.reserve_price_display);
+    const [reservePriceChecked, setReservePriceChecked] = useState();
+    const [reservePriceDisplay, setReservePriceDisplay] = useState();
     const [reservePrice, setReservePrice] = useState();
-    const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(sampleAuction.has_buyout_price);
-    const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(sampleAuction.buyout_price_display);
+    const [buyoutPriceChecked, setBuyoutPriceChecked] = useState();
+    const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState();
     const [buyoutPrice, setBuyoutPrice] = useState();
     const placeholderText = selectValue === 'percentage' ? '%' : '$';
-    const [startDate, setStartDate] = useState(sampleAuction.start_date);
-    const [endDate, setEndDate] = useState(sampleAuction.end_date);
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
     const [auctionDetail, setAuctionDetail] = useState(null);
     const [productData , setProductData] = useState(null);
 
@@ -140,33 +126,71 @@ export default function AuctionForm() {
         [],
     );
 
-    const handleCreateAuction = () => {
+    const [updateAuction] = useMutation(UPDATE_AUCTION);
+
+    const handleCreateAuction = async () => {
         const auction = {
             variables: {
                 input: {
-                    general: {
-                        name: name,
-                        start_price: startPrice,
-                        bid_increment: bidIncrement,
-                    },
-                    selected_product: selectedProducts,
-                    settings: {
-                        has_reserve_price: reservePriceChecked,
-                        reserve_price_display: reservePriceDisplay,
-                        reserve_price: reservePrice,
-                        has_buyout_price: buyoutPriceChecked,
-                        buyout_price_display: buyoutPriceDisplay,
-                        buyout_price: buyoutPrice,
-                    },
-                    active_dates: {
-                        start_date: startDate,
-                        end_date: endDate,
-                    }
+                    id: `${shop.id}`,
+                    key: auctionDetail.key,
+                    name: name,
+                    product_id: auctionDetail.product_id,
+                    status: auctionDetail.status,
+                    start_date: startDate,
+                    end_date: endDate,
+                    start_price: startPrice,
+                    bid_increment: bidIncrement,
+                    end_price: auctionDetail.end_price,
+                    is_reverse_price: reservePriceChecked,
+                    is_reverse_price_display: reservePriceDisplay,
+                    reserve_price: reservePrice,
+                    is_buyout_price: buyoutPriceChecked,
+                    is_buyout_price_display: buyoutPriceDisplay,
+                    buyout_price: buyoutPrice,
                 }
             }
         };
-        console.log(auction);
-        console.log(product);
+
+        try {
+            const updatePromise = await updateAuction({
+                variables: {
+                    input: {
+                        id: `${shop.id}`,
+                        key: auctionDetail.key,
+                        name: name,
+                        product_id: auctionDetail.product_id,
+                        status: auctionDetail.status,
+                        start_date: startDate,
+                        end_date: endDate,
+                        start_price: parseInt(startPrice, 10),
+                        bid_increment: parseInt(bidIncrement, 10),
+                        end_price: parseInt(auctionDetail.end_price, 10),
+                        is_reverse_price: reservePriceChecked,
+                        is_reverse_price_display: reservePriceDisplay,
+                        reserve_price: parseInt(reservePrice, 10),
+                        is_buyout_price: buyoutPriceChecked,
+                        is_buyout_price_display: buyoutPriceDisplay,
+                        buyout_price: parseInt(buyoutPrice, 10),
+                    }
+                }
+            });
+
+            const timeoutPromise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject(new Error('Update program timed out'));
+                }, 10000);
+            });
+
+            await Promise.race([updatePromise, timeoutPromise]);
+
+            shopify.toast.show('Updated successfully');
+        } catch (error) {
+            console.error('Error:', error.message);
+            shopify.toast.show('Connection timeout', {
+                isError: true,
+            });
+        }
     };
 
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
@@ -180,14 +204,12 @@ export default function AuctionForm() {
                 console.log(dataError);
             } else {
                 setAuctionDetail(auctionsQuery.getAuction);
-                console.log(auctionsQuery.getAuction);
             }
         },
     });
 
     useEffect(() => {
         if (auctionDetail) {
-            console.log(auctionDetail);
             setName(auctionDetail.name);
             setStartPrice(auctionDetail.start_price);
             setBidIncrement(auctionDetail.bid_increment);
@@ -197,6 +219,8 @@ export default function AuctionForm() {
             setBuyoutPriceChecked(auctionDetail.is_buyout_price);
             setBuyoutPriceDisplay(auctionDetail.is_buyout_price_display);
             setBuyoutPrice(auctionDetail.buyout_price);
+            setStartDate(auctionDetail.start_date);
+            setEndDate(auctionDetail.end_date);
 
             fetcher.load(`../../api/product?product=${auctionDetail.product_id}`);
         }
@@ -204,12 +228,9 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (fetcher.data) {
-            console.log(fetcher.data);
             setProductData(fetcher.data);
         }
     }, [fetcher.data]);
-
-    const productUrl = shop.domain + '/products/' + product.handle;
 
     return (
         <Page
@@ -311,43 +332,54 @@ export default function AuctionForm() {
                                 <Text as="h6" variant="headingMd">Selected products</Text>
                             </InlineStack>
                         </BlockStack>
-                        <ResourceList
-                            items={[product]}
-                            renderItem={(item) => {
+                        {productData && (
+                            <ResourceList
+                                items={[productData.product]}
+                                renderItem={(item) => {
 
-                                return (
-                                    <ResourceItem
-                                        id={item.productId}
-                                        media={
-                                            <Thumbnail
-                                                source={item.image.src || ""}
-                                                alt={item.image.alt}
-                                            />
-                                        }
-                                    >
-                                        <div style={{display:'flex'}}>
-                                            <BlockStack>
-                                                <Text variant="headingMd" fontWeight="bold" as="h6">
-                                                    {item.title}
-                                                </Text>
-                                                <span style={{fontSize: '14px'}}>Price: ${item.variants[0].price}</span>
-                                            </BlockStack>
-                                            <div>
-                                                <a style={{fontSize:'14px', textDecoration:'none'}}
-                                                   href={'https://' + shop.domain + '/products/' + item.handle}
-                                                   target="_blank">
-                                                    <Icon
-                                                        source={ExternalIcon}
-                                                        tone="base"
+                                    return (
+                                        <ResourceItem
+                                            id={item.id}
+                                            media={
+                                                item.image ? (
+                                                    <Thumbnail
+                                                        source={item.image.src || ""}
+                                                        alt={item.image.alt}
                                                     />
-                                                </a>
+                                                ) : (
+                                                    <Card>
+                                                        <Icon
+                                                            source={ImageIcon}
+                                                            tone="base"
+                                                        />
+                                                    </Card>
+                                                )
+                                            }
+                                        >
+                                            <div style={{display:'flex'}}>
+                                                <BlockStack>
+                                                    <Text variant="headingMd" fontWeight="bold" as="h6">
+                                                        {item.title}
+                                                    </Text>
+                                                    <span style={{fontSize: '14px'}}>Price: ${item.variants[0].price}</span>
+                                                </BlockStack>
+                                                <div>
+                                                    <a style={{fontSize:'14px', textDecoration:'none'}}
+                                                       href={'https://' + shop.domain + '/products/' + item.handle}
+                                                       target="_blank">
+                                                        <Icon
+                                                            source={ExternalIcon}
+                                                            tone="base"
+                                                        />
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </ResourceItem>
-                                );
-                            }
-                            }
-                        />
+                                        </ResourceItem>
+                                    );
+                                }
+                                }
+                            />
+                        )}
                     </Card>
                     <div style={{marginTop: "10px"}}>
                         <Card roundedAbove="sm">

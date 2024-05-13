@@ -60,28 +60,12 @@ export default function AuctionsList() {
     if (dataError) {
         console.log(dataError);
     } else if (!auctionsQueryLoading) {
-        console.log(auctionsQuery.getAuctions);
         auctionsQuery.getAuctions.map(
             (
                 {
-                    id,
-                    key,
-                    name,
-                    product_id,
-                    status,
-                    start_date,
-                    end_date,
-                    start_price,
-                    bid_increment,
-                    end_price,
-                    is_reverse_price,
-                    is_reverse_price_display,
-                    reserve_price,
-                    is_buyout_price,
-                    is_buyout_price_display,
-                    buyout_price,
-                    createdAt,
-                    updatedAt,
+                    id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+                    is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
+                    buyout_price, createdAt, updatedAt,
                 },
                 index
             ) => {
@@ -116,21 +100,8 @@ export default function AuctionsList() {
     auctionsList.map(
         (
             {
-                id,
-                key,
-                name,
-                product_id,
-                start_date,
-                end_date,
-                start_price,
-                bid_increment,
-                end_price,
-                is_reverse_price,
-                is_reverse_price_display,
-                reserve_price,
-                is_buyout_price,
-                is_buyout_price_display,
-                buyout_price,
+                id, key, name, product_id, start_date, end_date, start_price, bid_increment, end_price, is_reverse_price,
+                is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display, buyout_price,
             },
             index
         ) => {
@@ -243,7 +214,7 @@ export default function AuctionsList() {
                     <IndexTable.Cell>
                         <span>${start_price}</span>
                     </IndexTable.Cell>
-                    <IndexTable.Cell><span>${end_price?end_price: start_price}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{end_price?'$' + end_price: '$0'}</span></IndexTable.Cell>
                     <IndexTable.Cell><span>${bid_increment}</span></IndexTable.Cell>
                     <IndexTable.Cell>
                         {startDate > Date.now() &&(
@@ -260,12 +231,14 @@ export default function AuctionsList() {
                     <IndexTable.Cell><span>{endDate.toLocaleString()}</span></IndexTable.Cell>
                     <IndexTable.Cell>
                         <InlineStack align='center' gap="400" wrap={false}>
-                            <Button onClick={() => navigate('../auction/edit/' + key)}>
-                                <Icon
-                                    source={ThemeEditIcon}
-                                    tone="base"
-                                />
-                            </Button>
+                            {!(endDate < Date.now()) &&(
+                                <Button onClick={() => navigate('../auction/edit/' + key)}>
+                                    <Icon
+                                        source={ThemeEditIcon}
+                                        tone="base"
+                                    />
+                                </Button>
+                            )}
                             <Button onClick={() => navigate('../auction/' + key)}>
                                 <Icon
                                     source={ViewIcon}
