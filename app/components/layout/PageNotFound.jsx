@@ -1,5 +1,6 @@
-import { Text } from "@shopify/polaris";
+import {Text} from "@shopify/polaris";
 import React from "react";
+
 export default function PageNotFound() {
     return (
         <div

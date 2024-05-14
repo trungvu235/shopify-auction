@@ -33,7 +33,7 @@ export const resolver = {
         return auctions;
     },
 
-    createAuction: async ({ input }, request) => {
+    createAuction: async ({input}, request) => {
         const {
             id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
             is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,

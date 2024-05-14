@@ -18,8 +18,8 @@ import {
     ThemeEditIcon,
     ViewIcon
 } from '@shopify/polaris-icons';
-import { useMutation, useQuery } from "@apollo/client";
-import { GET_AUCTIONS, GET_AUCTION } from "../graphql/query";
+import {useMutation, useQuery} from "@apollo/client";
+import {GET_AUCTIONS, GET_AUCTION} from "../graphql/query";
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
@@ -100,8 +100,21 @@ export default function AuctionsList() {
     auctionsList.map(
         (
             {
-                id, key, name, product_id, start_date, end_date, start_price, bid_increment, end_price, is_reverse_price,
-                is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display, buyout_price,
+                id,
+                key,
+                name,
+                product_id,
+                start_date,
+                end_date,
+                start_price,
+                bid_increment,
+                end_price,
+                is_reverse_price,
+                is_reverse_price_display,
+                reserve_price,
+                is_buyout_price,
+                is_buyout_price_display,
+                buyout_price,
             },
             index
         ) => {
@@ -127,7 +140,7 @@ export default function AuctionsList() {
                         buyout_price,
                     }
                 );
-            }else if( startDate < Date.now() && endDate > Date.now()){
+            } else if (startDate < Date.now() && endDate > Date.now()) {
                 auctions[0].push(
                     {
                         id,
@@ -147,7 +160,7 @@ export default function AuctionsList() {
                         buyout_price,
                     }
                 );
-            }else {
+            } else {
                 auctions[2].push(
                     {
                         id,
@@ -202,7 +215,7 @@ export default function AuctionsList() {
     };
     const rowMarkup = paginatedItems.map(
         (
-            { id, key, name, start_price, bid_increment, end_price, start_date, end_date },
+            {id, key, name, start_price, bid_increment, end_price, start_date, end_date},
             index
         ) => {
             const startDate = new Date(start_date);
@@ -214,16 +227,16 @@ export default function AuctionsList() {
                     <IndexTable.Cell>
                         <span>${start_price}</span>
                     </IndexTable.Cell>
-                    <IndexTable.Cell><span>{end_price?'$' + end_price: '$0'}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{end_price ? '$' + end_price : '$0'}</span></IndexTable.Cell>
                     <IndexTable.Cell><span>${bid_increment}</span></IndexTable.Cell>
                     <IndexTable.Cell>
-                        {startDate > Date.now() &&(
+                        {startDate > Date.now() && (
                             <Badge tone="info">Scheduled</Badge>
                         )}
-                        {startDate < Date.now() && endDate > Date.now() &&(
+                        {startDate < Date.now() && endDate > Date.now() && (
                             <Badge tone="success">Running</Badge>
                         )}
-                        {endDate < Date.now() &&(
+                        {endDate < Date.now() && (
                             <Badge tone="attention">Finished</Badge>
                         )}
                     </IndexTable.Cell>
@@ -231,7 +244,7 @@ export default function AuctionsList() {
                     <IndexTable.Cell><span>{endDate.toLocaleString()}</span></IndexTable.Cell>
                     <IndexTable.Cell>
                         <InlineStack align='center' gap="400" wrap={false}>
-                            {!(endDate < Date.now()) &&(
+                            {!(endDate < Date.now()) && (
                                 <Button onClick={() => navigate('../auction/edit/' + key)}>
                                     <Icon
                                         source={ThemeEditIcon}

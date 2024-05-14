@@ -14,7 +14,7 @@ import {
     Thumbnail, Box
 } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
-import { ExternalIcon , ImageIcon } from '@shopify/polaris-icons';
+import {ExternalIcon, ImageIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
@@ -42,7 +42,7 @@ export default function AuctionForm() {
     const fetcher = useFetcher();
     const {session, shop, key} = useLoaderData();
     const [auctionDetail, setAuctionDetail] = useState(null);
-    const [productData , setProductData] = useState(null);
+    const [productData, setProductData] = useState(null);
     const [loadingPage, setLoadingPage] = useState(true);
 
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
@@ -53,7 +53,7 @@ export default function AuctionForm() {
         },
         onCompleted: data => {
             setLoadingPage(false);
-            if(dataError) {
+            if (dataError) {
                 console.log(dataError);
             } else {
                 setAuctionDetail(auctionsQuery.getAuction);
@@ -73,17 +73,17 @@ export default function AuctionForm() {
         }
     }, [fetcher.data]);
 
-    const endTime = auctionDetail? new Date(auctionDetail.end_date) : new Date(null);
-    const startTime = auctionDetail? new Date(auctionDetail.start_date) : new Date(null);
+    const endTime = auctionDetail ? new Date(auctionDetail.end_date) : new Date(null);
+    const startTime = auctionDetail ? new Date(auctionDetail.start_date) : new Date(null);
     const timeRemaining = endTime.getTime() - Date.now();
     const startIn = startTime.getTime() - Date.now();
 
     const Completionist = () => <span>The auction was finished</span>;
     const StartedMessage = () => <span>The auction has started. Please refresh the page.</span>;
 
-    const renderer = ({ days, hours, minutes, seconds, completed }) => {
+    const renderer = ({days, hours, minutes, seconds, completed}) => {
         if (completed) {
-            return <Completionist />;
+            return <Completionist/>;
         } else {
 
             return (
@@ -131,7 +131,7 @@ export default function AuctionForm() {
                             navigate('../auction/edit/' + key);
                         },
                     }}
-                    actionGroups = {
+                    actionGroups={
                         [
                             {
                                 title: 'More actions',
@@ -156,7 +156,7 @@ export default function AuctionForm() {
                                         content: 'Edit product',
                                         icon: ExternalIcon,
                                         onAction: () => {
-                                            const url ='https://admin.shopify.com/store/' + shop.name + '/products/' + auctionDetail.product_id;
+                                            const url = 'https://admin.shopify.com/store/' + shop.name + '/products/' + auctionDetail.product_id;
                                             window.open(url, '_blank');
                                         },
                                     }
@@ -199,11 +199,14 @@ export default function AuctionForm() {
                                                         <div>
                                                             <BlockStack>
                                                                 <Text as="h2" variant="headingMd">
-                                                                    <Link url={'https://' + shop.domain + '/products/' + item.handle} target='_blank'>
+                                                                    <Link
+                                                                        url={'https://' + shop.domain + '/products/' + item.handle}
+                                                                        target='_blank'>
                                                                         {item.title}
                                                                     </Link>
                                                                 </Text>
-                                                                <span style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
+                                                                <span
+                                                                    style={{fontSize: '14px'}}>Vendor: {item.vendor}</span>
                                                             </BlockStack>
 
                                                         </div>
@@ -230,7 +233,7 @@ export default function AuctionForm() {
                                                 },
                                                 {
                                                     term: 'Current Bids',
-                                                    description: auctionDetail.end_price? auctionDetail.end_price + ' ' + shop.currency : 'This auction has not yet been bid',
+                                                    description: auctionDetail.end_price ? auctionDetail.end_price + ' ' + shop.currency : 'This auction has not yet been bid',
                                                 },
                                                 {
                                                     term: 'Reserve Price',
@@ -256,7 +259,7 @@ export default function AuctionForm() {
                                                     fontWeight: 'bold',
                                                     display: 'flex',
                                                     justifyContent: 'center',
-                                                    padding:'15px 0',
+                                                    padding: '15px 0',
                                                 }}>
                                                     <Countdown date={Date.now() + timeRemaining} renderer={renderer}>
                                                         <Completionist/>
@@ -272,7 +275,7 @@ export default function AuctionForm() {
                                                     fontWeight: 'bold',
                                                     display: 'flex',
                                                     justifyContent: 'center',
-                                                    padding:'15px 0',
+                                                    padding: '15px 0',
                                                 }}>
                                                     <Countdown date={Date.now() + startIn} renderer={renderer}>
                                                         <StartedMessage/>
@@ -286,28 +289,31 @@ export default function AuctionForm() {
                                     <Card>
                                         <BlockStack inlineAlign="start" gap="200">
                                             <Text as="h2" variant="headingMd">Bid Details</Text>
-                                            <div style={{width:'100%'}}>
+                                            <div style={{width: '100%'}}>
                                                 {auctionDetail && (
                                                     <BlockStack gap="300">
-                                                        <InlineStack gap="1000" align="center" >
+                                                        <InlineStack gap="1000" align="center">
                                                             <BlockStack>
                                                                 <Text variant="subdued">START PRICE</Text>
-                                                                <Text variant="headingLg" fontWeight="bold" alignment="center">
+                                                                <Text variant="headingLg" fontWeight="bold"
+                                                                      alignment="center">
                                                                     {auctionDetail.start_price} {shop.currency}
                                                                 </Text>
                                                             </BlockStack>
                                                             <BlockStack>
                                                                 <Text variant="subdued">BID INCREMENT</Text>
-                                                                <Text variant="headingLg" fontWeight="bold" alignment="center">
+                                                                <Text variant="headingLg" fontWeight="bold"
+                                                                      alignment="center">
                                                                     {auctionDetail.bid_increment} {shop.currency}
                                                                 </Text>
                                                             </BlockStack>
                                                         </InlineStack>
-                                                        <InlineStack gap="1000" align="center" >
+                                                        <InlineStack gap="1000" align="center">
                                                             <BlockStack>
                                                                 <Text variant="subdued">CURRENT BIDS</Text>
-                                                                <Text variant="headingLg" fontWeight="bold" alignment="center">
-                                                                    {auctionDetail.end_price? auctionDetail.end_price + shop.currency: '0'}
+                                                                <Text variant="headingLg" fontWeight="bold"
+                                                                      alignment="center">
+                                                                    {auctionDetail.end_price ? auctionDetail.end_price + shop.currency : '0'}
                                                                 </Text>
                                                             </BlockStack>
                                                         </InlineStack>
@@ -324,13 +330,25 @@ export default function AuctionForm() {
             ) : (
                 <>
                     {loadingPage && (
-                        <ReactLoading type="spin" color="#000" />
+                        <div
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        >
+                            <ReactLoading type="spin" color="#000"/>
+                        </div>
                     )}
                     {!loadingPage && (
                         <PageNotFound/>
                     )}
                 </>
-            )}
+            )
+            }
         </>
-    );
+    )
+        ;
 }
