@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
     Page,
     Card,
@@ -93,6 +93,7 @@ export default function AuctionsList() {
 
     }
 
+    auctionsList = auctionsList.slice().reverse();
     const auctions = [
         [], [], [],
     ];

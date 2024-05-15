@@ -132,7 +132,7 @@ export default function Index() {
                         )}
                     </IndexTable.Cell>
                     <IndexTable.Cell>
-                        <Button onClick={() => navigate('../app/auction/' + key)}>
+                        <Button onClick={() => navigate('../auction/' + key)}>
                             <Icon
                                 source={ViewIcon}
                                 tone="base"

@@ -11,10 +11,11 @@ import {
     ResourceList,
     Text,
     Icon,
-    Thumbnail, Box
+    Thumbnail,
+    Box, ButtonGroup, Button, InlineGrid
 } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
-import {ExternalIcon, ImageIcon} from '@shopify/polaris-icons';
+import {ExternalIcon, ImageIcon, CheckIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
@@ -38,6 +39,80 @@ export const loader = async ({request, params}) => {
 }
 
 export default function AuctionForm() {
+    const customer = {
+        "id": 7767143973182,
+        "email": "vuthanhtrung23052001@gmail.com",
+        "created_at": "2024-04-01T13:41:23-04:00",
+        "updated_at": "2024-04-01T13:41:23-04:00",
+        "first_name": "trung",
+        "last_name": "vu",
+        "orders_count": 1,
+        "state": "disabled",
+        "total_spent": "199.65",
+        "last_order_id": 450789469,
+        "note": null,
+        "verified_email": true,
+        "multipass_identifier": null,
+        "tax_exempt": false,
+        "tags": "Léon, Noël",
+        "last_order_name": "#1001",
+        "currency": "USD",
+        "phone": "+16136120707",
+        "addresses": [
+            {
+                "id": 7767143973182,
+                "customer_id": 7767143973182,
+                "first_name": null,
+                "last_name": null,
+                "company": null,
+                "address1": "Chestnut Street 92",
+                "address2": "",
+                "city": "Louisville",
+                "province": "Kentucky",
+                "country": "United States",
+                "zip": "40202",
+                "phone": "555-625-1199",
+                "name": "",
+                "province_code": "KY",
+                "country_code": "US",
+                "country_name": "United States",
+                "default": true
+            }
+        ],
+        "tax_exemptions": [],
+        "email_marketing_consent": {
+            "state": "not_subscribed",
+            "opt_in_level": null,
+            "consent_updated_at": "2004-06-13T11:57:11-04:00"
+        },
+        "sms_marketing_consent": {
+            "state": "not_subscribed",
+            "opt_in_level": "single_opt_in",
+            "consent_updated_at": "2024-04-01T13:41:23-04:00",
+            "consent_collected_from": "OTHER"
+        },
+        "admin_graphql_api_id": "gid://shopify/Customer/207119551",
+        "default_address": {
+            "id": 7767143973182,
+            "customer_id": 7767143973182,
+            "first_name": null,
+            "last_name": null,
+            "company": null,
+            "address1": "Chestnut Street 92",
+            "address2": "",
+            "city": "Louisville",
+            "province": "Kentucky",
+            "country": "United States",
+            "zip": "40202",
+            "phone": "555-625-1199",
+            "name": "",
+            "province_code": "KY",
+            "country_code": "US",
+            "country_name": "United States",
+            "default": true
+        }
+    };
+
     const navigate = useNavigate();
     const fetcher = useFetcher();
     const {session, shop, key} = useLoaderData();
@@ -63,6 +138,7 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (auctionDetail) {
+            console.log(auctionDetail);
             fetcher.load(`../../api/product?product=${auctionDetail.product_id}`);
         }
     }, [auctionDetail]);
@@ -165,6 +241,46 @@ export default function AuctionForm() {
                         ]
                     }
                 >
+                    <div style={{marginBottom: '10px'}}>
+                        <Box background="bg-surface">
+                            <BlockStack>
+                                <Box background="bg-fill-success" borderRadius="100">
+                                    <div style={{'padding': '10px 20px', 'color': '#fff'}}>
+                                        <BlockStack inlineAlign="start" gap="200">
+                                            <InlineStack gap="200">
+                                                <Icon
+                                                    source={CheckIcon}
+                                                    tone="inherit"
+                                                />
+                                                <Text as="h3" variant="headingMd">This auction has sold</Text>
+                                            </InlineStack>
+                                        </BlockStack>
+                                    </div>
+                                </Box>
+                                <Box background="bg-surface" borderRadius="100">
+                                    <div style={{'padding': '10px 20px'}}>
+                                        <BlockStack gap="100" inlineAlign="start" gap="200">
+                                            <Text as="p" variant="bodyLg">
+                                                <div style={{display:'flex'}}>
+                                                    Customer
+                                                    <a style={{display:'flex', color: 'rgba(0, 91, 211, 1)', marginLeft:'2px'}}
+                                                       href={'https://admin.shopify.com/store/' + shop.name + '/customers/' + customer.id}
+                                                       target="_blank">
+                                                        {` ${customer.first_name} ${customer.last_name} `}
+                                                        <Icon
+                                                            source={ExternalIcon}
+                                                            tone="base"
+                                                        />
+                                                    </a>
+                                                    won the auction with a bid of $100
+                                                </div>
+                                            </Text>
+                                        </BlockStack>
+                                    </div>
+                                </Box>
+                            </BlockStack>
+                        </Box>
+                    </div>
                     {!auctionsQueryLoading && (
                         <Layout>
                             <Layout.Section>
@@ -242,6 +358,10 @@ export default function AuctionForm() {
                                                 {
                                                     term: 'Buyout Price',
                                                     description: auctionDetail.buyout_price ? auctionDetail.buyout_price + ' ' + shop.currency : '',
+                                                },
+                                                {
+                                                    term: 'Created at',
+                                                    description: auctionDetail.createdAt ? new Date(auctionDetail.createdAt).toLocaleString() : '',
                                                 },
                                             ]}
                                         />

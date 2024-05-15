@@ -186,6 +186,7 @@ export default function AuctionForm() {
                             key: key,
                             name: name,
                             product_id: productId,
+                            winner_id: null,
                             status: true,
                             start_date: startDate,
                             end_date: endDate,
@@ -204,13 +205,13 @@ export default function AuctionForm() {
 
                 const timeoutPromise = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        reject(new Error('Update program timed out'));
+                        reject(new Error('Create auction timed out'));
                     }, 10000);
                 });
 
                 await Promise.race([createPromise, timeoutPromise]);
 
-                shopify.toast.show('Updated successfully');
+                shopify.toast.show('Created successfully');
 
             } catch (error) {
                 console.error('Error:', error.message);

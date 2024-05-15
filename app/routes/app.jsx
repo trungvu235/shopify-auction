@@ -5,7 +5,7 @@ import { AppProvider as PolarisAppProvider } from "@shopify/polaris";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css";
 import { boundary } from "@shopify/shopify-app-remix";
 import { authenticate } from "../shopify.server";
-
+import TopBarComponent from "../components/layout/TopBar";
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export async function loader({ request }) {
@@ -26,8 +26,9 @@ export default function App() {
                 src="https://cdn.shopify.com/shopifycloud/app-bridge.js"
                 data-api-key={apiKey}
             />
+            <TopBarComponent/>
             <ui-nav-menu>
-                <Link to="/app" rel="home">Home</Link>
+                <Link to="/app/dashboard" rel="home">Home</Link>
                 <Link to="/app/auctions">Auctions</Link>
                 <Link to="/app/settings">Settings</Link>
             </ui-nav-menu>

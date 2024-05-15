@@ -19,6 +19,10 @@ const auctionSchema = new Schema({
         type: String,
         required: true,
     },
+    winner_id: {
+        type: String,
+        required: false,
+    },
     status: {
         type: Boolean,
         required: true,

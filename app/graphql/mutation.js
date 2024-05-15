@@ -7,6 +7,7 @@ export const UPDATE_AUCTION = gql`
             key
             name
             product_id
+            winner_id
             status
             start_date
             end_date
@@ -31,6 +32,7 @@ export const CREATE_AUCTION = gql`
             key
             name
             product_id
+            winner_id
             status
             start_date
             end_date

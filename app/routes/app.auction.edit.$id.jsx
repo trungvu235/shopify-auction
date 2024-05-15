@@ -34,7 +34,7 @@ import PageNotFound from "../components/layout/PageNotFound";
 import ReactLoading from "react-loading";
 
 export const loader = async ({request, params}) => {
-    const {session} = await authenticate.admin(request);
+    const {session, admin} = await authenticate.admin(request);
 
     let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
         headers: {
@@ -42,6 +42,22 @@ export const loader = async ({request, params}) => {
         },
     });
     store = store.data.shop;
+
+    const response = await admin.graphql(`
+    #graphql
+        query {
+          customers(first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+    `)
+
+    const data = await response.json();
+    console.log(data);
 
     return json({session: session, shop: store , key: params.id});
 }
@@ -145,6 +161,7 @@ export default function AuctionForm() {
                             key: auctionDetail.key,
                             name: name,
                             product_id: auctionDetail.product_id,
+                            winner_id: null,
                             status: auctionDetail.status,
                             start_date: startDate,
                             end_date: endDate,

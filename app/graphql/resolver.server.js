@@ -35,7 +35,7 @@ export const resolver = {
 
     createAuction: async ({input}, request) => {
         const {
-            id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+            id, key, name, product_id, winner_id, status, start_date, end_date, start_price, bid_increment, end_price,
             is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
             buyout_price
         } = input;
@@ -45,6 +45,7 @@ export const resolver = {
             key: key,
             name: name,
             product_id: product_id,
+            winner_id: winner_id,
             status: status,
             start_date: start_date,
             end_date: end_date,
@@ -61,7 +62,7 @@ export const resolver = {
     },
     updateAuction: async ({input}, request) => {
         const {
-            id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+            id, key, name, product_id, winner_id, status, start_date, end_date, start_price, bid_increment, end_price,
             is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
             buyout_price
         } = input;
@@ -72,6 +73,7 @@ export const resolver = {
         }, {
             name: name,
             product_id: product_id,
+            winner_id: winner_id,
             status: status,
             start_date: start_date,
             end_date: end_date,
