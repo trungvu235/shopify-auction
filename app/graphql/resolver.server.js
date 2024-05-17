@@ -28,8 +28,9 @@ export const resolver = {
     getAuctions: async ({input}, request) => {
         const auctions = await AuctionModel.find({
             id: input.id,
-        });
+        }, null,{ new: true});
 
+        console.log('Autioncs: ',auctions);
         return auctions;
     },
 

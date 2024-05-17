@@ -67,6 +67,7 @@ export default function Index() {
 
     useEffect(() => {
         if (auctionsList) {
+            console.log(auctionsList);
             let activeCount = 0;
             let scheduledCount = 0;
             let completedCount = 0;

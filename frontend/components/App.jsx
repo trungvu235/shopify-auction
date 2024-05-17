@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Spinner } from '@shopify/polaris';
+import LoginPage from "~/components/LoginPage";
+import {testFetch} from "@/utils/apis";
+import {Button} from "antd";
 
 export default function App({ home }) {
     const modal = document.getElementById("major-popup-parent");
@@ -18,19 +21,24 @@ export default function App({ home }) {
         setIsLoading(false);
     }, []);
 
-    const PopupHandler = function () {
+    const PopupHandler = () => {
         if (modal.style.display !== "block") {
             modal.style.display = "block";
-            // console.log(customer);
-            // console.log(shop);
-            // console.log("Home", home);
         } else {
             modal.style.display = "none";
         }
     };
+    const test = async () => {
+        await testFetch().then(
+            response => {
+                console.log(response);
+            }
+        );
+    }
     const PopupClose = function () {
         modal.style.display = "none";
     }
+
     const RegButtonHandler = function () {
         window.location.href = `https://${shop.domain}/account/register`;
     }
@@ -60,9 +68,10 @@ export default function App({ home }) {
                                 <p className="overflow-text" style={{ width: "340px" }}>
                                     Welcome {customer.name}!
                                 </p>
-                                <p className="common-text" style={{ fontSize: "20px", ontWeight: "bold" }}>
-                                    Your points: 250
+                                <p className="common-text" style={{ fontSize: "20px", fontWeight: "bold" }}>
+                                    Let's go see the auctions
                                 </p>
+                                <Button type="primary" onClick={test}>Test Api</Button>
                             </div>
                         ) : (
                             <div style={{ paddingLeft: "10px", paddingBottom: "5px" }}>
@@ -104,7 +113,7 @@ export default function App({ home }) {
                 <div id="footer-major-content">
                     <div id="footer-banner">
                         <p style={{ fontSize: "15px", textAlign: "center", fontWeight: "bold" }}>
-                            Shopify Loyalty Customer Rewards
+                            Shopify Auctions
                         </p>
                     </div>
                 </div>

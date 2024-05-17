@@ -192,7 +192,7 @@ export default function AuctionForm() {
                                     </Box>
                                     <Box background="bg-surface" borderRadius="100">
                                         <div style={{'padding': '10px 20px'}}>
-                                            <BlockStack gap="100" inlineAlign="start" gap="200">
+                                            <BlockStack inlineAlign="start" gap="200">
                                                 <Text as="span" variant="bodyLg">
                                                     <div style={{display:'flex'}}>
                                                         Customer

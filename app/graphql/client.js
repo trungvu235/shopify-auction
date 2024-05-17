@@ -1,4 +1,4 @@
-import {ApolloClient, InMemoryCache} from "@apollo/client";
+import {ApolloClient, defaultDataIdFromObject, InMemoryCache} from "@apollo/client";
 import {HELLO_QUERY} from "./query";
 
 const client = new ApolloClient({
