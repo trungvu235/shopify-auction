@@ -1,0 +1,15 @@
+<div id="root">
+    {% liquid
+        render 'vite-tag' with 'theme.css'
+        render 'vite-tag' with 'theme.jsx'
+    %}
+</div>
+
+{% schema %}
+{
+    "name": "Product auction",
+    "target": "body",
+    "settings": []
+}
+{% endschema %}
+

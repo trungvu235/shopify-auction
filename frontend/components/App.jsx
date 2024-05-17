@@ -18,7 +18,7 @@ export default function App({ home }) {
         setIsLoading(false);
     }, []);
 
-    const PopupHanleer = function () {
+    const PopupHandler = function () {
         if (modal.style.display !== "block") {
             modal.style.display = "block";
             // console.log(customer);
@@ -38,7 +38,7 @@ export default function App({ home }) {
     if (isLoading) {
         return (
             <div className="tw-text-5xl tw-text-red-600">
-                <button id="major-popup-button" onClick={PopupHanleer}></button>
+                <button id="major-popup-button" onClick={PopupHandler}></button>
                 <div id="major-popup-parent">
                     <div><Spinner accessibilityLabel="Loading" size="large"></Spinner></div>
                 </div>
@@ -48,7 +48,7 @@ export default function App({ home }) {
 
     return (
         <div className="tw-text-5xl tw-text-red-600">
-            <button id="major-popup-button" onClick={PopupHanleer}></button>
+            <button id="major-popup-button" onClick={PopupHandler}></button>
             <div id="major-popup-parent">
                 <div id="top-major-content">
                     <div id="fixed-top" style={{ float: "right", width: "100%" }}>

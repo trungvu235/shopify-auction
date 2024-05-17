@@ -29,7 +29,7 @@ import axios from "axios";
 import {json} from "@remix-run/node";
 import {useQuery, useMutation} from "@apollo/client";
 import {GET_AUCTION} from "../graphql/query";
-import { UPDATE_AUCTION } from "../graphql/mutation";
+import {UPDATE_AUCTION} from "../graphql/mutation";
 import PageNotFound from "../components/layout/PageNotFound";
 import ReactLoading from "react-loading";
 
@@ -43,23 +43,8 @@ export const loader = async ({request, params}) => {
     });
     store = store.data.shop;
 
-    const response = await admin.graphql(`
-    #graphql
-        query {
-          customers(first: 10) {
-            edges {
-              node {
-                id
-              }
-            }
-          }
-        }
-    `)
 
-    const data = await response.json();
-    console.log(data);
-
-    return json({session: session, shop: store , key: params.id});
+    return json({session: session, shop: store, key: params.id});
 }
 
 export default function AuctionForm() {
@@ -80,7 +65,7 @@ export default function AuctionForm() {
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [auctionDetail, setAuctionDetail] = useState(null);
-    const [productData , setProductData] = useState(null);
+    const [productData, setProductData] = useState(null);
     const [loadingPage, setLoadingPage] = useState(true);
 
     const [nameInvalid, setNameInvalid] = useState('');
@@ -202,7 +187,7 @@ export default function AuctionForm() {
         },
         onCompleted: data => {
             setLoadingPage(false);
-            if(dataError) {
+            if (dataError) {
                 console.log(dataError);
             } else {
                 setAuctionDetail(auctionsQuery.getAuction);
@@ -223,7 +208,6 @@ export default function AuctionForm() {
             setBuyoutPrice(auctionDetail.buyout_price);
             setStartDate(auctionDetail.start_date);
             setEndDate(auctionDetail.end_date);
-
             fetcher.load(`../../api/product?product=${auctionDetail.product_id}`);
         }
     }, [auctionDetail]);
