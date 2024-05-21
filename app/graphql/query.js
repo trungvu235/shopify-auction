@@ -13,6 +13,7 @@ export const GET_AUCTION = gql`
             key
             name
             product_id
+            auction_thumbnail
             winner_id
             status
             start_date
@@ -38,6 +39,7 @@ export const GET_AUCTIONS = gql`
             key
             name
             product_id
+            auction_thumbnail
             winner_id
             status
             start_date

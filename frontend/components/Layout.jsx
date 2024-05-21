@@ -39,11 +39,6 @@ export default function LayoutPage({customer, childComponent, shop}) {
                                 Welcome {customer.name}!
                             </p>
                         </div>
-                        <div>
-                            <p style={{color: '#ffffff', lineHeight: '21px', whiteSpace: 'nowrap'}}>
-                                2500000 Points
-                            </p>
-                        </div>
                     </Flex>
                 </Header>
             ) : (
@@ -80,7 +75,7 @@ export default function LayoutPage({customer, childComponent, shop}) {
             )}
             <Content style={{padding: '10px'}}>
                 {customer ? (
-                    <div style={{minHeight: 458}}>
+                    <div style={{minHeight: 515}}>
                         {childComponent}
                     </div>
                 ) : (
@@ -90,7 +85,7 @@ export default function LayoutPage({customer, childComponent, shop}) {
                 )}
             </Content>
             <Footer style={{ textAlign: 'center', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-                    Loyalty Reward Program ©{new Date().getFullYear()} Created by SstrikesS
+                    Shopify Auction App ©{new Date().getFullYear()}
             </Footer>
         </Layout>
     )

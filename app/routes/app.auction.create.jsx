@@ -178,6 +178,9 @@ export default function AuctionForm() {
         } else {
             const productId = selectedProducts[0].productId.replace(/^.*\/(\d+)$/, "$1");
             const key = ulid();
+            const thumbnail = selectedProducts[0].productImage;
+            console.log(thumbnail);
+
             try {
                 const createPromise = await createAuction({
                     variables: {
@@ -186,6 +189,7 @@ export default function AuctionForm() {
                             key: key,
                             name: name,
                             product_id: productId,
+                            auction_thumbnail: thumbnail,
                             winner_id: null,
                             status: true,
                             start_date: startDate,

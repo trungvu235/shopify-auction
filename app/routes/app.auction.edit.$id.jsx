@@ -146,6 +146,7 @@ export default function AuctionForm() {
                             key: auctionDetail.key,
                             name: name,
                             product_id: auctionDetail.product_id,
+                            auction_thumbnail: auctionDetail.auction_thumbnail? auctionDetail.auction_thumbnail : '',
                             winner_id: null,
                             status: auctionDetail.status,
                             start_date: startDate,

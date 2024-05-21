@@ -15,14 +15,6 @@ export default function MainPage({page, setPage}) {
         setPage('earn-point');
     }
 
-    const navigateToRedeemPoint = () => {
-        setPage('redeem-point');
-    }
-
-    const navigateToReferral = () => {
-        setPage('referral-page');
-    }
-
     const navigateToUserActivity = () => {
         setPage('user-activity');
     }
@@ -36,26 +28,15 @@ export default function MainPage({page, setPage}) {
             }}>
                 <Flex gap="small" justify="flex-end" align="center">
 
-                    <div style={{
-                        width: "15%"
-                    }}>
-                        <img alt="" src="https://cdn-icons-png.flaticon.com/32/548/548427.png"/>
+                    <div style={{ width: "15%", display:"flex", justifyContent:"center"}}>
+                        <img style={{width:"80%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/1052/1052364.png"/>
                     </div>
                     <div style={{
                         width: "75%"
                     }}>
                         <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Your rewards
+                            Let's go see the auctions
                         </p>
-                        <p style={{fontWeight: "light", fontSize: "12px", textAlign: "center", display: 'flex'}}>
-                            You don't have any rewards yet.
-                        </p>
-                    </div>
-                    <div style={{
-                        width: "10%"
-                    }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToRewardList}
-                                style={{display: 'flex'}}></Button>
                     </div>
                 </Flex>
             </div>
@@ -67,15 +48,17 @@ export default function MainPage({page, setPage}) {
             }}>
                 <Flex gap="small" justify="flex-end" align="center">
                     <div style={{
-                        width: "15%"
+                        width: "15%",
+                        display:"flex",
+                        justifyContent:"center"
                     }}>
-                        <img alt="" src="https://cdn-icons-png.flaticon.com/32/8829/8829756.png"/>
+                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/1052/1052364.png"/>
                     </div>
                     <div style={{
                         width: "75%"
                     }}>
                         <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Earn Points
+                            All Auctions
                         </p>
                     </div>
                     <div style={{
@@ -91,45 +74,23 @@ export default function MainPage({page, setPage}) {
                 }}/>
                 <Flex gap="small" justify="flex-end" align="center">
                     <div style={{
-                        width: "15%"
+                        width: "15%",
+                        display:"flex",
+                        justifyContent:"center"
                     }}>
-                        <img alt="" src="https://cdn-icons-png.flaticon.com/32/4221/4221657.png"/>
+                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/6825/6825718.png"/>
                     </div>
                     <div style={{
                         width: "75%"
                     }}>
                         <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Redeem Points
+                            Upcoming list
                         </p>
                     </div>
                     <div style={{
                         width: "10%"
                     }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToRedeemPoint}
-                                style={{display: 'flex'}}></Button>
-                    </div>
-                </Flex>
-                <Divider style={{
-                    display: 'block',
-                    margin: '0 0'
-                }}/>
-                <Flex gap="small" justify="flex-end" align="center">
-                    <div style={{
-                        width: "15%"
-                    }}>
-                        <img alt="" src="https://cdn-icons-png.flaticon.com/32/14806/14806431.png"/>
-                    </div>
-                    <div style={{
-                        width: "75%"
-                    }}>
-                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Referral
-                        </p>
-                    </div>
-                    <div style={{
-                        width: "10%"
-                    }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToReferral}
+                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToRewardList}
                                 style={{display: 'flex'}}></Button>
                     </div>
                 </Flex>

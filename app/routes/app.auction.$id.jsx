@@ -65,11 +65,8 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (auctionDetail) {
-            console.log(auctionDetail);
-            console.log('../../api/product?product=' + auctionDetail.product_id + (auctionDetail.winner_id ? '&winner=' + auctionDetail.winner_id : ''));
             fetcher.load('../../api/product?product=' + auctionDetail.product_id
                 + (auctionDetail.winner_id ? '&winner=' + auctionDetail.winner_id : ''));
-            console.log(auctionDetail.winner_id);
         }
     }, [auctionDetail]);
 
@@ -77,7 +74,6 @@ export default function AuctionForm() {
         if (fetcher.data) {
             setProductData(fetcher.data);
             setWinnerData(fetcher.data.winner);
-            console.log(fetcher.data.winner);
         }
     }, [fetcher.data]);
 

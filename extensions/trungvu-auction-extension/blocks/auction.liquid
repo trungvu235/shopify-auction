@@ -42,7 +42,7 @@
         bottom: 110px;
         right: 15px;
         width: 360px;
-        height: 640px;
+        height: 700px;
         background: #efefef;
         border-radius: 5px;
         border: solid 1px chocolate;
@@ -52,7 +52,7 @@
         top: 0;
         height: 20%;
         width: 100%;
-        background: linear-gradient(90deg, rgba(1,0,8,1) 0%, rgba(33,33,161,1) 50%, rgba(10,230,222,1) 100%);
+        background: rgb(18, 102, 195);
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         z-index: 10
@@ -85,6 +85,8 @@
     }
     div[id='major-content'] {
         height: 70%;
+        display: flex;
+        justify-content: center;
     }
     div[id='footer-major-content'] {
         position: sticky;
@@ -107,11 +109,11 @@
         position: relative;
         border-radius: 10px;
         background-color: #ffffff;
-        height: 200px;
+        min-height: 200px;
+        max-height: 460px;
         width: 90%;
         margin-top: 10px;
-        margin-right: 5%;
-        margin-left: 5%;
+        overflow: auto;
     }
     div[class='card-content'] {
         top: 30%;
@@ -119,6 +121,16 @@
         position: absolute;
         transform: translate(-50%, -50%);
         width: 80%;
+    }
+    div.ant-list-pagination {
+        text-align: center !important;
+    }
+    .ant-pagination {
+        .ant-pagination-item  {
+            a {
+                cursor: pointer;
+            }
+        }
     }
     button[id='register-button'] {
         position: absolute;
@@ -130,6 +142,27 @@
         text-align:center;
         cursor: pointer;
         border: none;
+    }
+    button[id='close-popup'] {
+        position: relative;
+        font-size: 20px;
+        text-align: center;
+        height: 32px;
+        width: 32px;
+        border: none;
+        background: transparent;
+        border-radius: 5px;
+        color: aliceblue;
+        cursor: pointer;
+    }
+    button[id='close-popup']:hover {
+        box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    }
+    div[class='popup-page '] {
+        display: none;
+    }
+    div[class='popup-page active'] {
+        display: block;
     }
 </style>
 {% schema %}

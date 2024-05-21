@@ -156,7 +156,7 @@ export default function Index() {
                 content: 'Create Auction',
                 disabled: false,
                 onAction: () => {
-                    navigate('../auction/create');
+                    navigate('../app/auction/create');
                 },
             }}
         >

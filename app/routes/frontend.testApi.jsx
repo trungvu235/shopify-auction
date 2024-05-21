@@ -29,8 +29,6 @@ export async function loader({request}) {
         fetchPolicy: "no-cache"
     })
 
-    console.log('Frontend Fetch: ',response.data.getAuctions);
-
     return {response};
 }
 

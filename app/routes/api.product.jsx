@@ -13,7 +13,6 @@ export async function loader({request}) {
             "Accept-Encoding": "application/json",
         }
     });
-    console.log(winnerId);
     let response, data;
     if(winnerId){
         response = await admin.graphql
@@ -26,7 +25,6 @@ export async function loader({request}) {
             }
         `);
         data = await response.json();
-        console.log(data);
     }
 
     return json({product: product.data.product, winner: data?.data?.customer});
