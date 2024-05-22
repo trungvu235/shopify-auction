@@ -13,6 +13,11 @@ export const schema = buildSchema(`
         id: String,
     }
 
+    input GetAuctionsByCustomerInput {
+        id: String,
+        winner_id: String,
+    }
+
     type AuctionSchema {
         id: String,
         key: String,
@@ -86,6 +91,9 @@ export const schema = buildSchema(`
         hello: String
         getAuction(input: GetAuctionInput): AuctionSchema
         getAuctions(input: GetAuctionsListInput): [AuctionSchema]
+        getAuctionsByCustomer(input: GetAuctionsByCustomerInput): [AuctionSchema]
+        getActiveAuctions(input: GetAuctionsListInput): [AuctionSchema]
+        getScheduledAuctions(input: GetAuctionsListInput): [AuctionSchema]
     }
 
     type Mutation {

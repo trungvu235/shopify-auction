@@ -12,7 +12,7 @@ import {
     Text,
     Icon,
     Thumbnail,
-    Box, ButtonGroup, Button, InlineGrid
+    Box,
 } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
 import {ExternalIcon, ImageIcon, CheckIcon} from '@shopify/polaris-icons';
@@ -46,7 +46,7 @@ export default function AuctionForm() {
     const [productData, setProductData] = useState(null);
     const [winnerData, setWinnerData] = useState(null);
     const [loadingPage, setLoadingPage] = useState(true);
-
+    const currentDateTime = new Date().toISOString().slice(0, 16);
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
             input: {
@@ -67,6 +67,12 @@ export default function AuctionForm() {
         if (auctionDetail) {
             fetcher.load('../../api/product?product=' + auctionDetail.product_id
                 + (auctionDetail.winner_id ? '&winner=' + auctionDetail.winner_id : ''));
+            console.log(auctionDetail.start_date);
+            console.log(auctionDetail.end_date);
+            console.log(currentDateTime);
+            if(auctionDetail.start_date < currentDateTime && auctionDetail.end_date > currentDateTime){
+                console.log("active auction");
+            }
         }
     }, [auctionDetail]);
 

@@ -16,7 +16,34 @@
         name: "{{ shop.name }}",
         domain: "{{ shop.domain }}",
     }
+    const productIdElements = document.querySelectorAll('input[name="product-id"]');
+    let hasProductId = false;
+    for (let i = 0; i < productIdElements.length; i++) {
+        if (productIdElements[i].value === '11052470731070') {
+            hasProductId = true;
+            break;
+        }
+    }
+    if (hasProductId) {
+        console.log('Thẻ <input type="hidden" name="product-id" value="11052470731070"> tồn tại trong page');
+        let quantityInput = document.querySelector('.product-form__quantity');
+        if (quantityInput) {
+            quantityInput.remove();
+            console.log(`The element with the 'product-form__quantity' class has been removed.`);
+        }
+        const productFormElement = document.querySelector('.product-form');
+        if (productFormElement) {
+            productFormElement.remove();
+            console.log('Element with the "product-form" class exists.');
+        }
+        const priceContainer = document.querySelector('.price__container');
+        if (priceContainer) {
+            priceContainer.remove();
+            console.log('The element with the "price__container" class has been removed.');
+        }
+    }
 </script>
+
 <style>
     button[id='major-popup-button'] {
         position: fixed;
@@ -41,11 +68,11 @@
         overflow: auto;
         bottom: 110px;
         right: 15px;
-        width: 360px;
+        width: 400px;
         height: 700px;
         background: #efefef;
         border-radius: 5px;
-        border: solid 1px chocolate;
+        border: solid 1px black;
     }
     div[id='top-major-content'] {
         position: sticky;
@@ -165,6 +192,7 @@
         display: block;
     }
 </style>
+
 {% schema %}
 {
     "name": "Product auction",

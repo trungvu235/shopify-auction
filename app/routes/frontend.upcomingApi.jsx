@@ -1,7 +1,7 @@
 // import { cors } from 'remix-utils/cors'
 import {authenticate} from "../shopify.server";
 import axios from "axios";
-import {GET_AUCTIONS} from "../graphql/query";
+import {GET_SCHEDULED_AUCTIONS} from "../graphql/query";
 import client from "../graphql/client";
 
 export async function loader({request}) {
@@ -15,8 +15,9 @@ export async function loader({request}) {
             },
         }
     );
+
     const response = await client.query({
-        query: GET_AUCTIONS,
+        query: GET_SCHEDULED_AUCTIONS,
         variables: {
             input: {
                 id: `${store.data.shop.id}`

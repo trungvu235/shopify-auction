@@ -1,25 +1,18 @@
 import {Button, Flex, Avatar, List, Tag} from "antd";
 import {LeftOutlined, LoadingOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
-import {testFetch} from "@/utils/apis";
+import {getUpcomingListApi} from "@/utils/apis";
 
-export default function AuctionsList({page, setPage}) {
-    const [auctions, setAuctions] = useState([]);
-    const [displayAuctions, setDisplayAuctions] = useState([]);
+export default function UpcomingList({page, setPage}) {
+    const [upcomingAuctions, setUpcomingAuctions] = useState([]);
 
     useEffect(() => {
-        testFetch().then(response => {
+        getUpcomingListApi().then(response => {
             if (response) {
-                setAuctions(response.response.data.getAuctions);
+                setUpcomingAuctions(response.response.data.getScheduledAuctions.slice().reverse());
             }
         });
     }, []);
-
-    useEffect(() => {
-        if (auctions) {
-            setDisplayAuctions(auctions.slice().reverse());
-        }
-    }, [auctions]);
 
     const navigateToMain = () => {
         setPage('main-page');
@@ -30,10 +23,10 @@ export default function AuctionsList({page, setPage}) {
             <div>
                 <Flex gap="small" justify="flex-start" align="center">
                     <Button type="text" icon={<LeftOutlined/>} onClick={navigateToMain} style={{display: 'flex'}}></Button>
-                    <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>All auctions</p>
+                    <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>Upcoming auctions</p>
                 </Flex>
             </div>
-            {displayAuctions.length ? (
+            {upcomingAuctions.length ? (
                 <div style={{backgroundColor:"#ffffff", borderRadius:"5px", paddingBottom:"20px"}}>
                     <List
                         itemLayout="vertical"
@@ -44,7 +37,7 @@ export default function AuctionsList({page, setPage}) {
                             },
                             pageSize: 3,
                         }}
-                        dataSource={displayAuctions}
+                        dataSource={upcomingAuctions}
                         renderItem={(item) => (
                             <List.Item
                                 key={item.key}
@@ -57,17 +50,18 @@ export default function AuctionsList({page, setPage}) {
                                     }
                                     title={
                                         <div>
-                                            <a style={{fontFamily: "Archivo, serif", display:"block"}} href="https://ant.design">
+                                            <a style={{fontFamily: "Archivo, serif", display: "block"}}
+                                               href="https://ant.design">
                                                 {item.name}
                                             </a>
                                             {new Date(item.start_date) > Date.now() && (
-                                                <Tag color="blue" >Scheduled</Tag>
+                                                <Tag color="blue">Scheduled</Tag>
                                             )}
                                             {new Date(item.start_date) < Date.now() && new Date(item.end_date) > Date.now() && (
-                                                <Tag color="green" >Active</Tag>
+                                                <Tag color="green">Active</Tag>
                                             )}
                                             {new Date(item.end_date) < Date.now() && (
-                                                <Tag color="gold" >Completed</Tag>
+                                                <Tag color="gold">Completed</Tag>
                                             )}
                                         </div>
                                     }
@@ -79,8 +73,8 @@ export default function AuctionsList({page, setPage}) {
                     />
                 </div>
             ) : (
-                <div style={{display:'flex', justifyContent:'center', marginTop:'20%'}}>
-                    <LoadingOutlined style={{fontSize:'60px'}}/>
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '20%'}}>
+                    <LoadingOutlined style={{fontSize: '60px'}}/>
                 </div>
             )}
         </div>

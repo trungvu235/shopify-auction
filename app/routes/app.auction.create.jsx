@@ -29,15 +29,6 @@ import {ulid} from 'ulid';
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
-    let products = await axios.get(`https://${session.shop}/admin/api/2024-04/products.json`, {
-        headers: {
-            "X-Shopify-Access-Token": session.accessToken,
-            "Accept-Encoding": "application/json",
-        },
-        params: {
-            limit: 100
-        }
-    });
     let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
         headers: {
             "X-Shopify-Access-Token": session.accessToken, "Accept-Encoding": "application/json",
@@ -60,7 +51,7 @@ export default function AuctionForm() {
     const addProductImage = "/add-product.png";
     const [reservePriceChecked, setReservePriceChecked] = useState(false);
     const [reservePriceDisplay, setReservePriceDisplay] = useState(false);
-    const [reservePrice, setReservePrice] = useState(null);
+    const [reservePrice, setReservePrice] = useState();
     const [buyoutPriceChecked, setBuyoutPriceChecked] = useState(false);
     const [buyoutPriceDisplay, setBuyoutPriceDisplay] = useState(false);
     const [buyoutPrice, setBuyoutPrice] = useState();
@@ -77,6 +68,7 @@ export default function AuctionForm() {
     const [endDateInvalid, setEndDateInvalid] = useState('');
     const [reservePriceInvalid, setReservePriceInvalid] = useState('');
     const [buyoutPriceInvalid, setBuyoutPriceInvalid] = useState('');
+    const [createStatus, setCreateStatus] = useState(false);
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
@@ -175,6 +167,7 @@ export default function AuctionForm() {
             setSelectedProductsInvalid(!selectedProducts.length);
             setReservePriceInvalid(reservePriceChecked && !reservePrice ? 'Please enter the reserve price' : '');
             setBuyoutPriceInvalid(buyoutPriceChecked && !buyoutPrice ? 'Please enter the buyout price' : '');
+            setCreateStatus(false);
         } else {
             const productId = selectedProducts[0].productId.replace(/^.*\/(\d+)$/, "$1");
             const key = ulid();
@@ -216,7 +209,7 @@ export default function AuctionForm() {
                 await Promise.race([createPromise, timeoutPromise]);
 
                 shopify.toast.show('Created successfully');
-
+                setCreateStatus(true);
             } catch (error) {
                 console.error('Error:', error.message);
                 shopify.toast.show('Connection timeout', {
@@ -250,7 +243,9 @@ export default function AuctionForm() {
                     disabled: false,
                     onAction: () => {
                         handleCreateAuction().then(() => {
-                            navigate('../auctions');
+                            if(createStatus){
+                                navigate('../auctions');
+                            }
                         });
                     },
                 }

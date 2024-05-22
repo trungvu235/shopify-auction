@@ -2,7 +2,6 @@ import {Button, Flex, Layout, Space, theme, Avatar, List, Tag} from "antd";
 import React, {useEffect, useState} from "react";
 import LoginPage from "~/components/LoginPage";
 import {testFetch} from "@/utils/apis";
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 export default function AllAuctions() {
     const [auctions, setAuctions] = useState([]);
@@ -17,14 +16,13 @@ export default function AllAuctions() {
 
     useEffect(() => {
         if (auctions) {
-            console.log(auctions);
             setDisplayAuctions(auctions.slice().reverse());
         }
     }, [auctions]);
 
     return (
         <div>
-            {displayAuctions ? (
+            {displayAuctions.length ? (
                 <div>
                     <List
                         itemLayout="vertical"

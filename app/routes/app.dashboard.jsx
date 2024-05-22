@@ -59,7 +59,7 @@ export default function Index() {
                 setAuctionsList(auctionsQuery.getAuctions);
             }
         },
-    })
+    });
 
     const [totalActive, setTotalActive] = useState(0);
     const [totalScheduled, setTotalScheduled] = useState(0);

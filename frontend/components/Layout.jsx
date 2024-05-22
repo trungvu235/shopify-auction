@@ -26,20 +26,19 @@ export default function LayoutPage({customer, childComponent, shop}) {
                         <Button ghost size="small" shape="circle" display="flex"
                                 onClick={PopupClose}>&#x00d7;</Button>
                     </div>
-                    <Flex gap="small">
-                        <div>
-                            <p style={{
-                                color: '#ffffff',
-                                lineHeight: '21px',
-                                textOverflow: "ellipsis",
-                                whiteSpace: 'nowrap',
-                                width: "200px",
-                                overflow: 'hidden'
-                            }}>
-                                Welcome {customer.name}!
-                            </p>
-                        </div>
-                    </Flex>
+                    <div style={{width:'100%', display: 'flex', justifyContent:'center', textAlign:'center'}}>
+                        <p style={{
+                            color: '#ffffff',
+                            lineHeight: '21px',
+                            textOverflow: "ellipsis",
+                            whiteSpace: 'nowrap',
+                            width: "200px",
+                            overflow: 'hidden'
+                        }}>
+                            Welcome to {shop.name}!
+                        </p>
+                    </div>
+
                 </Header>
             ) : (
                 <Header style={{
@@ -75,7 +74,7 @@ export default function LayoutPage({customer, childComponent, shop}) {
             )}
             <Content style={{padding: '10px'}}>
                 {customer ? (
-                    <div style={{minHeight: 515}}>
+                    <div style={{minHeight: 540}}>
                         {childComponent}
                     </div>
                 ) : (

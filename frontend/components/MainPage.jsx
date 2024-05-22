@@ -7,12 +7,16 @@ export default function MainPage({page, setPage}) {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
 
-    const navigateToRewardList = () => {
-        setPage('reward-list');
+    const navigateToAuctionsList = () => {
+        setPage('auctions-list');
     }
 
-    const navigateToEarnPoint = () => {
-        setPage('earn-point');
+    const navigateToUpcomingList = () => {
+        setPage('upcoming-list');
+    }
+
+    const navigateToActiveList = () => {
+        setPage('active-list');
     }
 
     const navigateToUserActivity = () => {
@@ -29,13 +33,13 @@ export default function MainPage({page, setPage}) {
                 <Flex gap="small" justify="flex-end" align="center">
 
                     <div style={{ width: "15%", display:"flex", justifyContent:"center"}}>
-                        <img style={{width:"80%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/1052/1052364.png"/>
+                        <img style={{width:"80%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/3898/3898671.png"/>
                     </div>
                     <div style={{
                         width: "75%"
                     }}>
                         <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Let's go see the auctions
+                            Hi {window.shopifyCustomer.name}!
                         </p>
                     </div>
                 </Flex>
@@ -52,7 +56,7 @@ export default function MainPage({page, setPage}) {
                         display:"flex",
                         justifyContent:"center"
                     }}>
-                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/1052/1052364.png"/>
+                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/443/443634.png"/>
                     </div>
                     <div style={{
                         width: "75%"
@@ -64,7 +68,33 @@ export default function MainPage({page, setPage}) {
                     <div style={{
                         width: "10%"
                     }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToEarnPoint}
+                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToAuctionsList}
+                                style={{display: 'flex'}}></Button>
+                    </div>
+                </Flex>
+                <Divider style={{
+                    display: 'block',
+                    margin: '0 0'
+                }}/>
+                <Flex gap="small" justify="flex-end" align="center">
+                    <div style={{
+                        width: "15%",
+                        display:"flex",
+                        justifyContent:"center"
+                    }}>
+                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/7154/7154465.png"/>
+                    </div>
+                    <div style={{
+                        width: "75%"
+                    }}>
+                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
+                            Active auctions
+                        </p>
+                    </div>
+                    <div style={{
+                        width: "10%"
+                    }}>
+                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToActiveList}
                                 style={{display: 'flex'}}></Button>
                     </div>
                 </Flex>
@@ -84,13 +114,13 @@ export default function MainPage({page, setPage}) {
                         width: "75%"
                     }}>
                         <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Upcoming list
+                            Upcoming auctions
                         </p>
                     </div>
                     <div style={{
                         width: "10%"
                     }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToRewardList}
+                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToUpcomingList}
                                 style={{display: 'flex'}}></Button>
                     </div>
                 </Flex>

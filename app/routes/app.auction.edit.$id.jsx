@@ -43,7 +43,6 @@ export const loader = async ({request, params}) => {
     });
     store = store.data.shop;
 
-
     return json({session: session, shop: store, key: params.id});
 }
 
@@ -75,6 +74,7 @@ export default function AuctionForm() {
     const [endDateInvalid, setEndDateInvalid] = useState('');
     const [reservePriceInvalid, setReservePriceInvalid] = useState('');
     const [buyoutPriceInvalid, setBuyoutPriceInvalid] = useState('');
+    const [editStatus, setEditStatus] = useState(false);
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
@@ -137,6 +137,7 @@ export default function AuctionForm() {
             setEndDateInvalid(!endDate ? 'Please choose the valid date' : '');
             setReservePriceInvalid(reservePriceChecked && !reservePrice ? 'Please enter the reserve price' : '');
             setBuyoutPriceInvalid(buyoutPriceChecked && !buyoutPrice ? 'Please enter the buyout price' : '');
+            setEditStatus(false);
         } else {
             try {
                 const updatePromise = await updateAuction({
@@ -171,6 +172,7 @@ export default function AuctionForm() {
                 });
                 await Promise.race([updatePromise, timeoutPromise]);
                 shopify.toast.show('Updated successfully');
+                setEditStatus(true);
             } catch (error) {
                 console.error('Error:', error.message);
                 shopify.toast.show('Connection timeout', {
@@ -237,7 +239,9 @@ export default function AuctionForm() {
                         disabled: false,
                         onAction: () => {
                             handleCreateAuction().then(() => {
-                                navigate('../auction/' + key);
+                                if(editStatus){
+                                    navigate('../auction/' + key);
+                                }
                             });
                             // navigate('../auctions');
                         },

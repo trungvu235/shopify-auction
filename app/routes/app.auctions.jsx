@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
     Page,
     Card,
@@ -10,7 +10,6 @@ import {
     Button,
     Pagination,
     BlockStack,
-    Text,
     Badge
 } from '@shopify/polaris';
 import {useNavigate, useLoaderData} from '@remix-run/react';
@@ -18,8 +17,8 @@ import {
     ThemeEditIcon,
     ViewIcon
 } from '@shopify/polaris-icons';
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_AUCTIONS, GET_AUCTION} from "../graphql/query";
+import {useQuery} from "@apollo/client";
+import {GET_AUCTIONS} from "../graphql/query";
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";

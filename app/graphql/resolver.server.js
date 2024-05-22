@@ -25,6 +25,33 @@ export const resolver = {
             new: true
         }).lean();
     },
+    getAuctionsByCustomer: async ({input}, request) => {
+        const auctions = await AuctionModel.find({
+            id: input.id,
+            winner_id: input.winner_id
+        }, null,{ new: true});
+
+        return auctions;
+    },
+    getActiveAuctions: async ({input}, request) => {
+        const now = new Date().toISOString().slice(0, 16);
+        const auctions = await AuctionModel.find({
+            id: input.id,
+            start_date: { $lt: now },
+            end_date: { $gt: now },
+        }, null,{ new: true});
+
+        return auctions;
+    },
+    getScheduledAuctions: async ({input}, request) => {
+        const now = new Date().toISOString().slice(0, 16);
+        const auctions = await AuctionModel.find({
+            id: input.id,
+            start_date: { $gt: now },
+        }, null,{ new: true});
+
+        return auctions;
+    },
     getAuctions: async ({input}, request) => {
         const auctions = await AuctionModel.find({
             id: input.id,
