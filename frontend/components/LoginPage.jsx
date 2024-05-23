@@ -1,5 +1,4 @@
 import {Button, Flex, theme} from "antd";
-import {testFetch} from "@/utils/apis";
 
 export default function LoginPage({shop}) {
 

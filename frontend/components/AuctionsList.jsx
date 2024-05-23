@@ -1,11 +1,12 @@
-import {Button, Flex, Layout, Space, theme, Avatar, List, Tag} from "antd";
+import {Button, Flex, Avatar, List, Tag} from "antd";
+import {LeftOutlined, LoadingOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
-import LoginPage from "~/components/LoginPage";
 import {testFetch} from "@/utils/apis";
 
-export default function AllAuctions() {
+export default function AuctionsList({page, setPage, auctionKey, setAuctionKey}) {
     const [auctions, setAuctions] = useState([]);
     const [displayAuctions, setDisplayAuctions] = useState([]);
+
     useEffect(() => {
         testFetch().then(response => {
             if (response) {
@@ -20,10 +21,24 @@ export default function AllAuctions() {
         }
     }, [auctions]);
 
+    const navigateToMain = () => {
+        setPage('main-page');
+    }
+    const handleAuctionClick = (auction) => {
+        setAuctionKey(auction.key);
+        setPage('auction-detail');
+    }
+
     return (
-        <div>
+        <div style={{height:"100%"}}>
+            <div>
+                <Flex gap="small" justify="flex-start" align="center">
+                    <Button type="text" icon={<LeftOutlined/>} onClick={navigateToMain} style={{display: 'flex'}}></Button>
+                    <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>All auctions</p>
+                </Flex>
+            </div>
             {displayAuctions.length ? (
-                <div>
+                <div style={{backgroundColor:"#ffffff", borderRadius:"5px", paddingBottom:"20px"}}>
                     <List
                         itemLayout="vertical"
                         size="large"
@@ -46,14 +61,16 @@ export default function AllAuctions() {
                                     }
                                     title={
                                         <div>
-                                            <a style={{fontFamily: "Archivo, serif", display:"block"}} href="https://ant.design">
-                                                {item.name}
-                                            </a>
+                                            <div>
+                                                <Button type="link" onClick={() => handleAuctionClick(item)}>
+                                                    {item.name}
+                                                </Button>
+                                            </div>
                                             {new Date(item.start_date) > Date.now() && (
-                                                <Tag color="green" >Scheduled</Tag>
+                                                <Tag color="blue" >Scheduled</Tag>
                                             )}
                                             {new Date(item.start_date) < Date.now() && new Date(item.end_date) > Date.now() && (
-                                                <Tag color="blue" >Active</Tag>
+                                                <Tag color="green" >Active</Tag>
                                             )}
                                             {new Date(item.end_date) < Date.now() && (
                                                 <Tag color="gold" >Completed</Tag>
@@ -68,8 +85,10 @@ export default function AllAuctions() {
                     />
                 </div>
             ) : (
-                <div>test 3</div>
+                <div style={{display:'flex', justifyContent:'center', marginTop:'20%'}}>
+                    <LoadingOutlined style={{fontSize:'60px'}}/>
+                </div>
             )}
         </div>
-    )
+    );
 }

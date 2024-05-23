@@ -1,5 +1,5 @@
 import {Button, Flex, Layout, Space, theme} from "antd";
-
+import {getAuctionDetail} from "@/utils/apis";
 export default function LayoutPage({customer, childComponent, shop}) {
     const {Header, Content, Footer} = Layout;
     const modal = document.getElementById("major-popup-parent");
