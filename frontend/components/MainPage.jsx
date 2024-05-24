@@ -24,105 +24,77 @@ export default function MainPage({page, setPage}) {
     }
 
     return (
-        <Flex gap="middle" vertical>
+        <Flex gap="small" vertical>
             <div style={{
                 padding: "6px 24px",
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
             }}>
-                <Flex gap="small" justify="flex-end" align="center">
-
-                    <div style={{ width: "15%", display:"flex", justifyContent:"center"}}>
-                        <img style={{width:"80%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/3898/3898671.png"/>
+                <Flex gap="middle" justify="start" align="center">
+                    <div style={{display:"flex", justifyContent:"center"}}>
+                        <img style={{width:"40px", height:"40px"}}
+                             alt=""
+                             src="https://cdn-icons-png.flaticon.com/128/3898/3898671.png"
+                        />
                     </div>
-                    <div style={{
-                        width: "75%"
-                    }}>
+                    <div>
                         <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Hi {window.shopifyCustomer.name}!
+                            Welcome, {window.shopifyCustomer.name}!
                         </p>
                     </div>
                 </Flex>
             </div>
-
             <div style={{
                 padding: "6px 24px",
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
             }}>
-                <Flex gap="small" justify="flex-end" align="center">
-                    <div style={{
-                        width: "15%",
-                        display:"flex",
-                        justifyContent:"center"
-                    }}>
-                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/443/443634.png"/>
-                    </div>
-                    <div style={{
-                        width: "75%"
-                    }}>
-                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            All Auctions
-                        </p>
-                    </div>
-                    <div style={{
-                        width: "10%"
-                    }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToAuctionsList}
-                                style={{display: 'flex'}}></Button>
-                    </div>
-                </Flex>
-                <Divider style={{
-                    display: 'block',
-                    margin: '0 0'
-                }}/>
-                <Flex gap="small" justify="flex-end" align="center">
-                    <div style={{
-                        width: "15%",
-                        display:"flex",
-                        justifyContent:"center"
-                    }}>
-                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/7154/7154465.png"/>
-                    </div>
-                    <div style={{
-                        width: "75%"
-                    }}>
-                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Active auctions
-                        </p>
-                    </div>
-                    <div style={{
-                        width: "10%"
-                    }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToActiveList}
-                                style={{display: 'flex'}}></Button>
-                    </div>
-                </Flex>
-                <Divider style={{
-                    display: 'block',
-                    margin: '0 0'
-                }}/>
-                <Flex gap="small" justify="flex-end" align="center">
-                    <div style={{
-                        width: "15%",
-                        display:"flex",
-                        justifyContent:"center"
-                    }}>
-                        <img style={{width:"75%"}} alt="" src="https://cdn-icons-png.flaticon.com/128/6825/6825718.png"/>
-                    </div>
-                    <div style={{
-                        width: "75%"
-                    }}>
-                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Upcoming auctions
-                        </p>
-                    </div>
-                    <div style={{
-                        width: "10%"
-                    }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToUpcomingList}
-                                style={{display: 'flex'}}></Button>
-                    </div>
+                <Flex gap="middle" justify="center" horizontal>
+                    <Flex gap="large" align="center">
+                        <div style={{
+                            width: "75%"
+                        }}>
+                            <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
+                                All Auctions
+                            </p>
+                        </div>
+                        <div style={{
+                            width: "10%"
+                        }}>
+                            <Button type="text" icon={<RightOutlined/>} onClick={navigateToAuctionsList}
+                                    style={{display: 'flex'}}></Button>
+                        </div>
+                    </Flex>
+                    <Flex gap="large" align="center">
+                        <div style={{
+                            width: "75%"
+                        }}>
+                            <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
+                                Active auctions
+                            </p>
+                        </div>
+                        <div style={{
+                            width: "10%"
+                        }}>
+                            <Button type="text" icon={<RightOutlined/>} onClick={navigateToActiveList}
+                                    style={{display: 'flex'}}></Button>
+                        </div>
+                    </Flex>
+                    <Flex gap="large" align="center">
+                        <div style={{
+                            width: "75%"
+                        }}>
+                            <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
+                                Upcoming auctions
+                            </p>
+                        </div>
+                        <div style={{
+                            width: "10%"
+                        }}>
+                            <Button type="text" icon={<RightOutlined/>} onClick={navigateToUpcomingList}
+                                    style={{display: 'flex'}}></Button>
+                        </div>
+                    </Flex>
                 </Flex>
             </div>
 

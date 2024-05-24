@@ -6,7 +6,7 @@ import client from "../graphql/client";
 import {json} from "@remix-run/node";
 
 export async function loader({request}) {
-    const {session} = await authenticate.public.appProxy(request);
+    const {session, admin} = await authenticate.public.appProxy(request);
     const url = new URL(request.url);
     const key = url.searchParams.get("key");
     let store = await axios.get(
@@ -36,6 +36,20 @@ export async function loader({request}) {
         }
     });
 
-    return json({auctionDetail: response, product: product.data.product});
+    let data, winnerData;
+    if(response.winner_id){
+        data = await admin.graphql
+        (`
+            #graphql
+            query {
+                customer(id: "gid://shopify/Customer/6896330375486") {
+                    displayName
+                }
+            }
+        `);
+        winnerData = await data.json();
+    }
+
+    return json({auctionDetail: response, product: product.data.product, winner: winnerData});
 }
 
