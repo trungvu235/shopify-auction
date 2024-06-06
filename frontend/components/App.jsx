@@ -10,6 +10,7 @@ import AuctionDetail from "@/components/AuctionDetail";
 
 export default function App({ home }) {
     const modal = document.getElementById("major-popup-parent");
+    const overlay = document.getElementById("overlay");
     const [customer, setCustomer] = useState(null);
     const [shop, setShop] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -30,12 +31,13 @@ export default function App({ home }) {
 
         setIsLoading(false);
     }, []);
-
     const PopupHandler = () => {
-        if (modal.style.display !== "block") {
-            modal.style.display = "block";
+        if (modal.style.display === "block") {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
         } else {
-            modal.style.display = "none";
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
         }
     };
 
@@ -43,6 +45,7 @@ export default function App({ home }) {
         return (
             <div className="tw-text-5xl tw-text-red-600">
                 <button id="major-popup-button" onClick={PopupHandler}></button>
+                <div id="overlay"></div>
                 <div id="major-popup-parent">
                     <div><Spinner accessibilityLabel="Loading" size="large"></Spinner></div>
                 </div>
@@ -50,15 +53,16 @@ export default function App({ home }) {
         )
     }
     const loginPageComponent = <LoginPage shop={shop}></LoginPage>;
-    const mainPageComponent = <MainPage page={page} setPage={setPage}></MainPage>;
+    const mainPageComponent = <MainPage page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></MainPage>;
     const auctionsListComponent = <AuctionsList page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></AuctionsList>;
-    const upcomingListComponent = <UpcomingList page={page} setPage={setPage}></UpcomingList>
-    const activeListComponent = <ActiveList page={page} setPage={setPage}></ActiveList>
+    const upcomingListComponent = <UpcomingList page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></UpcomingList>
+    const activeListComponent = <ActiveList page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></ActiveList>
     const auctionDetailComponent = <AuctionDetail page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></AuctionDetail>
 
     return (
         <div className="tw-text-5xl tw-text-red-600">
             <button id="major-popup-button" onClick={PopupHandler}></button>
+            <div id="overlay"></div>
             <div id="major-popup-parent">
                 {page === 'login-page' && (
                     <div id="login-page" className={`popup-page ${page === 'login-page' ? 'active' : ''}`}>
@@ -67,27 +71,27 @@ export default function App({ home }) {
                 )}
                 {page === 'main-page' && (
                     <div id="main-page" className={`popup-page ${page === 'main-page' ? 'active' : ''}`}>
-                        <LayoutPage customer={customer} shop={shop} childComponent={mainPageComponent}/>
+                        <LayoutPage customer={customer} shop={shop} page={page} setPage={setPage} childComponent={mainPageComponent}/>
                     </div>
                 )}
                 {page === 'auctions-list' && (
-                    <div id="reward-list" className={`popup-page ${page === 'auctions-list' ? 'active' : ''}`}>
-                        <LayoutPage customer={customer} shop={shop} childComponent={auctionsListComponent}/>
+                    <div id="auctions-list" className={`popup-page ${page === 'auctions-list' ? 'active' : ''}`}>
+                        <LayoutPage customer={customer} shop={shop} page={page} setPage={setPage} childComponent={auctionsListComponent}/>
                     </div>
                 )}
                 {page === 'upcoming-list' && (
                     <div id="upcoming-list" className={`popup-page ${page === 'upcoming-list' ? 'active' : ''}`}>
-                        <LayoutPage customer={customer} shop={shop} childComponent={upcomingListComponent}/>
+                        <LayoutPage customer={customer} shop={shop} page={page} setPage={setPage} childComponent={upcomingListComponent}/>
                     </div>
                 )}
                 {page === 'active-list' && (
                     <div id="active-list" className={`popup-page ${page === 'active-list' ? 'active' : ''}`}>
-                        <LayoutPage customer={customer} shop={shop} childComponent={activeListComponent}/>
+                        <LayoutPage customer={customer} shop={shop} page={page} setPage={setPage} childComponent={activeListComponent}/>
                     </div>
                 )}
                 {page === 'auction-detail' && (
                     <div id="auction-detail" className={`popup-page ${page === 'auction-detail' ? 'active' : ''}`}>
-                        <LayoutPage customer={customer} shop={shop} childComponent={auctionDetailComponent}/>
+                        <LayoutPage customer={customer} shop={shop} page={page} setPage={setPage} childComponent={auctionDetailComponent}/>
                     </div>
                 )}
             </div>

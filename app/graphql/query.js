@@ -1,10 +1,5 @@
 import {gql} from "@apollo/client";
 
-export const HELLO_QUERY = gql`
-    query hello {
-        hello
-    }
-`;
 
 export const GET_AUCTION = gql`
     query GetAuction($input : GetAuctionInput) {
@@ -15,6 +10,7 @@ export const GET_AUCTION = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -41,6 +37,7 @@ export const GET_AUCTIONS = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -68,6 +65,7 @@ export const GET_ACTIVE_AUCTIONS = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -94,6 +92,7 @@ export const GET_SCHEDULED_AUCTIONS = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -120,6 +119,7 @@ export const GET_AUCTIONS_BY_CUSTOMER = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -134,6 +134,15 @@ export const GET_AUCTIONS_BY_CUSTOMER = gql`
             buyout_price
             createdAt
             updatedAt
+        }
+    }
+`;
+
+export const GET_BIDS = gql`
+    query GetBids($input : GetBidsListInput) {
+        getBids(input: $input) {
+            id
+            key
         }
     }
 `;

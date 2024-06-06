@@ -27,8 +27,12 @@ const auctionSchema = new Schema({
         type: String,
         required: false,
     },
+    contact_number: {
+        type: String,
+        required: false,
+    },
     status: {
-        type: Boolean,
+        type: String,
         required: true,
     },
     start_date: {

@@ -9,6 +9,7 @@ export const UPDATE_AUCTION = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -35,6 +36,7 @@ export const CREATE_AUCTION = gql`
             product_id
             auction_thumbnail
             winner_id
+            contact_number
             status
             start_date
             end_date
@@ -50,5 +52,15 @@ export const CREATE_AUCTION = gql`
         }
     }
 `;
+
+export const CREATE_BID = gql`
+    mutation CreateBid($input : CreateBidInput) {
+        createBid(input : $input) {
+            id
+            key
+        }
+    }
+`;
+
 
 

@@ -1,12 +1,33 @@
-import {Button, Flex, Layout, Space, theme} from "antd";
+import {Button, Flex, Layout, Space, theme, Menu} from "antd";
 import {getAuctionDetail} from "@/utils/apis";
-export default function LayoutPage({customer, childComponent, shop}) {
+export default function LayoutPage({customer, childComponent, shop, page, setPage,}) {
     const {Header, Content, Footer} = Layout;
     const modal = document.getElementById("major-popup-parent");
+    const overlay = document.getElementById("overlay");
     const PopupClose = function () {
         modal.style.display = "none";
+        overlay.style.display = "none";
     }
-
+    console.log(`page: ${page}`);
+    const items = [
+        {
+            key: 'main-page',
+            label: 'Home',
+        },
+        {
+            key: 'upcoming-list',
+            label: 'Upcoming Auctions',
+        },
+        {
+            key: 'active-list',
+            label: 'Running auctions',
+        },
+        {
+            key: 'auctions-list',
+            label: 'Check your bids',
+        },
+    ];
+    console.log(`layout 7: ${page}`);
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
@@ -18,9 +39,10 @@ export default function LayoutPage({customer, childComponent, shop}) {
                     top: 0,
                     zIndex: 10,
                     width: '100%',
-                    display: 'flex',
+                    display: 'block',
                     alignItems: 'center',
-                    padding: '0 10px'
+                    padding: '0 10px',
+                    minHeight:'120px'
                 }}>
                     <div style={{position: 'absolute', top: 10, right: 10, zIndex: 10, display: 'flex'}}>
                         <Button ghost size="small" shape="circle" display="flex"
@@ -38,7 +60,21 @@ export default function LayoutPage({customer, childComponent, shop}) {
                             Welcome to {shop.name}!
                         </p>
                     </div>
-
+                    <div>
+                        <Menu
+                            theme="dark"
+                            mode="horizontal"
+                            defaultSelectedKeys={['main-page']}
+                            selectedKeys={[page.toString()]}
+                            onSelect={(info) => setPage(info.key)}
+                            items={items}
+                            style={{
+                                flex: 1,
+                                minWidth: 0,
+                                justifyContent:'center'
+                            }}
+                        />
+                    </div>
                 </Header>
             ) : (
                 <Header style={{
@@ -69,6 +105,16 @@ export default function LayoutPage({customer, childComponent, shop}) {
                         }}>
                             {shop.name}
                         </h2>
+                        <Menu
+                            theme="dark"
+                            mode="horizontal"
+                            defaultSelectedKeys={['2']}
+                            items={items1}
+                            style={{
+                                flex: 1,
+                                minWidth: 0,
+                            }}
+                        />
                     </Space>
                 </Header>
             )}

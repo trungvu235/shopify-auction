@@ -82,11 +82,11 @@ export default function AuctionForm() {
         [],
     );
     const handleStartPriceChange = useCallback(
-        (value) => setStartPrice(parseInt(value, 10)),
+        (value) => setStartPrice(parseFloat(value)),
         [],
     );
     const handleBidIncrementChange = useCallback(
-        (value) => setBidIncrement(parseInt(value, 10)),
+        (value) => setBidIncrement(parseFloat(value)),
         [],
     );
     const handleSelectChange = useCallback(
@@ -111,7 +111,7 @@ export default function AuctionForm() {
         [],
     );
     const handleReservePriceChange = useCallback(
-        (value) => setReservePrice(parseInt(value, 10)),
+        (value) => setReservePrice(parseFloat(value)),
         [],
     );
     const handleBuyoutPrice = useCallback(
@@ -123,7 +123,7 @@ export default function AuctionForm() {
         [],
     );
     const handleBuyoutPriceChange = useCallback(
-        (value) => setBuyoutPrice(parseInt(value, 10)),
+        (value) => setBuyoutPrice(parseFloat(value)),
         [],
     );
 
@@ -184,7 +184,8 @@ export default function AuctionForm() {
                             product_id: productId,
                             auction_thumbnail: thumbnail,
                             winner_id: null,
-                            status: true,
+                            contact_number: null,
+                            status: 'wait for bid',
                             start_date: startDate,
                             end_date: endDate,
                             start_price: startPrice,
@@ -274,6 +275,7 @@ export default function AuctionForm() {
                                     type="number"
                                     prefix='$'
                                     error={startPriceInvalid}
+                                    step="1"
                                 />
                                 <TextField
                                     label="Bid increment"

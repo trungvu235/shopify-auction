@@ -1,130 +1,187 @@
-import {Button, Flex, theme, Divider} from "antd";
-import {RightOutlined} from "@ant-design/icons";
+import {Button, Flex, theme, Tag, Card, Pagination} from "antd";
+import {LoadingOutlined} from "@ant-design/icons";
+import {testFetch} from "@/utils/apis";
+import React, {useEffect, useState} from "react";
+import Countdown from 'react-countdown';
 
-export default function MainPage({page, setPage}) {
+const { Meta } = Card;
+
+export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
+    const [auctions, setAuctions] = useState([]);
+    const [displayAuctions, setDisplayAuctions] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(12);
+
+    const renderer = ({days, hours, minutes, seconds, completed}) => {
+        if (completed) {
+            return <Completionist/>;
+        } else {
+            return (
+                <div style={{fontWeight: 'bold', color: '#000000', fontSize: '22px'}}>
+                    <div>{days}d {hours}h {minutes}m {seconds}s</div>
+                </div>
+            );
+        }
+    };
+    const Completionist = () => <div>The auction was finished</div>;
+
+    useEffect(() => {
+        testFetch().then(response => {
+            if (response) {
+                setAuctions(response.response.data.getAuctions);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (auctions) {
+            setDisplayAuctions(auctions.slice().reverse());
+        }
+    }, [auctions]);
+
+    const handleAuctionClick = (auction) => {
+        setAuctionKey(auction.key);
+        setPage('auction-detail');
+    }
+
+    const handlePageChange = (page, pageSize) => {
+        setCurrentPage(page);
+        setPageSize(pageSize);
+    }
 
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
 
-    const navigateToAuctionsList = () => {
-        setPage('auctions-list');
-    }
-
-    const navigateToUpcomingList = () => {
-        setPage('upcoming-list');
-    }
-
-    const navigateToActiveList = () => {
-        setPage('active-list');
-    }
-
-    const navigateToUserActivity = () => {
-        setPage('user-activity');
-    }
-
     return (
         <Flex gap="small" vertical>
-            <div style={{
-                padding: "6px 24px",
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-            }}>
-                <Flex gap="middle" justify="start" align="center">
-                    <div style={{display:"flex", justifyContent:"center"}}>
-                        <img style={{width:"40px", height:"40px"}}
-                             alt=""
-                             src="https://cdn-icons-png.flaticon.com/128/3898/3898671.png"
-                        />
-                    </div>
-                    <div>
-                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Welcome, {window.shopifyCustomer.name}!
-                        </p>
-                    </div>
-                </Flex>
-            </div>
-            <div style={{
-                padding: "6px 24px",
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-            }}>
-                <Flex gap="middle" justify="center" horizontal>
-                    <Flex gap="large" align="center">
-                        <div style={{
-                            width: "75%"
-                        }}>
-                            <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                                All Auctions
-                            </p>
-                        </div>
-                        <div style={{
-                            width: "10%"
-                        }}>
-                            <Button type="text" icon={<RightOutlined/>} onClick={navigateToAuctionsList}
-                                    style={{display: 'flex'}}></Button>
-                        </div>
-                    </Flex>
-                    <Flex gap="large" align="center">
-                        <div style={{
-                            width: "75%"
-                        }}>
-                            <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                                Active auctions
-                            </p>
-                        </div>
-                        <div style={{
-                            width: "10%"
-                        }}>
-                            <Button type="text" icon={<RightOutlined/>} onClick={navigateToActiveList}
-                                    style={{display: 'flex'}}></Button>
-                        </div>
-                    </Flex>
-                    <Flex gap="large" align="center">
-                        <div style={{
-                            width: "75%"
-                        }}>
-                            <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                                Upcoming auctions
-                            </p>
-                        </div>
-                        <div style={{
-                            width: "10%"
-                        }}>
-                            <Button type="text" icon={<RightOutlined/>} onClick={navigateToUpcomingList}
-                                    style={{display: 'flex'}}></Button>
-                        </div>
-                    </Flex>
-                </Flex>
-            </div>
+            <div className="auction-card">
+                {displayAuctions.length ? (
+                    <>
+                        <Flex wrap="wrap" justify="flex-start" gap="20px">
+                            {displayAuctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
+                                <Card
+                                    key={item.key}
+                                    hoverable
+                                    style={{ width: 320 }}
+                                    cover={
+                                        <img
+                                            alt={item.name}
+                                            src={
+                                                item.auction_thumbnail
+                                                    ? item.auction_thumbnail
+                                                    : "https://cdn-icons-png.flaticon.com/512/1160/1160358.png"
+                                            }
+                                            style={{padding:'20px'}}
+                                        />
+                                    }
+                                    onClick={() => handleAuctionClick(item)}
+                                >
+                                    <Meta
+                                        style={{textAlign:"center"}}
+                                        title={item.name}
+                                        description={
+                                            <>
+                                                {new Date(item.start_date) > Date.now() && (
+                                                    <>
+                                                        <Tag color="blue">Upcoming</Tag>
+                                                        <span
+                                                            style={{
+                                                                color:'#fff',
+                                                                background:'rgb(230,159,98)',
+                                                                position:'absolute',
+                                                                top:'10px',
+                                                                left:'10px',
+                                                                padding:'8px',
+                                                                borderRadius:'2px'
+                                                            }}
+                                                        >
+                                                            Starting soon
+                                                        </span>
+                                                        <div style={{lineHeight:'14px', padding:'0'}}>
+                                                            <p>START PRICE:</p>
+                                                            <p
+                                                                style={{
+                                                                    fontWeight:'bold',
+                                                                    fontSize: '20px',
+                                                                    color: '#000'
+                                                                }}
+                                                            >
+                                                                ${item.start_price}
+                                                            </p>
+                                                        </div>
+                                                        <div style={{textAlign: "center"}}>
+                                                            <p>Open for bids in:</p>
+                                                            <Countdown date={Date.now() + (new Date(item.start_date) - Date.now())} renderer={renderer}>
+                                                                <Completionist/>
+                                                            </Countdown>
+                                                        </div>
+                                                    </>
+                                                )}
+                                                {new Date(item.start_date) < Date.now() && new Date(item.end_date) > Date.now() && (
+                                                    <>
+                                                        <Tag color="green">Running</Tag>
+                                                        <div>
+                                                            <p>CURRENT BID:</p>
+                                                            <p
+                                                                style={{
+                                                                    fontWeight:'bold',
+                                                                    fontSize: '20px',
+                                                                    color: '#000'
+                                                                }}
+                                                            >
+                                                                {item.end_price
+                                                                    ? `$${item.end_price}`
+                                                                    : `$${item.start_price}`}
+                                                            </p>
+                                                        </div>
+                                                        <p>Time remaining:</p>
+                                                        <Countdown date={Date.now() + (new Date(item.end_date) - Date.now())} renderer={renderer}>
+                                                            <Completionist/>
+                                                        </Countdown>
+                                                    </>
+                                                    )}
+                                                {new Date(item.end_date) < Date.now() && (
+                                                    <>
+                                                        <Tag color="gold">Closed</Tag>
+                                                        <div>
+                                                            <p>END BID:</p>
+                                                            <p
+                                                                style={{
+                                                                    fontWeight:'bold',
+                                                                    fontSize: '20px',
+                                                                    color: '#000'
+                                                                }}
+                                                            >
+                                                                {item.end_price
+                                                                    ? `$${item.end_price}`
+                                                                    : "No bids on this auction yet."}
+                                                            </p>
+                                                        </div>
+                                                    </>
 
-            <div style={{
-                padding: "6px 24px",
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-            }}>
-
-                <Flex gap="small" justify="flex-end" align="center">
-                    <div style={{
-                        width: "15%"
-                    }}>
-                        <img alt="" src="https://cdn-icons-png.flaticon.com/32/2961/2961948.png"/>
+                                                )}
+                                            </>
+                                        }
+                                    />
+                                </Card>
+                            ))}
+                        </Flex>
+                        <Flex justify="center" style={{marginTop: '20px'}}>
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={displayAuctions.length}
+                                onChange={handlePageChange}
+                            />
+                        </Flex>
+                    </>
+                ) : (
+                    <div style={{display:'flex', justifyContent:'center', marginTop:'20%'}}>
+                        <LoadingOutlined style={{fontSize:'60px'}}/>
                     </div>
-                    <div style={{
-                        width: "75%"
-                    }}>
-                        <p style={{fontWeight: "bold", fontSize: "15px", textAlign: "center", display: 'flex'}}>
-                            Your activity
-                        </p>
-                    </div>
-                    <div style={{
-                        width: "10%"
-                    }}>
-                        <Button type="text" icon={<RightOutlined/>} onClick={navigateToUserActivity}
-                                style={{display: 'flex'}}></Button>
-                    </div>
-                </Flex>
+                )}
             </div>
         </Flex>
-)
+    )
 }

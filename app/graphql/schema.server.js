@@ -8,9 +8,14 @@ export const schema = buildSchema(`
         id: String,
         key: String,
     }
+    
+    input GetBidsListInput {
+        id: String,
+    }
 
     input GetAuctionsListInput {
         id: String,
+        key: String,
     }
 
     input GetAuctionsByCustomerInput {
@@ -25,24 +30,34 @@ export const schema = buildSchema(`
         product_id: String,
         auction_thumbnail: String,
         winner_id: String,
-        status: Boolean,
+        contact_number: String,
+        status: String,
         start_date: String,
         end_date: String,
-        start_price: Int,
-        bid_increment: Int,
-        end_price: Int,
+        start_price: Float,
+        bid_increment: Float,
+        end_price: Float,
         is_reverse_price: Boolean,
         is_reverse_price_display: Boolean,
-        reserve_price: Int,
+        reserve_price: Float,
         is_buyout_price: Boolean,
         is_buyout_price_display: Boolean,
-        buyout_price: Int,
+        buyout_price: Float,
         createdAt: Date,
         updatedAt: Date
+    }
+    
+    type BidSchema {
+        id: String,
+        key: String,
     }
 
     type AuctionsList {
         auctions:[AuctionSchema],
+    }
+    
+    type BidsList {
+        bids:[BidSchema],
     }
 
     input UpdateAuctionInput {
@@ -52,18 +67,19 @@ export const schema = buildSchema(`
         product_id: String,
         auction_thumbnail: String,
         winner_id: String,
-        status: Boolean,
+        contact_number: String,
+        status: String,
         start_date: String,
         end_date: String,
-        start_price: Int,
-        bid_increment: Int,
-        end_price: Int,
+        start_price: Float,
+        bid_increment: Float,
+        end_price: Float,
         is_reverse_price: Boolean,
         is_reverse_price_display: Boolean,
-        reserve_price: Int,
+        reserve_price: Float,
         is_buyout_price: Boolean,
         is_buyout_price_display: Boolean,
-        buyout_price: Int,
+        buyout_price: Float,
     }
 
     input CreateAuctionInput{
@@ -73,31 +89,38 @@ export const schema = buildSchema(`
         product_id: String,
         auction_thumbnail: String,
         winner_id: String,
-        status: Boolean,
+        contact_number: String,
+        status: String,
         start_date: String,
         end_date: String,
-        start_price: Int,
-        bid_increment: Int,
-        end_price: Int,
+        start_price: Float,
+        bid_increment: Float,
+        end_price: Float,
         is_reverse_price: Boolean,
         is_reverse_price_display: Boolean,
-        reserve_price: Int,
+        reserve_price: Float,
         is_buyout_price: Boolean,
         is_buyout_price_display: Boolean,
-        buyout_price: Int,
+        buyout_price: Float,
+    }
+    
+    input CreateBidInput{
+        id: String,
+        key: String,
     }
 
     type Query {
-        hello: String
         getAuction(input: GetAuctionInput): AuctionSchema
         getAuctions(input: GetAuctionsListInput): [AuctionSchema]
         getAuctionsByCustomer(input: GetAuctionsByCustomerInput): [AuctionSchema]
         getActiveAuctions(input: GetAuctionsListInput): [AuctionSchema]
         getScheduledAuctions(input: GetAuctionsListInput): [AuctionSchema]
+        getBids(input: GetBidsListInput): [BidSchema]
     }
 
     type Mutation {
         updateAuction(input: UpdateAuctionInput): AuctionSchema
         createAuction(input: CreateAuctionInput): AuctionSchema
+        createBid(input: CreateBidInput): BidSchema
     }
 `)

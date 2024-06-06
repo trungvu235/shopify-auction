@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import AuctionModel from "~/models/auction.model";
+import BidModel from "~/models/bid.model";
 
 export const verifyToken = async (bearerToken) => {
     if (!bearerToken) {
@@ -16,9 +17,6 @@ export const verifyToken = async (bearerToken) => {
 }
 
 export const resolver = {
-    hello: () => {
-        return "Hello World";
-    },
     getAuction: async ({input}, request) => {
         return AuctionModel.findOne({id: input.id, key: input.key}, null, {
             returnDocument: "after",
@@ -29,6 +27,14 @@ export const resolver = {
         const auctions = await AuctionModel.find({
             id: input.id,
             winner_id: input.winner_id
+        }, null,{ new: true});
+
+        return auctions;
+    },
+    getAuctionsByKeys: async ({input}, request) => {
+        const auctions = await AuctionModel.find({
+            id: input.id,
+            key: input.winner_id
         }, null,{ new: true});
 
         return auctions;
@@ -53,16 +59,37 @@ export const resolver = {
         return auctions;
     },
     getAuctions: async ({input}, request) => {
-        const auctions = await AuctionModel.find({
+        if(input.key) {
+            const key_list = JSON.parse(input.key);
+            const autions = await AuctionModel.find({
+                key: {
+                    $in: key_list
+                }
+            }, null, {
+                lean: true,
+            });
+            console.log(autions);
+            return autions
+        } else {
+            const auctions = await AuctionModel.find({
+                id: input.id,
+            }, null,{ new: true});
+
+            return auctions;
+        }
+
+    },
+    getBids: async ({input}, request) => {
+        const bids = await BidModel.find({
             id: input.id,
         }, null,{ new: true});
 
-        return auctions;
+        return bids;
     },
 
     createAuction: async ({input}, request) => {
         const {
-            id, key, name, product_id, auction_thumbnail, winner_id, status, start_date, end_date, start_price, bid_increment, end_price,
+            id, key, name, product_id, auction_thumbnail, winner_id, contact_number, status, start_date, end_date, start_price, bid_increment, end_price,
             is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
             buyout_price
         } = input;
@@ -74,6 +101,7 @@ export const resolver = {
             product_id: product_id,
             auction_thumbnail: auction_thumbnail,
             winner_id: winner_id,
+            contact_number: contact_number,
             status: status,
             start_date: start_date,
             end_date: end_date,
@@ -88,9 +116,26 @@ export const resolver = {
             buyout_price: buyout_price,
         });
     },
+
+    createBid: async ({input}, request) => {
+        const {
+            id, key
+        } = input;
+
+        const existingBid = await BidModel.findOne({ id, key });
+        if (existingBid) {
+            return;
+        }
+
+        return await BidModel.create({
+            id: id,
+            key: key,
+        });
+    },
+
     updateAuction: async ({input}, request) => {
         const {
-            id, key, name, product_id, winner_id, auction_thumbnail, status, start_date, end_date, start_price, bid_increment, end_price,
+            id, key, name, product_id, winner_id, contact_number, auction_thumbnail, status, start_date, end_date, start_price, bid_increment, end_price,
             is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
             buyout_price
         } = input;
@@ -103,6 +148,7 @@ export const resolver = {
             product_id: product_id,
             auction_thumbnail: auction_thumbnail,
             winner_id: winner_id,
+            contact_number: contact_number,
             status: status,
             start_date: start_date,
             end_date: end_date,
@@ -120,5 +166,4 @@ export const resolver = {
             new: true
         })
     },
-
 }
