@@ -44,6 +44,7 @@ export const loader = async ({request}) => {
 export default function Index() {
     const {session, shop} = useLoaderData();
     const [auctionsList, setAuctionsList] = useState([]);
+    const [unsolvedList, setUnsolvedList] = useState([]);
 
     const navigate = useNavigate();
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTIONS, {
@@ -59,22 +60,27 @@ export default function Index() {
                 setAuctionsList(auctionsQuery.getAuctions);
             }
         },
-    })
+    });
 
     const [totalActive, setTotalActive] = useState(0);
     const [totalScheduled, setTotalScheduled] = useState(0);
     const [totalCompleted, setTotalCompleted] = useState(0);
+    const [totalVerified, setTotalVerified] = useState(0);
+    const [totalRejected, setTotalRejected] = useState(0);
 
     useEffect(() => {
         if (auctionsList) {
             let activeCount = 0;
             let scheduledCount = 0;
             let completedCount = 0;
+            let rejectedCount = 0;
+            let verifiedCount = 0;
+            const unsolvedAuctions = [];
+
             auctionsList.map(
                 (
                     {
-                        start_date,
-                        end_date,
+                        id, key, name, start_price, bid_increment, end_price, start_date, end_date, status, winner_id,
                     },
                     index
                 ) => {
@@ -86,6 +92,16 @@ export default function Index() {
                         activeCount += 1;
                     } else {
                         completedCount += 1;
+                        if (status === 'unsolved' && winner_id) {
+                            unsolvedAuctions.push({
+                                id, key, name, start_price, bid_increment, end_price, start_date, end_date, status, winner_id,
+                            });
+                        }
+                    }
+                    if(status === 'verified'){
+                        verifiedCount += 1;
+                    }else if(status === 'rejected'){
+                        rejectedCount += 1;
                     }
                 }
             );
@@ -93,43 +109,26 @@ export default function Index() {
             setTotalActive(activeCount);
             setTotalScheduled(scheduledCount);
             setTotalCompleted(completedCount);
+            setTotalVerified(verifiedCount);
+            setTotalRejected(rejectedCount);
+            setUnsolvedList(unsolvedAuctions);
         }
     }, [auctionsList]);
 
-    const [displayList, setDisplayList] = useState([]);
-
-    useEffect(() => {
-        if (auctionsList) {
-            setDisplayList(auctionsList.slice().reverse());
-        }
-    }, [auctionsList]);
-
-    const rowMarkup = displayList.slice(0, 8).map(
+    const rowMarkup = unsolvedList.slice(0, 8).map(
         (
             {id, key, name, start_price, bid_increment, end_price, start_date, end_date},
             index
         ) => {
-            const startDate = new Date(start_date);
             const endDate = new Date(end_date);
 
             return (
                 <IndexTable.Row id={key} key={key} position={index}>
                     <IndexTable.Cell><span>{name}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>${end_price}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{endDate.toLocaleString()}</span></IndexTable.Cell>
                     <IndexTable.Cell>
-                        <span>${start_price}</span>
-                    </IndexTable.Cell>
-                    <IndexTable.Cell><span>{end_price ? '$' + end_price : '$0'}</span></IndexTable.Cell>
-                    <IndexTable.Cell><span>${bid_increment}</span></IndexTable.Cell>
-                    <IndexTable.Cell>
-                        {startDate > Date.now() && (
-                            <Badge tone="info">Scheduled</Badge>
-                        )}
-                        {startDate < Date.now() && endDate > Date.now() && (
-                            <Badge tone="success">Running</Badge>
-                        )}
-                        {endDate < Date.now() && (
-                            <Badge tone="attention">Finished</Badge>
-                        )}
+                        <Badge tone="attention">Unsolved</Badge>
                     </IndexTable.Cell>
                     <IndexTable.Cell>
                         <Button onClick={() => navigate('../app/auction/' + key)}>
@@ -145,8 +144,8 @@ export default function Index() {
         }
     );
     const resourceName = {
-        singular: 'auctions',
-        plural: 'auctions',
+        singular: 'unsolved auctions',
+        plural: 'unsolved auctions',
     };
 
     return (
@@ -164,21 +163,20 @@ export default function Index() {
                 <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 8}}>
                     <Card>
                         <InlineStack align="space-between">
-                            <Text as="h6" variant="headingMd">Auctions</Text>
+                            <Text as="h6" variant="headingMd">Unsolved Auction</Text>
                             <Link url="/app/auctions">View all</Link>
                         </InlineStack>
 
-                        <Box paddingBlockStart="500" paddingBlockEnd="1600" paddingInlineStart="0" paddingInlineEnd="0">
-                            {auctionsList && (
+                        <Box minHeight="400px" paddingBlockStart="500" paddingBlockEnd="1600" paddingInlineStart="0" paddingInlineEnd="0">
+                            {unsolvedList && (
                                 <IndexTable
                                     condensed={useBreakpoints().smDown}
                                     resourceName={resourceName}
-                                    itemCount={auctionsList.length}
+                                    itemCount={unsolvedList.length}
                                     headings={[
                                         {title: 'Name'},
-                                        {title: 'Start Price'},
-                                        {title: 'Current Bids'},
-                                        {title: 'Bid increment'},
+                                        {title: 'End Bids'},
+                                        {title: 'End Date'},
                                         {title: 'Status'},
                                         {title: 'Actions', alignment: 'center'},
                                     ]}
@@ -257,15 +255,15 @@ export default function Index() {
                                         <Box>
                                             <BlockStack>
                                                 <Text as="h2" variant="headingXl" fontWeight="bold"
-                                                      alignment="center">0</Text>
-                                                <Text as="h2" variant="subdued">PAID</Text>
+                                                      alignment="center">{totalVerified}</Text>
+                                                <Text as="h2" variant="subdued">VERIFIED</Text>
                                             </BlockStack>
                                         </Box>
                                         <Box>
                                             <BlockStack>
                                                 <Text as="h2" variant="headingXl" fontWeight="bold"
-                                                      alignment="center">0</Text>
-                                                <Text as="h2" variant="subdued">UNFULFILLED</Text>
+                                                      alignment="center">{totalRejected}</Text>
+                                                <Text as="h2" variant="subdued">REJECTED</Text>
                                             </BlockStack>
                                         </Box>
                                     </InlineStack>

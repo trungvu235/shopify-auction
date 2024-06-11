@@ -10,7 +10,6 @@ import {
     BlockStack,
     Card,
     Tabs,
-    ChoiceList
 } from '@shopify/polaris';
 import React, { useState, useCallback } from 'react';
 import axios from "axios";
@@ -135,36 +134,38 @@ function FormOnSubmitExample() {
                                             </span>
                                         }
                                     />
-                                    <div style={{marginTop: "10px"}}>
-                                        <BlockStack>
-                                            <Checkbox
-                                                label="Set pricing timeout"
-                                                helpText="No winning bidder if closing price is below reserve price."
-                                                checked={isTimeout}
-                                                onChange={handleIsTimeout}
-                                            />
-                                            {isTimeout && (
-                                                <div style={{width: "45%"}}>
-                                                    <Select
-                                                        label="Choose pricing period"
-                                                        options={timeoutOptions}
-                                                        value={timeoutOption}
-                                                        onChange={handleTimeoutOption}
-                                                    />
-                                                </div>
-                                            )}
-                                        </BlockStack>
-                                    </div>
+                                    {/*<div style={{marginTop: "10px"}}>*/}
+                                    {/*    <BlockStack>*/}
+                                    {/*        <Checkbox*/}
+                                    {/*            label="Set pricing timeout"*/}
+                                    {/*            helpText="No winning bidder if closing price is below reserve price."*/}
+                                    {/*            checked={isTimeout}*/}
+                                    {/*            onChange={handleIsTimeout}*/}
+                                    {/*        />*/}
+                                    {/*        {isTimeout && (*/}
+                                    {/*            <div style={{width: "45%"}}>*/}
+                                    {/*                <Select*/}
+                                    {/*                    label="Choose pricing period"*/}
+                                    {/*                    options={timeoutOptions}*/}
+                                    {/*                    value={timeoutOption}*/}
+                                    {/*                    onChange={handleTimeoutOption}*/}
+                                    {/*                />*/}
+                                    {/*            </div>*/}
+                                    {/*        )}*/}
+                                    {/*    </BlockStack>*/}
+                                    {/*</div>*/}
                                 </BlockStack>
                             )}
                             {selectedTab === 1 && (
-                                <Checkbox
-                                    label="Basic checkbox"
-                                    checked={checked}
-                                    onChange={handleChange}
-                                    tone="magic"
-                                    bleed
-                                />
+                                <div>
+                                    {/*<Checkbox*/}
+                                    {/*    label="Basic checkbox"*/}
+                                    {/*    checked={checked}*/}
+                                    {/*    onChange={handleChange}*/}
+                                    {/*    tone="magic"*/}
+                                    {/*    bleed*/}
+                                    {/*/>*/}
+                                </div>
                             )}
                             <Button variant="primary" submit>Submit</Button>
                         </FormLayout>

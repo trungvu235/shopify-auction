@@ -1,5 +1,5 @@
-import {Button, Flex, theme, Tag, Card, Pagination} from "antd";
-import {LeftOutlined, LoadingOutlined} from "@ant-design/icons";
+import {Flex, theme, Tag, Card, Pagination} from "antd";
+import {LoadingOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {getUpcomingListApi} from "@/utils/apis";
 import Countdown from "react-countdown";

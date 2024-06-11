@@ -40,7 +40,9 @@ export const resolver = {
         return auctions;
     },
     getActiveAuctions: async ({input}, request) => {
-        const now = new Date().toISOString().slice(0, 16);
+        const now2 = new Date();
+        const timezoneOffset = now2.getTimezoneOffset();
+        const now = new Date(now2.getTime() - (timezoneOffset * 60 * 1000)).toISOString().slice(0, 16);
         const auctions = await AuctionModel.find({
             id: input.id,
             start_date: { $lt: now },
@@ -50,10 +52,25 @@ export const resolver = {
         return auctions;
     },
     getScheduledAuctions: async ({input}, request) => {
-        const now = new Date().toISOString().slice(0, 16);
+        const now2 = new Date();
+        const timezoneOffset = now2.getTimezoneOffset();
+        const now = new Date(now2.getTime() - (timezoneOffset * 60 * 1000)).toISOString().slice(0, 16);
+
         const auctions = await AuctionModel.find({
             id: input.id,
             start_date: { $gt: now },
+        }, null,{ new: true});
+
+        return auctions;
+    },
+    getUnsolvedAuctions: async ({input}, request) => {
+        const now2 = new Date();
+        const timezoneOffset = now2.getTimezoneOffset();
+        const now = new Date(now2.getTime() - (timezoneOffset * 60 * 1000)).toISOString().slice(0, 16);
+        const auctions = await AuctionModel.find({
+            id: input.id,
+            end_date: { $lt: now },
+            status: 'unsolved',
         }, null,{ new: true});
 
         return auctions;
@@ -68,7 +85,7 @@ export const resolver = {
             }, null, {
                 lean: true,
             });
-            console.log(autions);
+
             return autions
         } else {
             const auctions = await AuctionModel.find({

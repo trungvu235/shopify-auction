@@ -218,7 +218,7 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (fetcher.data) {
-            setProductData(fetcher.data);
+            setProductData(fetcher.data);fetcher
         }
     }, [fetcher.data]);
 
@@ -244,7 +244,6 @@ export default function AuctionForm() {
                                     navigate('../auction/' + key);
                                 }
                             });
-                            // navigate('../auctions');
                         },
                     }}
                 >

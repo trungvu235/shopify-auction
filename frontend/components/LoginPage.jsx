@@ -12,15 +12,11 @@ export default function LoginPage({shop}) {
 
 
     return (
-        <Flex gap="middle" vertical>
             <div style={{
                 padding: "6px 24px",
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
             }}>
-                <p style={{fontWeight: "bold", fontSize: "16px", textAlign: "center"}}>
-                    Become our membership
-                </p>
                 <p style={{fontWeight: "light", fontSize: "12px", textAlign: "center"}}>
                     Please sign in to view and join the auction.
                 </p>
@@ -32,6 +28,5 @@ export default function LoginPage({shop}) {
                     <a href={`https://${shop.domain}/account/register`} style={{textDecoration: "none"}}> Sign up</a>
                 </p>
             </div>
-        </Flex>
     );
 }

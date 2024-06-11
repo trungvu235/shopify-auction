@@ -18,7 +18,6 @@ export async function loader({request}) {
             },
         }
     );
-    console.log(winnerId);
 
     let response = await client.query({
         query: GET_AUCTIONS_BY_CUSTOMER,

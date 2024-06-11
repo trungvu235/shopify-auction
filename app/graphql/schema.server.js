@@ -115,6 +115,7 @@ export const schema = buildSchema(`
         getAuctionsByCustomer(input: GetAuctionsByCustomerInput): [AuctionSchema]
         getActiveAuctions(input: GetAuctionsListInput): [AuctionSchema]
         getScheduledAuctions(input: GetAuctionsListInput): [AuctionSchema]
+        getUnsolvedAuctions(input: GetAuctionsListInput): [AuctionSchema]
         getBids(input: GetBidsListInput): [BidSchema]
     }
 

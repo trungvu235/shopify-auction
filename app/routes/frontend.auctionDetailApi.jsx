@@ -38,11 +38,12 @@ export async function loader({request}) {
 
     let data, winnerData;
     if(response.winner_id){
+        console.log(response.winner_id);
         data = await admin.graphql
         (`
             #graphql
             query {
-                customer(id: "gid://shopify/Customer/6896330375486") {
+                customer(id: "gid://shopify/Customer/${response.winner_id}") {
                     displayName
                 }
             }

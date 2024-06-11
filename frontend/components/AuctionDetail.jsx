@@ -1,13 +1,13 @@
-import {Button, Flex, theme, Tag, Image, Card, Col, Row, Breadcrumb, InputNumber, Cascader} from "antd";
+import {Button, Flex, Image,Breadcrumb, InputNumber, message} from "antd";
 import React, {useEffect, useState} from "react";
-import LoginPage from "~/components/LoginPage";
 import {getAuctionDetail, getCustomerAuctionsApi} from "@/utils/apis";
-import {LeftOutlined, LoadingOutlined} from "@ant-design/icons";
+import {LoadingOutlined} from "@ant-design/icons";
 import Countdown from 'react-countdown';
 import {UPDATE_AUCTION, CREATE_BID} from "../../app/graphql/mutation";
 import client from "../../app/graphql/client";
-import {apiLink} from "../utils/apis";
 import PhoneInput from 'react-phone-number-input'
+import {Icon} from "@shopify/polaris";
+import {ExternalIcon} from "@shopify/polaris-icons";
 
 export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}) {
     const [auctionDetail, setAuctionDetail] = useState();
@@ -19,21 +19,22 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
     const [currentBid, setCurrentBid] = useState();
     const [nextBid, setNextBid] = useState(0);
     const [phoneNumber, setPhoneNumber] = useState();
+    const [phoneNumberError, setPhoneNumberError] = useState(false);
 
     useEffect(() => {
         getAuctionDetail(auctionKey).then(response => {
             if (response) {
-                console.log(response);
                 setAuctionDetail(response.auctionDetail);
                 setProduct(response.product);
                 setBidder(response.winner);
+                console.log(response);
             }
         });
     }, []);
     useEffect(() => {
         getCustomerAuctionsApi(window.shopifyCustomer.id).then(responseApi => {
             if (responseApi) {
-                console.log(responseApi.customerAuctions);
+                // console.log(responseApi.customerAuctions);
             }
         });
     }, []);
@@ -47,7 +48,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
 
     useEffect(() => {
         if (currentBid) {
-            setNextBid(currentBid + auctionDetail.bid_increment);
+            setNextBid(parseFloat(currentBid + auctionDetail.bid_increment).toFixed(2));
         }
     }, [currentBid]);
 
@@ -90,44 +91,46 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
         setNextBid(value);
     };
     const handlePhoneNumberChange = (value) => {
-        setPhoneNumber(value);
         console.log(value);
+        setPhoneNumber(value);
     };
     const handlePlaceBid = () => {
-        console.log(nextBid);
-        console.log(phoneNumber);
-        try {
-            const responseUpdate = client.mutate({
-                mutation: UPDATE_AUCTION,
-                variables: {
-                    input: {
-                        id: auctionDetail.id,
-                        key: auctionDetail.key,
-                        end_price: parseFloat(nextBid),
-                        winner_id: window.shopifyCustomer.id,
-                        contact_number: phoneNumber,
+        if(phoneNumber && phoneNumber.length > 4){
+            try {
+                const responseUpdate = client.mutate({
+                    mutation: UPDATE_AUCTION,
+                    variables: {
+                        input: {
+                            id: auctionDetail.id,
+                            key: auctionDetail.key,
+                            end_price: parseFloat(nextBid),
+                            winner_id: window.shopifyCustomer.id,
+                            contact_number: phoneNumber,
+                        }
                     }
-                }
-            });
-            console.log('update successfully');
-        } catch (error) {
-            console.error(error);
-        }
-        try {
-            const responseCreate = client.mutate({
-                mutation: CREATE_BID,
-                variables: {
-                    input: {
-                        id: window.shopifyCustomer.id,
-                        key: auctionDetail.key,
+                });
+                console.log('update successfully');
+            } catch (error) {
+                console.error(error);
+            }
+            try {
+                const responseCreate = client.mutate({
+                    mutation: CREATE_BID,
+                    variables: {
+                        input: {
+                            id: window.shopifyCustomer.id,
+                            key: auctionDetail.key,
+                        }
                     }
-                }
-            });
-            console.log('create successfully');
-        } catch (error) {
-            console.error(error);
+                });
+                console.log('create successfully');
+            } catch (error) {
+                console.error(error);
+            }
+            getNewData();
+        }else{
+            setPhoneNumberError(true);
         }
-        getNewData();
     };
 
     const getNewData = () => {
@@ -148,7 +151,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
 
     const handlePlaceBuyoutPrice = () => {
         const newEndDate = new Date(Date.now()).toISOString().slice(0, 16);
-        console.log(newEndDate);
         try {
             const responseUpdate = client.mutate({
                 mutation: UPDATE_AUCTION,
@@ -411,7 +413,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                                             <strong>Next minimum bid</strong>
                                                             <strong>
-                                                                ${currentBid + auctionDetail.bid_increment}
+                                                                ${parseFloat(currentBid + auctionDetail.bid_increment).toFixed(2)}
                                                             </strong>
                                                         </div>
                                                     </div>
@@ -490,6 +492,11 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                                 placeholder="Enter phone number"
                                                                                 value={phoneNumber}
                                                                                 onChange={handlePhoneNumberChange}/>
+                                                                            {phoneNumberError && (
+                                                                                <div style={{color:'red'}}>
+                                                                                    Please enter a valid phone number.
+                                                                                </div>
+                                                                            )}
                                                                         </Flex>
 
                                                                         <Button
@@ -529,6 +536,163 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
 
                                                     </div>
                                                 </div>
+                                            </Flex>
+                                        </div>
+                                    )}
+                                    {auctionStatus === 'completed' && (
+                                        <div
+                                            style={{
+                                                borderRadius: '0 0 8px 8px',
+                                                boxSizing: 'border-box',
+                                                border: 'solid 1px rgb(240, 240, 240)'
+                                            }}
+                                        >
+                                            <Flex align="center" vertical>
+                                                <div style={{
+                                                    textAlign: 'center',
+                                                    fontSize: '16px',
+                                                    width: '100%',
+                                                    borderRadius: '5px 5px 0px 0px',
+                                                    color: '#000',
+                                                    padding: '10px 0px 40px',
+                                                    borderBottom: '1px solid #eaeaea'
+                                                }}
+                                                >
+                                                    <span style={{fontSize: '28px', color: 'rgb(61, 8, 27)'}}>
+                                                        {product.title}
+                                                    </span>
+                                                    <div>
+                                                        {auctionDetail.winner_id ? (
+                                                            <div>
+                                                                {auctionDetail.winner_id === window.shopifyCustomer.id ? (
+                                                                    `You have won the auction. Congratulation!`
+                                                                ) : (
+                                                                    `Auction has closed! ${bidder.data.customer.displayName} has won the auction!`
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <div>Bidding time has ended. No one has won this auction!</div>
+                                                        )}
+
+                                                        <div
+                                                            style={{fontSize: '12px', color: 'rgba(18, 18, 18, 0.75)'}}>
+                                                            Closed date: {endDate.toLocaleDateString('en-US', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric',
+                                                                hour: 'numeric',
+                                                                minute: 'numeric',
+                                                                second: 'numeric',
+                                                                hour12: true
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="auction-infor-table" style={{width:'100%'}}>
+                                                    {auctionDetail.end_price && (
+                                                        <div style={{
+                                                            marginTop: '10px 0',
+                                                            padding: '10px 15px',
+                                                            borderBottom: 'solid 1px #eaeaea'
+                                                        }}>
+                                                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                                <strong>Closed Price</strong>
+                                                                <strong>
+                                                                    ${auctionDetail.end_price}
+                                                                </strong>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <div style={{
+                                                        marginTop: '10px 0',
+                                                        padding: '10px 15px',
+                                                        borderBottom: 'solid 1px #eaeaea'
+                                                    }}>
+                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                            <strong>Start Price</strong>
+                                                            <strong>
+                                                                ${auctionDetail.start_price}
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{
+                                                        marginTop: '10px 0',
+                                                        padding: '10px 15px',
+                                                        borderBottom: 'solid 1px #eaeaea'
+                                                    }}>
+                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                            <div>Start at</div>
+                                                            <strong>
+                                                                {startDate.toLocaleString()}
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{
+                                                        marginTop: '10px 0',
+                                                        width: '100%',
+                                                        padding: '10px 15px',
+                                                        borderBottom: 'solid 1px #eaeaea'
+                                                    }}>
+                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                            <div>End at</div>
+                                                            <strong>
+                                                                {endDate.toLocaleString()}
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {auctionDetail.winner_id === window.shopifyCustomer.id && (
+                                                    <div className="get-auction-container" style={{width:'100%'}}>
+                                                        {auctionDetail.status === 'unsolved' && (
+                                                            <div style={{
+                                                                fontSize:'16px',
+                                                                textAlign:'left',
+                                                                padding: '10px 15px'
+                                                            }}>
+                                                                <div>
+                                                                    The auction will be ready once we have verified the transaction.
+                                                                </div>
+                                                                <div>
+                                                                    Please wait a moment...
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {auctionDetail.status === 'verified' && (
+                                                            <div style={{
+                                                                fontSize:'16px',
+                                                                textAlign:'left',
+                                                                padding: '10px 15px'
+                                                            }}>
+                                                                <div>The transaction has been verified. Click the button to purchase the auction.</div>
+                                                                <Button
+                                                                    style={{background: "rgba(0, 21, 41,0.85)"}}
+                                                                    type="primary"
+                                                                >
+                                                                    <a style={{color: 'white'}}
+                                                                       href={`https://${shop.domain}/products/${product.handle}`}
+                                                                       target="_blank">
+                                                                        Go to get the auction
+                                                                    </a>
+                                                                </Button>
+                                                            </div>
+                                                        )}
+                                                        {auctionDetail.status === 'rejected' && (
+                                                            <div style={{
+                                                                fontSize:'16px',
+                                                                textAlign:'left',
+                                                                padding: '10px 15px'
+                                                            }}>
+                                                                <div>
+                                                                    Your bid has been rejected.
+                                                                </div>
+                                                                <div>
+                                                                    Contact us to get more detail.
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </Flex>
                                         </div>
                                     )}

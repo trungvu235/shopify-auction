@@ -40,7 +40,6 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
         if (bids) {
             const auctionIds = bids.map(bid => bid.key);
             const key = JSON.stringify(auctionIds);
-            console.log(auctionIds);
             testFetch_2(key).then(response => {
                 if (response) {
                     setAuctions(response.response.data.getAuctions);

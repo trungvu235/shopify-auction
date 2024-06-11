@@ -13,6 +13,8 @@ import {
     Icon,
     Thumbnail,
     Box,
+    ButtonGroup,
+    Button
 } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
 import {ExternalIcon, ImageIcon, CheckIcon} from '@shopify/polaris-icons';
@@ -24,6 +26,8 @@ import {useQuery} from "@apollo/client";
 import {GET_AUCTION} from "../graphql/query";
 import ReactLoading from "react-loading";
 import PageNotFound from "../components/layout/PageNotFound";
+import {UPDATE_AUCTION} from "../graphql/mutation";
+import client from "../graphql/client";
 
 export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
@@ -41,6 +45,8 @@ export const loader = async ({request, params}) => {
 export default function AuctionForm() {
     const navigate = useNavigate();
     const fetcher = useFetcher();
+    const fetcher2 = useFetcher();
+    const fetcher3 = useFetcher();
     const {session, shop, key} = useLoaderData();
     const [auctionDetail, setAuctionDetail] = useState(null);
     const [productData, setProductData] = useState(null);
@@ -67,12 +73,6 @@ export default function AuctionForm() {
         if (auctionDetail) {
             fetcher.load('../../api/product?product=' + auctionDetail.product_id
                 + (auctionDetail.winner_id ? '&winner=' + auctionDetail.winner_id : ''));
-            console.log(auctionDetail.start_date);
-            console.log(auctionDetail.end_date);
-            console.log(currentDateTime);
-            if(auctionDetail.start_date < currentDateTime && auctionDetail.end_date > currentDateTime){
-                console.log("active auction");
-            }
         }
     }, [auctionDetail]);
 
@@ -121,6 +121,46 @@ export default function AuctionForm() {
             );
         }
     };
+    const handleVerify = async () => {
+        try {
+            const responseUpdate = client.mutate({
+                mutation: UPDATE_AUCTION,
+                variables: {
+                    input: {
+                        id: auctionDetail.id,
+                        key: auctionDetail.key,
+                        status: 'verified'
+                    }
+                }
+            });
+            shopify.toast.show('Auction is verified');
+            await fetcher2.load('../../api/productPriceUpdate?product=' + auctionDetail.product_id
+                +  '&price=' + auctionDetail.end_price);
+            await fetcher3.load(`../../api/productUpdate?product=gid://shopify/Product/${auctionDetail.product_id}&winner=${auctionDetail.winner_id}`);
+            navigate(0);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleReject = async () => {
+        try {
+            const responseUpdate = client.mutate({
+                mutation: UPDATE_AUCTION,
+                variables: {
+                    input: {
+                        id: auctionDetail.id,
+                        key: auctionDetail.key,
+                        status: 'rejected'
+                    }
+                }
+            });
+            shopify.toast.show('Auction is rejected');
+            navigate(0);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <>
@@ -147,14 +187,6 @@ export default function AuctionForm() {
                                 title: 'More actions',
                                 actions: [
                                     {
-                                        content: 'Stop auction',
-                                        destructive: true,
-                                        onAction: () => {
-                                            // handleCreateAuction();
-                                            // navigate('../auctions');
-                                        },
-                                    },
-                                    {
                                         content: 'View product in store',
                                         icon: ExternalIcon,
                                         onAction: () => {
@@ -175,7 +207,7 @@ export default function AuctionForm() {
                         ]
                     }
                 >
-                    {auctionDetail.winner_id && winnerData && (
+                    {auctionDetail.winner_id && winnerData && new Date(auctionDetail.end_date) < Date.now() && (
                         <div style={{marginBottom: '10px'}}>
                             <Box background="bg-surface">
                                 <BlockStack>
@@ -193,7 +225,7 @@ export default function AuctionForm() {
                                         </div>
                                     </Box>
                                     <Box background="bg-surface" borderRadius="100">
-                                        <div style={{'padding': '10px 20px'}}>
+                                        <div style={{padding: '10px 20px', display: 'flex', justifyContent: 'space-between'}}>
                                             <BlockStack inlineAlign="start" gap="200">
                                                 <Text as="span" variant="bodyLg">
                                                     <div style={{display:'flex'}}>
@@ -211,6 +243,18 @@ export default function AuctionForm() {
                                                     </div>
                                                 </Text>
                                             </BlockStack>
+                                            <div>
+                                                {auctionDetail.status === 'unsolved' ? (
+                                                    <ButtonGroup>
+                                                        <Button variant="primary" onClick={handleVerify}>Verify</Button>
+                                                        <Button onClick={handleReject}>Reject</Button>
+                                                    </ButtonGroup>
+                                                ) : (
+                                                    <div>
+                                                        This auction was {auctionDetail.status}!
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </Box>
                                 </BlockStack>

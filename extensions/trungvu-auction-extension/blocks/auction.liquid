@@ -7,41 +7,39 @@
 
 <script>
     const home = {{ request.path | json }}
-        window.shopifyCustomer = {
-            id:   "{{ customer.id}}",
-            name: "{{ customer.name }}",
-            email: "{{ customer.email }}"
-        }
+    window.shopifyCustomer = {
+        id:   "{{ customer.id}}",
+        name: "{{ customer.name }}",
+        email: "{{ customer.email }}"
+    }
     window.shop = {
         name: "{{ shop.name }}",
         domain: "{{ shop.domain }}",
     }
-    const productIdElements = document.querySelectorAll('input[name="product-id"]');
-    let hasProductId = false;
-    for (let i = 0; i < productIdElements.length; i++) {
-        if (productIdElements[i].value === '11052470731070') {
-            hasProductId = true;
-            break;
+
+    let auctionInput = document.querySelector('#auction_tag');
+    if(auctionInput){
+        let customerInput = document.querySelector('#auction_winner_id');
+        let auctionWinnerId = 'no-one';
+        if (customerInput) {
+            auctionWinnerId = customerInput.value;
+        }
+        if(auctionWinnerId !== window.shopifyCustomer.id || auctionWinnerId === 'no-one'){
+            let quantityInput = document.querySelector('.product-form__quantity');
+            if (quantityInput) {
+                quantityInput.remove();
+            }
+            const productFormElement = document.querySelector('.product-form');
+            if (productFormElement) {
+                productFormElement.remove();
+            }
+            const priceContainer = document.querySelector('.price__container');
+            if (priceContainer) {
+                priceContainer.remove();
+            }
         }
     }
-    if (hasProductId) {
-        console.log('Thẻ <input type="hidden" name="product-id" value="11052470731070"> tồn tại trong page');
-        let quantityInput = document.querySelector('.product-form__quantity');
-        if (quantityInput) {
-            quantityInput.remove();
-            console.log(`The element with the 'product-form__quantity' class has been removed.`);
-        }
-        const productFormElement = document.querySelector('.product-form');
-        if (productFormElement) {
-            productFormElement.remove();
-            console.log('Element with the "product-form" class exists.');
-        }
-        const priceContainer = document.querySelector('.price__container');
-        if (priceContainer) {
-            priceContainer.remove();
-            console.log('The element with the "price__container" class has been removed.');
-        }
-    }
+
 </script>
 
 <style>
@@ -71,14 +69,15 @@
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        border: 2px solid hsl(0, 100%, 50%);
+        border: none;
         padding: 0;
         font: inherit;
         cursor: pointer;
         outline: inherit;
         z-index: 100;
         transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-        background: url("{{ 'new-auction.png' | asset_img_url: '56x56' }}") no-repeat center
+        background: url("https://i.postimg.cc/3w0vgGsQ/10348697-1.png") no-repeat center;
+        {% comment %}background: url("{{ 'new-auction.png' | asset_img_url: '56x56' }}") no-repeat center{% endcomment %}
     }
 
     div[id='overlay'] {
@@ -219,6 +218,9 @@
     }
     div[class='popup-page active'] {
         display: block;
+    }
+    div[id='login-page'] {
+        height: 100%;
     }
     .PhoneInput {
         display: flex;

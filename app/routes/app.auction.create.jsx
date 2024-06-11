@@ -18,7 +18,7 @@ import {
     Checkbox,
     Pagination,
 } from '@shopify/polaris';
-import {useNavigate, useLoaderData} from '@remix-run/react';
+import {useNavigate, useLoaderData, useFetcher} from '@remix-run/react';
 import {ProductIcon, CalendarIcon, SettingsIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -41,6 +41,7 @@ export const loader = async ({request}) => {
 
 export default function AuctionForm() {
     const navigate = useNavigate();
+    const fetcher = useFetcher();
     const [name, setName] = useState();
     const [startPrice, setStartPrice] = useState();
     const [bidIncrement, setBidIncrement] = useState();
@@ -172,7 +173,6 @@ export default function AuctionForm() {
             const productId = selectedProducts[0].productId.replace(/^.*\/(\d+)$/, "$1");
             const key = ulid();
             const thumbnail = selectedProducts[0].productImage;
-            console.log(thumbnail);
 
             try {
                 const createPromise = await createAuction({
@@ -185,7 +185,7 @@ export default function AuctionForm() {
                             auction_thumbnail: thumbnail,
                             winner_id: null,
                             contact_number: null,
-                            status: 'wait for bid',
+                            status: 'unsolved',
                             start_date: startDate,
                             end_date: endDate,
                             start_price: startPrice,
@@ -208,9 +208,10 @@ export default function AuctionForm() {
                 });
 
                 await Promise.race([createPromise, timeoutPromise]);
-
+                await fetcher.load('../../api/productUpdate?product=' + selectedProducts[0].productId);
                 shopify.toast.show('Created successfully');
                 setCreateStatus(true);
+                navigate(`../auction/${key}`);
             } catch (error) {
                 console.error('Error:', error.message);
                 shopify.toast.show('Connection timeout', {

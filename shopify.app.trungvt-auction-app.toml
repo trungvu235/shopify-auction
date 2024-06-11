@@ -3,7 +3,7 @@
 client_id = "a9896d72741bd015197b16bab41f472c"
 name = "auction-app"
 handle = "auction-app-23"
-application_url = "https://assumption-nyc-somewhat-spiritual.trycloudflare.com"
+application_url = "https://spirit-keyword-bios-trip.trycloudflare.com"
 embedded = true
 
 [build]
@@ -13,20 +13,20 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_customers,read_files,read_products,read_themes,write_customers,write_files,write_products,write_themes"
+scopes = "read_customers,read_files,read_orders,read_products,read_themes,write_customers,write_files,write_orders,write_products,write_themes"
 
 [auth]
 redirect_urls = [
-  "https://assumption-nyc-somewhat-spiritual.trycloudflare.com/auth/callback",
-  "https://assumption-nyc-somewhat-spiritual.trycloudflare.com/auth/shopify/callback",
-  "https://assumption-nyc-somewhat-spiritual.trycloudflare.com/api/auth/callback"
+  "https://spirit-keyword-bios-trip.trycloudflare.com/auth/callback",
+  "https://spirit-keyword-bios-trip.trycloudflare.com/auth/shopify/callback",
+  "https://spirit-keyword-bios-trip.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-04"
 
 [app_proxy]
-url = "https://assumption-nyc-somewhat-spiritual.trycloudflare.com"
+url = "https://spirit-keyword-bios-trip.trycloudflare.com"
 subpath = "frontend"
 prefix = "apps"
 

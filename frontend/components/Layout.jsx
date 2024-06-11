@@ -1,5 +1,4 @@
 import {Button, Flex, Layout, Space, theme, Menu} from "antd";
-import {getAuctionDetail} from "@/utils/apis";
 export default function LayoutPage({customer, childComponent, shop, page, setPage,}) {
     const {Header, Content, Footer} = Layout;
     const modal = document.getElementById("major-popup-parent");
@@ -8,7 +7,7 @@ export default function LayoutPage({customer, childComponent, shop, page, setPag
         modal.style.display = "none";
         overlay.style.display = "none";
     }
-    console.log(`page: ${page}`);
+
     const items = [
         {
             key: 'main-page',
@@ -27,12 +26,11 @@ export default function LayoutPage({customer, childComponent, shop, page, setPag
             label: 'Check your bids',
         },
     ];
-    console.log(`layout 7: ${page}`);
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
     return (
-        <Layout style={{position: "relative"}}>
+        <Layout style={{position: "relative", height: '100%'}}>
             {customer ? (
                 <Header style={{
                     position: 'sticky',
@@ -105,16 +103,6 @@ export default function LayoutPage({customer, childComponent, shop, page, setPag
                         }}>
                             {shop.name}
                         </h2>
-                        <Menu
-                            theme="dark"
-                            mode="horizontal"
-                            defaultSelectedKeys={['2']}
-                            items={items1}
-                            style={{
-                                flex: 1,
-                                minWidth: 0,
-                            }}
-                        />
                     </Space>
                 </Header>
             )}
@@ -124,7 +112,7 @@ export default function LayoutPage({customer, childComponent, shop, page, setPag
                         {childComponent}
                     </div>
                 ) : (
-                    <div style={{minHeight: 422}}>
+                    <div style={{minHeight: 540}}>
                         {childComponent}
                     </div>
                 )}

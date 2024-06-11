@@ -1,5 +1,5 @@
-import {Button, Flex, theme, Tag, Card, Pagination} from "antd";
-import {LeftOutlined, LoadingOutlined} from "@ant-design/icons";
+import {Flex, theme, Tag, Card, Pagination} from "antd";
+import {LoadingOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {getActiveListApi} from "@/utils/apis";
 import Countdown from "react-countdown";
@@ -20,7 +20,7 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
 
     useEffect(() => {
         if (activeAuctions) {
-            console.log(activeAuctions);
+            // console.log(activeAuctions);
         }
     }, [activeAuctions]);
 
