@@ -328,21 +328,27 @@ export default function AuctionForm() {
                                                 description: endTime.toLocaleString(),
                                             },
                                             {
-                                                term: 'Current Bids',
-                                                description: auctionDetail.end_price ? auctionDetail.end_price + ' ' + shop.currency : 'This auction has not yet been bid',
+                                                term: 'Auction Type',
+                                                description: auctionDetail.auction_type === 'live-auction' ? 'Live auction' : 'Reverse auction',
                                             },
-                                            {
-                                                term: 'Reserve Price',
-                                                description: auctionDetail.reserve_price ? auctionDetail.reserve_price + ' ' + shop.currency : '',
-                                            },
-                                            {
-                                                term: 'Buyout Price',
-                                                description: auctionDetail.buyout_price ? auctionDetail.buyout_price + ' ' + shop.currency : '',
-                                            },
-                                            {
-                                                term: 'Created at',
-                                                description: auctionDetail.createdAt ? new Date(auctionDetail.createdAt).toLocaleString() : '',
-                                            },
+                                            ...(auctionDetail.auction_type === 'live-auction' ? [
+                                                {
+                                                    term: 'Current Bids',
+                                                    description: auctionDetail.end_price ? auctionDetail.end_price + ' ' + shop.currency : 'This auction has not yet been bid',
+                                                },
+                                                {
+                                                    term: 'Reserve Price',
+                                                    description: auctionDetail.reserve_price ? auctionDetail.reserve_price + ' ' + shop.currency : '',
+                                                },
+                                                {
+                                                    term: 'Buyout Price',
+                                                    description: auctionDetail.buyout_price ? auctionDetail.buyout_price + ' ' + shop.currency : '',
+                                                },
+                                                {
+                                                    term: 'Created at',
+                                                    description: auctionDetail.createdAt ? new Date(auctionDetail.createdAt).toLocaleString() : '',
+                                                },
+                                            ] : [])
                                         ]}
                                     />
                                 )}
@@ -400,13 +406,15 @@ export default function AuctionForm() {
                                                                 {auctionDetail.start_price} {shop.currency}
                                                             </Text>
                                                         </BlockStack>
-                                                        <BlockStack>
-                                                            <Text as="h3" variant="subdued">BID INCREMENT</Text>
-                                                            <Text as="h3" variant="headingLg" fontWeight="bold"
-                                                                  alignment="center">
-                                                                {auctionDetail.bid_increment} {shop.currency}
-                                                            </Text>
-                                                        </BlockStack>
+                                                        {auctionDetail.auction_type === 'live-auction' && (
+                                                            <BlockStack>
+                                                                <Text as="h3" variant="subdued">BID INCREMENT</Text>
+                                                                <Text as="h3" variant="headingLg" fontWeight="bold"
+                                                                      alignment="center">
+                                                                    {auctionDetail.bid_increment} {shop.currency}
+                                                                </Text>
+                                                            </BlockStack>
+                                                        )}
                                                     </InlineStack>
                                                     <InlineStack gap="1000" align="center">
                                                         <BlockStack>

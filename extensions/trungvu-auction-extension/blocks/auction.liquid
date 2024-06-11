@@ -16,6 +16,7 @@
         name: "{{ shop.name }}",
         domain: "{{ shop.domain }}",
     }
+    console.log('test 12');
 
     let auctionInput = document.querySelector('#auction_tag');
     if(auctionInput){
@@ -76,7 +77,7 @@
         outline: inherit;
         z-index: 100;
         transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-        background: url("https://i.postimg.cc/3w0vgGsQ/10348697-1.png") no-repeat center;
+        background: url("https://i.postimg.cc/jjJVsJKg/auction-3.png") no-repeat center;
         {% comment %}background: url("{{ 'new-auction.png' | asset_img_url: '56x56' }}") no-repeat center{% endcomment %}
     }
 

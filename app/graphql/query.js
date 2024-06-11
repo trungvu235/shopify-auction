@@ -17,6 +17,7 @@ export const GET_AUCTION = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -44,6 +45,7 @@ export const GET_AUCTIONS = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -72,6 +74,7 @@ export const GET_ACTIVE_AUCTIONS = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -99,6 +102,7 @@ export const GET_SCHEDULED_AUCTIONS = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -126,6 +130,7 @@ export const GET_UNSOLVED_AUCTIONS = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -153,6 +158,7 @@ export const GET_AUCTIONS_BY_CUSTOMER = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -170,6 +176,19 @@ export const GET_BIDS = gql`
         getBids(input: $input) {
             id
             key
+            bid
+            contact_number
+        }
+    }
+`;
+
+export const GET_BID = gql`
+    query GetBid($input : GetBidInput) {
+        getBid(input: $input) {
+            id
+            key
+            bid
+            contact_number
         }
     }
 `;

@@ -55,6 +55,10 @@ const auctionSchema = new Schema({
         type: Number,
         required: false,
     },
+    auction_type: {
+        type: String,
+        required: true,
+    },
     is_reverse_price: {
         type: Boolean,
         required: true,

@@ -1,22 +1,8 @@
 import {useState, useCallback} from 'react';
 import React from 'react';
 import {
-    Page,
-    Card,
-    Text,
-    InlineStack,
-    Icon,
-    Button,
-    Layout,
-    BlockStack,
-    TextField,
-    Select,
-    ResourceList,
-    Thumbnail,
-    ResourceItem,
-    FormLayout,
-    Checkbox,
-    Pagination,
+    Page, Card, Text, InlineStack, Icon, Button, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
+    ResourceItem, FormLayout, Checkbox, Pagination, RadioButton,
 } from '@shopify/polaris';
 import {useNavigate, useLoaderData, useFetcher} from '@remix-run/react';
 import {ProductIcon, CalendarIcon, SettingsIcon} from '@shopify/polaris-icons';
@@ -50,6 +36,7 @@ export default function AuctionForm() {
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
     const addProductImage = "/add-product.png";
+    const [auctionType, setAuctionType] = useState();
     const [reservePriceChecked, setReservePriceChecked] = useState(false);
     const [reservePriceDisplay, setReservePriceDisplay] = useState(false);
     const [reservePrice, setReservePrice] = useState();
@@ -101,6 +88,11 @@ export default function AuctionForm() {
     const paginatedItems = selectedProducts.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
+    );
+
+    const handleAuctionType = useCallback(
+        (_, value) => setAuctionType(value),
+        [],
     );
 
     const handleReservePrice = useCallback(
@@ -158,8 +150,8 @@ export default function AuctionForm() {
 
     const [createAuction] = useMutation(CREATE_AUCTION);
     const handleCreateAuction = async () => {
-        if (!name || !startPrice || !bidIncrement || !startDate || !endDate || !selectedProducts.length
-            || (reservePriceChecked && !reservePrice) || (buyoutPriceChecked && !buyoutPrice)) {
+        if (!name || !startPrice || (!bidIncrement && auctionType === 'live-auction') || !startDate || !endDate
+            || !selectedProducts.length || (reservePriceChecked && !reservePrice) || (buyoutPriceChecked && !buyoutPrice)) {
             setNameInvalid(!name ? 'This field is required' : '');
             setStartPriceInvalid(!startPrice ? 'This field is required' : '');
             setBidIncrementInvalid(!bidIncrement ? 'This field is required' : '');
@@ -189,13 +181,14 @@ export default function AuctionForm() {
                             start_date: startDate,
                             end_date: endDate,
                             start_price: startPrice,
-                            bid_increment: bidIncrement,
+                            bid_increment: auctionType === 'live-auction' ? bidIncrement : 0,
                             end_price: null,
-                            is_reverse_price: reservePriceChecked,
-                            is_reverse_price_display: reservePriceDisplay,
+                            auction_type: auctionType,
+                            is_reverse_price: auctionType === 'live-auction' ? reservePriceChecked : false,
+                            is_reverse_price_display: auctionType === 'live-auction' ? reservePriceDisplay : false,
                             reserve_price: reservePrice,
-                            is_buyout_price: buyoutPriceChecked,
-                            is_buyout_price_display: buyoutPriceDisplay,
+                            is_buyout_price: auctionType === 'live-auction' ? buyoutPriceChecked : false,
+                            is_buyout_price_display: auctionType === 'live-auction' ? buyoutPriceDisplay : false,
                             buyout_price: buyoutPrice,
                         }
                     }
@@ -278,27 +271,29 @@ export default function AuctionForm() {
                                     error={startPriceInvalid}
                                     step="1"
                                 />
-                                <TextField
-                                    label="Bid increment"
-                                    type="number"
-                                    value={bidIncrement}
-                                    onChange={handleBidIncrementChange}
-                                    autoComplete="off"
-                                    placeholder={placeholderText}
-                                    error={bidIncrementInvalid}
-                                    connectedRight={
-                                        <Select
-                                            value={selectValue}
-                                            label="Bid increment options"
-                                            onChange={handleSelectChange}
-                                            labelHidden
-                                            options={[
-                                                {value: 'fixed', label: 'Fixed'},
-                                                {value: 'percentage', label: 'Percentage'},
-                                            ]}
-                                        />
-                                    }
-                                />
+                                {auctionType === 'live-auction' && (
+                                    <TextField
+                                        label="Bid increment"
+                                        type="number"
+                                        value={bidIncrement}
+                                        onChange={handleBidIncrementChange}
+                                        autoComplete="off"
+                                        prefix={placeholderText}
+                                        error={bidIncrementInvalid}
+                                        connectedRight={
+                                            <Select
+                                                value={selectValue}
+                                                label="Bid increment options"
+                                                onChange={handleSelectChange}
+                                                labelHidden
+                                                options={[
+                                                    {value: 'fixed', label: 'Fixed'},
+                                                    {value: 'percentage', label: 'Percentage'},
+                                                ]}
+                                            />
+                                        }
+                                    />
+                                )}
                             </BlockStack>
                         </Card>
                     </div>
@@ -417,82 +412,104 @@ export default function AuctionForm() {
                     </Card>
                     <div style={{marginTop: "10px"}}>
                         <Card roundedAbove="sm">
-                            <BlockStack inlineAlign="start" gap="200">
-                                <InlineStack gap="400">
-                                    <Icon source={SettingsIcon} tone="base"/>
-                                    <Text as="h2" variant="headingSm">Advanced settings</Text>
+                            <BlockStack gap="300">
+                                <BlockStack inlineAlign="start" gap="200">
+                                    <InlineStack gap="400">
+                                        <Icon source={SettingsIcon} tone="base"/>
+                                        <Text as="h2" variant="headingSm">Advanced settings</Text>
+                                    </InlineStack>
+                                </BlockStack>
+                                <InlineStack gap="500">
+                                    <Text as="p" variant="bodyLg">Choose auction type:</Text>
+                                    <RadioButton
+                                        label="Live auction"
+                                        checked={auctionType === 'live-auction'}
+                                        id="live-auction"
+                                        name="accounts"
+                                        onChange={handleAuctionType}
+                                    />
+                                    <RadioButton
+                                        label="Reverve auction"
+                                        id="reverse-auction"
+                                        name="accounts"
+                                        checked={auctionType === 'reverse-auction'}
+                                        onChange={handleAuctionType}
+                                    />
                                 </InlineStack>
+
+                                { auctionType === 'live-auction' &&  (
+                                    <FormLayout>
+                                        <FormLayout.Group>
+                                            <BlockStack inlineAlign="start" gap="200">
+                                                <div className="reserve-price" style={{display: "flex"}}>
+                                                    <div style={{marginRight: '10px'}}>
+                                                        <Checkbox
+                                                            label="Reserve price"
+                                                            helpText="No winning bidder if closing price is below reserve price."
+                                                            checked={reservePriceChecked}
+                                                            onChange={handleReservePrice}
+                                                        />
+                                                    </div>
+                                                    {reservePriceChecked && (
+                                                        <div style={{width: "45%"}}>
+                                                            <Checkbox
+                                                                label="Show on front store"
+                                                                checked={reservePriceDisplay}
+                                                                onChange={handleReservePriceDisplay}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {reservePriceChecked && (
+                                                    <TextField
+                                                        label="Reserve price"
+                                                        type="number"
+                                                        value={reservePrice}
+                                                        onChange={handleReservePriceChange}
+                                                        autoComplete="off"
+                                                        prefix='$'
+                                                        error={reservePriceInvalid}
+                                                    />
+                                                )}
+                                            </BlockStack>
+                                        </FormLayout.Group>
+                                        <FormLayout.Group>
+                                            <BlockStack inlineAlign="start" gap="200">
+                                                <div className="buyout-price" style={{display: "flex"}}>
+                                                    <div style={{marginRight: '10px'}}>
+                                                        <Checkbox
+                                                            label="Buyout price"
+                                                            helpText="Automatically close the auction when a customer bids the buyout price."
+                                                            checked={buyoutPriceChecked}
+                                                            onChange={handleBuyoutPrice}
+                                                        />
+                                                    </div>
+                                                    {buyoutPriceChecked && (
+                                                        <div style={{width: "45%"}}>
+                                                            <Checkbox
+                                                                label="Show on front store"
+                                                                checked={buyoutPriceDisplay}
+                                                                onChange={handleBuyoutPriceDisplay}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {buyoutPriceChecked && (
+                                                    <TextField
+                                                        label="Buyout price"
+                                                        type="number"
+                                                        value={buyoutPrice}
+                                                        onChange={handleBuyoutPriceChange}
+                                                        autoComplete="off"
+                                                        prefix='$'
+                                                        error={buyoutPriceInvalid}
+                                                    />
+                                                )}
+                                            </BlockStack>
+                                        </FormLayout.Group>
+                                    </FormLayout>
+                                )}
                             </BlockStack>
-                            <FormLayout>
-                                <FormLayout.Group>
-                                    <BlockStack inlineAlign="start" gap="200">
-                                        <div className="reserve-price" style={{display: "flex"}}>
-                                            <div style={{marginRight: '10px'}}>
-                                                <Checkbox
-                                                    label="Reserve price"
-                                                    helpText="No winning bidder if closing price is below reserve price."
-                                                    checked={reservePriceChecked}
-                                                    onChange={handleReservePrice}
-                                                />
-                                            </div>
-                                            {reservePriceChecked && (
-                                                <div style={{width: "45%"}}>
-                                                    <Checkbox
-                                                        label="Show on front store"
-                                                        checked={reservePriceDisplay}
-                                                        onChange={handleReservePriceDisplay}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        {reservePriceChecked && (
-                                            <TextField
-                                                label="Reserve price"
-                                                type="number"
-                                                value={reservePrice}
-                                                onChange={handleReservePriceChange}
-                                                autoComplete="off"
-                                                prefix='$'
-                                                error={reservePriceInvalid}
-                                            />
-                                        )}
-                                    </BlockStack>
-                                </FormLayout.Group>
-                                <FormLayout.Group>
-                                    <BlockStack inlineAlign="start" gap="200">
-                                        <div className="buyout-price" style={{display: "flex"}}>
-                                            <div style={{marginRight: '10px'}}>
-                                                <Checkbox
-                                                    label="Buyout price"
-                                                    helpText="Automatically close the auction when a customer bids the buyout price."
-                                                    checked={buyoutPriceChecked}
-                                                    onChange={handleBuyoutPrice}
-                                                />
-                                            </div>
-                                            {buyoutPriceChecked && (
-                                                <div style={{width: "45%"}}>
-                                                    <Checkbox
-                                                        label="Show on front store"
-                                                        checked={buyoutPriceDisplay}
-                                                        onChange={handleBuyoutPriceDisplay}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        {buyoutPriceChecked && (
-                                            <TextField
-                                                label="Buyout price"
-                                                type="number"
-                                                value={buyoutPrice}
-                                                onChange={handleBuyoutPriceChange}
-                                                autoComplete="off"
-                                                prefix='$'
-                                                error={buyoutPriceInvalid}
-                                            />
-                                        )}
-                                    </BlockStack>
-                                </FormLayout.Group>
-                            </FormLayout>
                         </Card>
                     </div>
                 </Layout.Section>

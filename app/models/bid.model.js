@@ -11,6 +11,14 @@ const bidSchema = new Schema({
         type: String,
         required: true,
     },
+    bid: {
+        type: Number,
+        required: false,
+    },
+    contact_number: {
+        type: String,
+        required: false,
+    },
 }, {
     timestamps: true
 });

@@ -103,12 +103,18 @@ export const resolver = {
 
         return bids;
     },
+    getBid: async ({input}, request) => {
+        return BidModel.findOne({id: input.id, key: input.key}, null, {
+            returnDocument: "after",
+            new: true
+        }).lean();
+    },
 
     createAuction: async ({input}, request) => {
         const {
-            id, key, name, product_id, auction_thumbnail, winner_id, contact_number, status, start_date, end_date, start_price, bid_increment, end_price,
-            is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
-            buyout_price
+            id, key, name, product_id, auction_thumbnail, winner_id, contact_number, status, start_date, end_date,
+            start_price, bid_increment, end_price, auction_type, is_reverse_price, is_reverse_price_display,
+            reserve_price, is_buyout_price, is_buyout_price_display, buyout_price
         } = input;
 
         return await AuctionModel.create({
@@ -125,6 +131,7 @@ export const resolver = {
             start_price: start_price,
             bid_increment: bid_increment,
             end_price: end_price,
+            auction_type: auction_type,
             is_reverse_price: is_reverse_price,
             is_reverse_price_display: is_reverse_price_display,
             reserve_price: reserve_price,
@@ -136,25 +143,33 @@ export const resolver = {
 
     createBid: async ({input}, request) => {
         const {
-            id, key
+            id, key, bid, contact_number
         } = input;
 
         const existingBid = await BidModel.findOne({ id, key });
         if (existingBid) {
-            return;
+            return BidModel.findOneAndUpdate({
+                id: id,
+                key: key,
+            }, {
+                bid: bid,
+                contact_number: contact_number,
+            });
         }
 
         return await BidModel.create({
             id: id,
             key: key,
+            bid: bid,
+            contact_number: contact_number,
         });
     },
 
     updateAuction: async ({input}, request) => {
         const {
-            id, key, name, product_id, winner_id, contact_number, auction_thumbnail, status, start_date, end_date, start_price, bid_increment, end_price,
-            is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
-            buyout_price
+            id, key, name, product_id, auction_thumbnail, winner_id, contact_number, status, start_date, end_date,
+            start_price, bid_increment, end_price, auction_type, is_reverse_price, is_reverse_price_display,
+            reserve_price, is_buyout_price, is_buyout_price_display, buyout_price
         } = input;
 
         return AuctionModel.findOneAndUpdate({
@@ -172,6 +187,7 @@ export const resolver = {
             start_price: start_price,
             bid_increment: bid_increment,
             end_price: end_price,
+            auction_type: auction_type,
             is_reverse_price: is_reverse_price,
             is_reverse_price_display: is_reverse_price_display,
             reserve_price: reserve_price,

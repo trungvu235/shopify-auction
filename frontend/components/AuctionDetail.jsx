@@ -1,13 +1,12 @@
-import {Button, Flex, Image,Breadcrumb, InputNumber, message} from "antd";
+import {Button, Flex, Image,Breadcrumb, InputNumber, message, Descriptions} from "antd";
 import React, {useEffect, useState} from "react";
 import {getAuctionDetail, getCustomerAuctionsApi} from "@/utils/apis";
 import {LoadingOutlined} from "@ant-design/icons";
 import Countdown from 'react-countdown';
 import {UPDATE_AUCTION, CREATE_BID} from "../../app/graphql/mutation";
+import {GET_BID} from "../../app/graphql/query";
 import client from "../../app/graphql/client";
 import PhoneInput from 'react-phone-number-input'
-import {Icon} from "@shopify/polaris";
-import {ExternalIcon} from "@shopify/polaris-icons";
 
 export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}) {
     const [auctionDetail, setAuctionDetail] = useState();
@@ -18,8 +17,10 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
     const [bidder, setBidder] = useState();
     const [currentBid, setCurrentBid] = useState();
     const [nextBid, setNextBid] = useState(0);
+    const [reverseBid, setReverseBid] = useState(0);
     const [phoneNumber, setPhoneNumber] = useState();
     const [phoneNumberError, setPhoneNumberError] = useState(false);
+    const [customerBid , setCustomerBid] = useState();
 
     useEffect(() => {
         getAuctionDetail(auctionKey).then(response => {
@@ -43,8 +44,35 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
             setStartDate(new Date(auctionDetail.start_date));
             setEndDate(new Date(auctionDetail.end_date));
             setCurrentBid(auctionDetail.end_price? auctionDetail.end_price : auctionDetail.start_price);
+            setReverseBid(auctionDetail.start_price);
+            async function fetchBid() {
+                try {
+                    const response = await client.query({
+                        query: GET_BID,
+                        variables: {
+                            input: {
+                                id: `${window.shopifyCustomer.id}`,
+                                key: auctionDetail.key,
+                            }
+                        },
+                        fetchPolicy: "no-cache"
+                    });
+                    console.log('Get bids successfully');
+                    console.log(response.data.getBid);
+                    setCustomerBid(response.data.getBid);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+            fetchBid();
         }
     }, [auctionDetail]);
+
+    useEffect(() => {
+        if (customerBid) {
+            console.log(customerBid);
+        }
+    }, [customerBid]);
 
     useEffect(() => {
         if (currentBid) {
@@ -90,6 +118,9 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
     const handleNextBidChange = (value) => {
         setNextBid(value);
     };
+    const handleReverseBidChange = (value) => {
+        setReverseBid(value);
+    };
     const handlePhoneNumberChange = (value) => {
         console.log(value);
         setPhoneNumber(value);
@@ -120,6 +151,32 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                         input: {
                             id: window.shopifyCustomer.id,
                             key: auctionDetail.key,
+                            bid: parseFloat(nextBid),
+                            contact_number: phoneNumber,
+                        }
+                    }
+                });
+                console.log('create successfully');
+            } catch (error) {
+                console.error(error);
+            }
+            getNewData();
+        }else{
+            setPhoneNumberError(true);
+        }
+    };
+
+    const handlePlaceReverseBid = () => {
+        if(phoneNumber && phoneNumber.length > 4){
+            try {
+                const responseCreate = client.mutate({
+                    mutation: CREATE_BID,
+                    variables: {
+                        input: {
+                            id: window.shopifyCustomer.id,
+                            key: auctionDetail.key,
+                            bid: parseFloat(reverseBid),
+                            contact_number: phoneNumber,
                         }
                     }
                 });
@@ -176,6 +233,8 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                     input: {
                         id: window.shopifyCustomer.id,
                         key: auctionDetail.key,
+                        bid: parseFloat(auctionDetail.buyout_price),
+                        contact_number: phoneNumber,
                     }
                 }
             });
@@ -283,7 +342,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                             </strong>
                                                         </div>
                                                     </div>
-                                                    {auctionDetail.is_reverse_price && (
+                                                    {auctionDetail.is_reverse_price && auctionDetail.auction_type === 'live-auctions' && (
                                                         <div style={{
                                                             marginTop: '10px 0',
                                                             padding: '10px 15px',
@@ -297,7 +356,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                             </div>
                                                         </div>
                                                     )}
-                                                    {auctionDetail.is_buyout_price && (
+                                                    {auctionDetail.is_buyout_price && auctionDetail.auction_type === 'live-auctions' && (
                                                         <div style={{
                                                             marginTop: '10px 0',
                                                             padding: '10px 15px',
@@ -384,40 +443,62 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                         padding: '10px 15px',
                                                         borderBottom: 'solid 1px #eaeaea'
                                                     }}>
-                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                            <strong>Current bid</strong>
-                                                            <strong>
-                                                                ${currentBid}
-                                                            </strong>
-                                                        </div>
+                                                        {auctionDetail === 'active-auction' ? (
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between'
+                                                            }}>
+                                                                <strong>Current bid</strong>
+                                                                <strong>
+                                                                    ${currentBid}
+                                                                </strong>
+                                                            </div>
+                                                        ) : (
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between'
+                                                            }}>
+                                                                <strong>Start price</strong>
+                                                                <strong>
+                                                                    ${auctionDetail.start_price}
+                                                                </strong>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    <div style={{
-                                                        marginTop: '10px 0',
-                                                        width: '100%',
-                                                        padding: '10px 15px',
-                                                        borderBottom: 'solid 1px #eaeaea'
-                                                    }}>
-                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                            <strong>Bidder name</strong>
-                                                            <strong>
-                                                                {bidder? bidder.data.customer.displayName : 'no bidder'}
-                                                            </strong>
+                                                    { auctionDetail.auction_type === 'live-auction' && (
+                                                        <div style={{
+                                                            marginTop: '10px 0',
+                                                            width: '100%',
+                                                            padding: '10px 15px',
+                                                            borderBottom: 'solid 1px #eaeaea'
+                                                        }}>
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between'
+                                                            }}>
+                                                                <strong>Bidder name</strong>
+                                                                <strong>
+                                                                    {bidder ? bidder.data.customer.displayName : 'no bidder'}
+                                                                </strong>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div style={{
-                                                        marginTop: '10px 0',
-                                                        width: '100%',
-                                                        padding: '10px 15px',
-                                                        borderBottom: 'solid 1px #eaeaea'
-                                                    }}>
-                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                            <strong>Next minimum bid</strong>
-                                                            <strong>
-                                                                ${parseFloat(currentBid + auctionDetail.bid_increment).toFixed(2)}
-                                                            </strong>
+                                                    )}
+                                                    { auctionDetail.auction_type === 'live-auction' && (
+                                                        <div style={{
+                                                            marginTop: '10px 0',
+                                                            width: '100%',
+                                                            padding: '10px 15px',
+                                                            borderBottom: 'solid 1px #eaeaea'
+                                                        }}>
+                                                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                                <strong>Next minimum bid</strong>
+                                                                <strong>
+                                                                    ${parseFloat(currentBid + auctionDetail.bid_increment).toFixed(2)}
+                                                                </strong>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    {auctionDetail.is_reverse_price && (
+                                                    )}
+                                                    {auctionDetail.is_reverse_price && auctionDetail.auction_type === 'live-auction' && (
                                                         <div style={{
                                                             marginTop: '10px 0',
                                                             padding: '10px 15px',
@@ -431,7 +512,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                             </div>
                                                         </div>
                                                     )}
-                                                    {auctionDetail.is_buyout_price && (
+                                                    {auctionDetail.is_buyout_price && auctionDetail.auction_type === 'live-auction' && (
                                                         <div style={{
                                                             marginTop: '10px 0',
                                                             padding: '10px 15px',
@@ -476,7 +557,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                     padding: '20px 20px 20px 20px'
                                                 }}>
                                                     <div style={{marginBottom:'10px'}}>
-                                                        {nextBid && (
+                                                        {nextBid && auctionDetail.auction_type === 'live-auction' && (
                                                             <Flex horizontal gap="middle" style={{flexWrap:'wrap'}}>
                                                                 <strong style={{fontSize:"18px"}}>Place live bid</strong>
                                                                 <Flex vertical gap="middle">
@@ -530,6 +611,60 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 </Flex>
 
                                                             </Flex>
+                                                        )}
+                                                        {auctionDetail.auction_type === 'reverse-auction' && (
+                                                            <div>
+                                                                {customerBid && (
+                                                                    <Flex vertical>
+                                                                        <Descriptions
+                                                                            title="Your bid"
+                                                                            items={
+                                                                            [{
+                                                                                key: '1',
+                                                                                label: 'Bid',
+                                                                                children: '$150',
+                                                                            },
+                                                                                {
+                                                                                    key: '2',
+                                                                                    label: 'Contact Number',
+                                                                                    children: '+84907440127',
+                                                                                },]
+                                                                            } />
+                                                                    </Flex>
+                                                                )}
+                                                                <Flex horizontal gap="middle" style={{flexWrap:'wrap'}}>
+                                                                    <strong style={{fontSize:"18px"}}>Place bid</strong>
+                                                                    <Flex vertical gap="middle">
+                                                                        <Flex horizontal gap="middle">
+                                                                            <Flex vertical gap="middle">
+                                                                                <InputNumber addonBefore="$" value={reverseBid}
+                                                                                             min={auctionDetail.start_price}
+                                                                                             onChange={handleReverseBidChange}/>
+                                                                                <PhoneInput
+                                                                                    international
+                                                                                    countryCallingCodeEditable={false}
+                                                                                    defaultCountry="VN"
+                                                                                    placeholder="Enter phone number"
+                                                                                    value={phoneNumber}
+                                                                                    onChange={handlePhoneNumberChange}/>
+                                                                                {phoneNumberError && (
+                                                                                    <div style={{color:'red'}}>
+                                                                                        Please enter a valid phone number.
+                                                                                    </div>
+                                                                                )}
+                                                                            </Flex>
+                                                                            <Button
+                                                                                style={{background: "rgba(0, 21, 41,0.85)"}}
+                                                                                type="primary"
+                                                                                onClick={handlePlaceReverseBid}
+                                                                            >
+                                                                                Place Bid
+                                                                            </Button>
+                                                                        </Flex>
+                                                                    </Flex>
+
+                                                                </Flex>
+                                                            </div>
                                                         )}
                                                     </div>
                                                     <div>

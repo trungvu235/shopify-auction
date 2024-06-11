@@ -8,9 +8,14 @@ export const schema = buildSchema(`
         id: String,
         key: String,
     }
-    
+
     input GetBidsListInput {
         id: String,
+    }
+
+    input GetBidInput {
+        id: String,
+        key: String,
     }
 
     input GetAuctionsListInput {
@@ -37,6 +42,7 @@ export const schema = buildSchema(`
         start_price: Float,
         bid_increment: Float,
         end_price: Float,
+        auction_type: String,
         is_reverse_price: Boolean,
         is_reverse_price_display: Boolean,
         reserve_price: Float,
@@ -46,16 +52,18 @@ export const schema = buildSchema(`
         createdAt: Date,
         updatedAt: Date
     }
-    
+
     type BidSchema {
         id: String,
         key: String,
+        bid: Float,
+        contact_number: String,
     }
 
     type AuctionsList {
         auctions:[AuctionSchema],
     }
-    
+
     type BidsList {
         bids:[BidSchema],
     }
@@ -74,6 +82,7 @@ export const schema = buildSchema(`
         start_price: Float,
         bid_increment: Float,
         end_price: Float,
+        auction_type: String,
         is_reverse_price: Boolean,
         is_reverse_price_display: Boolean,
         reserve_price: Float,
@@ -96,6 +105,7 @@ export const schema = buildSchema(`
         start_price: Float,
         bid_increment: Float,
         end_price: Float,
+        auction_type: String,
         is_reverse_price: Boolean,
         is_reverse_price_display: Boolean,
         reserve_price: Float,
@@ -103,10 +113,12 @@ export const schema = buildSchema(`
         is_buyout_price_display: Boolean,
         buyout_price: Float,
     }
-    
+
     input CreateBidInput{
         id: String,
         key: String,
+        bid: Float,
+        contact_number: String,
     }
 
     type Query {
@@ -117,6 +129,7 @@ export const schema = buildSchema(`
         getScheduledAuctions(input: GetAuctionsListInput): [AuctionSchema]
         getUnsolvedAuctions(input: GetAuctionsListInput): [AuctionSchema]
         getBids(input: GetBidsListInput): [BidSchema]
+        getBid(input: GetBidInput): BidSchema
     }
 
     type Mutation {

@@ -86,20 +86,50 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
                                                 {new Date(item.start_date) < Date.now() && new Date(item.end_date) > Date.now() && (
                                                     <>
                                                         <Tag color="green">Running</Tag>
-                                                        <div>
-                                                            <p>CURRENT BID:</p>
-                                                            <p
-                                                                style={{
-                                                                    fontWeight:'bold',
-                                                                    fontSize: '20px',
+                                                        <Flex horizontal gap="middle" justify="center">
+                                                            <div>
+                                                                <p>AUCTION TYPE:</p>
+                                                                <div style={{
+                                                                    fontWeight: 'bold',
+                                                                    fontSize: '14px',
                                                                     color: '#000'
                                                                 }}
-                                                            >
-                                                                {item.end_price
-                                                                    ? `$${item.end_price}`
-                                                                    : `$${item.start_price}`}
-                                                            </p>
-                                                        </div>
+                                                                >
+                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'REVERSE AUCTION'}
+                                                                </div>
+                                                            </div>
+                                                            { item.auction_type === 'live-auction' && (
+                                                                <div>
+                                                                    <p>CURRENT BID:</p>
+                                                                    <div
+                                                                        style={{
+                                                                            fontWeight: 'bold',
+                                                                            fontSize: '16px',
+                                                                            color: '#000'
+                                                                        }}
+                                                                    >
+                                                                        {item.end_price
+                                                                            ? `$${item.end_price}`
+                                                                            : `$${item.start_price}`}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            { item.auction_type === 'reverse-auction' && (
+                                                                <div>
+                                                                    <p>START PRICE:</p>
+                                                                    <div
+                                                                        style={{
+                                                                            fontWeight: 'bold',
+                                                                            fontSize: '16px',
+                                                                            color: '#000'
+                                                                        }}
+                                                                    >
+                                                                        ${item.start_price}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                        </Flex>
                                                         <p>Time remaining:</p>
                                                         <Countdown date={Date.now() + (new Date(item.end_date) - Date.now())} renderer={renderer}>
                                                             <Completionist/>

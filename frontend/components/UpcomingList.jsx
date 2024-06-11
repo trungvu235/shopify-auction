@@ -95,18 +95,31 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
                                                         >
                                                             Starting soon
                                                         </span>
-                                                        <div style={{lineHeight:'14px', padding:'0'}}>
-                                                            <p>START PRICE:</p>
-                                                            <p
-                                                                style={{
-                                                                    fontWeight:'bold',
-                                                                    fontSize: '20px',
+                                                        <Flex horizontal gap="middle" justify="center">
+                                                            <div>
+                                                                <p>AUCTION TYPE:</p>
+                                                                <div style={{
+                                                                    fontWeight: 'bold',
+                                                                    fontSize: '14px',
                                                                     color: '#000'
                                                                 }}
-                                                            >
-                                                                ${item.start_price}
-                                                            </p>
-                                                        </div>
+                                                                >
+                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'REVERSE AUCTION'}
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <p>START PRICE:</p>
+                                                                <div
+                                                                    style={{
+                                                                        fontWeight: 'bold',
+                                                                        fontSize: '16px',
+                                                                        color: '#000'
+                                                                    }}
+                                                                >
+                                                                    ${item.start_price}
+                                                                </div>
+                                                            </div>
+                                                        </Flex>
                                                         <div style={{textAlign: "center"}}>
                                                             <p>Open for bids in:</p>
                                                             <Countdown date={Date.now() + (new Date(item.start_date) - Date.now())} renderer={renderer}>

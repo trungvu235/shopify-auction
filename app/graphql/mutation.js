@@ -16,6 +16,7 @@ export const UPDATE_AUCTION = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -30,7 +31,6 @@ export const UPDATE_AUCTION = gql`
 export const CREATE_AUCTION = gql`
     mutation CreateAuction($input : CreateAuctionInput) {
         createAuction(input : $input) {
-            id
             key
             name
             product_id
@@ -43,6 +43,7 @@ export const CREATE_AUCTION = gql`
             start_price
             bid_increment
             end_price
+            auction_type
             is_reverse_price
             is_reverse_price_display
             reserve_price
@@ -58,6 +59,8 @@ export const CREATE_BID = gql`
         createBid(input : $input) {
             id
             key
+            bid
+            contact_number
         }
     }
 `;
