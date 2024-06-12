@@ -109,6 +109,13 @@ export const resolver = {
             new: true
         }).lean();
     },
+    getCustomersByAuction: async ({input}, request) => {
+        const customer = await BidModel.find({
+            key: input.key,
+        }, null,{ new: true});
+
+        return customer;
+    },
 
     createAuction: async ({input}, request) => {
         const {

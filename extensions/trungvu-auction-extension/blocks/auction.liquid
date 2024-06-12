@@ -16,7 +16,7 @@
         name: "{{ shop.name }}",
         domain: "{{ shop.domain }}",
     }
-    console.log('test 12');
+    console.log('test 31');
 
     let auctionInput = document.querySelector('#auction_tag');
     if(auctionInput){
@@ -178,6 +178,17 @@
         position: absolute;
         transform: translate(-50%, -50%);
         width: 80%;
+    }
+    .ant-carousel{
+        width: 85%;
+
+        .slick-dots{
+            li{
+                button::after{
+                    background: #001529;
+                }
+            }
+        }
     }
     div.ant-list-pagination {
         text-align: center !important;

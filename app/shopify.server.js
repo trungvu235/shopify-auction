@@ -10,6 +10,7 @@ import { restResources } from "@shopify/shopify-api/rest/admin/2023-07";
 import mongoose from "mongoose";
 import prisma from "./db.server";
 import GraphQLServer from "./graphql/graphql.server";
+import {Agenda} from "agenda";
 
 const shopify = shopifyApp({
     apiKey: process.env.SHOPIFY_API_KEY,
@@ -43,6 +44,12 @@ const shopify = shopifyApp({
 
 
 const dbConnectionString = "mongodb+srv://trungvt4697:20194697@cluster0.vikgmv5.mongodb.net/gr3?retryWrites=true&w=majority&appName=Cluster0";
+export const agenda = new Agenda({
+   db: {
+       address: dbConnectionString,
+       collection: 'agendaJobs',
+   }
+});
 mongoose.set("debug", true);
 mongoose.set("debug", { color: true });
 mongoose

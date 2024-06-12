@@ -192,3 +192,14 @@ export const GET_BID = gql`
         }
     }
 `;
+
+export const GET_CUSTOMERS_BY_AUCTION = gql`
+    query GetCustomersByAuction($input : GetCustomersListInput) {
+        getCustomersByAuction(input: $input) {
+            id
+            key
+            bid
+            contact_number
+        }
+    }
+`;

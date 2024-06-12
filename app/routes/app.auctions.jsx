@@ -63,8 +63,8 @@ export default function AuctionsList() {
             (
                 {
                     id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
-                    is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price, is_buyout_price_display,
-                    buyout_price, createdAt, updatedAt,
+                    auction_type, is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price,
+                    is_buyout_price_display, buyout_price, createdAt, updatedAt,
                 },
                 index
             ) => {
@@ -74,11 +74,13 @@ export default function AuctionsList() {
                         key,
                         name,
                         product_id,
+                        status,
                         start_date,
                         end_date,
                         start_price,
                         bid_increment,
                         end_price,
+                        auction_type,
                         is_reverse_price,
                         is_reverse_price_display,
                         reserve_price,
@@ -104,11 +106,13 @@ export default function AuctionsList() {
                 key,
                 name,
                 product_id,
+                status,
                 start_date,
                 end_date,
                 start_price,
                 bid_increment,
                 end_price,
+                auction_type,
                 is_reverse_price,
                 is_reverse_price_display,
                 reserve_price,
@@ -127,11 +131,13 @@ export default function AuctionsList() {
                         key,
                         name,
                         product_id,
+                        status,
                         start_date,
                         end_date,
                         start_price,
                         bid_increment,
                         end_price,
+                        auction_type,
                         is_reverse_price,
                         is_reverse_price_display,
                         reserve_price,
@@ -147,11 +153,13 @@ export default function AuctionsList() {
                         key,
                         name,
                         product_id,
+                        status,
                         start_date,
                         end_date,
                         start_price,
                         bid_increment,
                         end_price,
+                        auction_type,
                         is_reverse_price,
                         is_reverse_price_display,
                         reserve_price,
@@ -167,11 +175,13 @@ export default function AuctionsList() {
                         key,
                         name,
                         product_id,
+                        status,
                         start_date,
                         end_date,
                         start_price,
                         bid_increment,
                         end_price,
+                        auction_type,
                         is_reverse_price,
                         is_reverse_price_display,
                         reserve_price,
@@ -215,7 +225,7 @@ export default function AuctionsList() {
     };
     const rowMarkup = paginatedItems.map(
         (
-            {id, key, name, start_price, bid_increment, end_price, start_date, end_date},
+            {id, key, name, status, start_price, bid_increment, end_price, start_date, end_date, auction_type},
             index
         ) => {
             const startDate = new Date(start_date);
@@ -224,11 +234,11 @@ export default function AuctionsList() {
             return (
                 <IndexTable.Row id={key} key={key} position={index}>
                     <IndexTable.Cell><span>{name}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{auction_type === 'live-auction' ? 'Live Auction' : 'Reverse Auction'}</span></IndexTable.Cell>
                     <IndexTable.Cell>
                         <span>${start_price}</span>
                     </IndexTable.Cell>
-                    <IndexTable.Cell><span>{end_price ? '$' + end_price : '$0'}</span></IndexTable.Cell>
-                    <IndexTable.Cell><span>${bid_increment}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{end_price ? '$' + end_price : ''}</span></IndexTable.Cell>
                     <IndexTable.Cell>
                         {startDate > Date.now() && (
                             <Badge tone="info">Scheduled</Badge>
@@ -236,9 +246,13 @@ export default function AuctionsList() {
                         {startDate < Date.now() && endDate > Date.now() && (
                             <Badge tone="success">Running</Badge>
                         )}
-                        {endDate < Date.now() && (
-                            <Badge tone="attention">Finished</Badge>
-                        )}
+                        {
+                            endDate < Date.now() && (
+                                (status === 'verified') ? <Badge tone="success">Verified</Badge> :
+                                    (status === 'rejected') ? <Badge tone="warning">Rejected</Badge> :
+                                        (status === 'unsolved') && <Badge tone="attention">Unsolve</Badge>
+                            )
+                        }
                     </IndexTable.Cell>
                     <IndexTable.Cell><span>{startDate.toLocaleString()}</span></IndexTable.Cell>
                     <IndexTable.Cell><span>{endDate.toLocaleString()}</span></IndexTable.Cell>
@@ -287,9 +301,9 @@ export default function AuctionsList() {
                             itemCount={auctions[selected].length}
                             headings={[
                                 {title: 'Name'},
+                                {title: 'Auction type'},
                                 {title: 'Start Price'},
                                 {title: 'Current Bids'},
-                                {title: 'Bid increment'},
                                 {title: 'Status', alignment: 'center'},
                                 {title: 'Start at'},
                                 {title: 'End at'},

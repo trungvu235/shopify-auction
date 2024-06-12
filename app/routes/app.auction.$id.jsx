@@ -23,7 +23,7 @@ import axios from "axios";
 import {json} from "@remix-run/node";
 import Countdown from 'react-countdown';
 import {useQuery} from "@apollo/client";
-import {GET_AUCTION} from "../graphql/query";
+import {GET_AUCTION, GET_CUSTOMERS_BY_AUCTION} from "../graphql/query";
 import ReactLoading from "react-loading";
 import PageNotFound from "../components/layout/PageNotFound";
 import {UPDATE_AUCTION} from "../graphql/mutation";
@@ -53,6 +53,7 @@ export default function AuctionForm() {
     const [winnerData, setWinnerData] = useState(null);
     const [loadingPage, setLoadingPage] = useState(true);
     const currentDateTime = new Date().toISOString().slice(0, 16);
+    const [customersList, setCustomersList] = useState([]);
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
             input: {
@@ -68,6 +69,26 @@ export default function AuctionForm() {
             }
         },
     });
+    const {loading: customersQueryLoading, data: customersQuery, error: customersQueryError} = useQuery(GET_CUSTOMERS_BY_AUCTION, {
+        variables: {
+            input: {
+                key: `${key}`
+            }
+        },
+        onCompleted: data => {
+            if (customersQueryError) {
+                console.log(customersQueryError);
+            } else {
+                setCustomersList(customersQuery.getCustomersByAuction);
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (customersList) {
+            console.log(customersList);
+        }
+    }, [customersList]);
 
     useEffect(() => {
         if (auctionDetail) {
@@ -417,13 +438,24 @@ export default function AuctionForm() {
                                                         )}
                                                     </InlineStack>
                                                     <InlineStack gap="1000" align="center">
-                                                        <BlockStack>
-                                                            <Text as="h3" variant="subdued">CURRENT BIDS</Text>
-                                                            <Text as="h3" variant="headingLg" fontWeight="bold"
-                                                                  alignment="center">
-                                                                {auctionDetail.end_price ? auctionDetail.end_price + shop.currency : '0'}
-                                                            </Text>
-                                                        </BlockStack>
+                                                        {auctionDetail.auction_type ==='live-auction' && (
+                                                            <BlockStack>
+                                                                <Text as="h3" variant="subdued">CURRENT BID</Text>
+                                                                <Text as="h3" variant="headingLg" fontWeight="bold"
+                                                                      alignment="center">
+                                                                    {auctionDetail.end_price ? auctionDetail.end_price + shop.currency : '0'}
+                                                                </Text>
+                                                            </BlockStack>
+                                                        )}
+                                                        {auctionDetail.auction_type ==='reverse-auction' && (
+                                                            <BlockStack>
+                                                                <Text as="h3" variant="subdued">TOTAL BIDS</Text>
+                                                                <Text as="h3" variant="headingLg" fontWeight="bold"
+                                                                      alignment="center">
+                                                                    {customersList.length}
+                                                                </Text>
+                                                            </BlockStack>
+                                                        )}
                                                     </InlineStack>
                                                 </BlockStack>
                                             )}
