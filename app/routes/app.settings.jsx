@@ -1,22 +1,8 @@
-import {
-    Page,
-    Form,
-    FormLayout,
-    Checkbox,
-    TextField,
-    Button,
-    Select,
-    Text,
-    BlockStack,
-    Card,
-    Tabs,
-} from '@shopify/polaris';
+import {Page, Form, FormLayout, Checkbox, TextField, Button, Select, Text, BlockStack, Card, Tabs,} from '@shopify/polaris';
 import React, { useState, useCallback } from 'react';
 import axios from "axios";
 import {json} from "@remix-run/node";
-import {
-    useLoaderData,
-} from "@remix-run/react";
+import {useLoaderData} from "@remix-run/react";
 import {authenticate} from "../shopify.server";
 
 export const loader = async ({request}) => {

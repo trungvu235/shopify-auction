@@ -1,7 +1,6 @@
 import {useState, useCallback} from 'react';
 import React from 'react';
-import {
-    Page, Card, Text, InlineStack, Icon, Button, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
+import {Page, Card, Text, InlineStack, Icon, Button, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
     ResourceItem, FormLayout, Checkbox, Pagination, RadioButton,
 } from '@shopify/polaris';
 import {useNavigate, useLoaderData, useFetcher} from '@remix-run/react';

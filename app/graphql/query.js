@@ -189,6 +189,7 @@ export const GET_BID = gql`
             key
             bid
             contact_number
+            updatedAt
         }
     }
 `;
@@ -200,6 +201,7 @@ export const GET_CUSTOMERS_BY_AUCTION = gql`
             key
             bid
             contact_number
+            updatedAt
         }
     }
 `;

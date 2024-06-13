@@ -226,7 +226,7 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (fetcher.data) {
-            setProductData(fetcher.data);fetcher
+            setProductData(fetcher.data);
         }
     }, [fetcher.data]);
 

@@ -1,7 +1,6 @@
-// import { cors } from 'remix-utils/cors'
 import {authenticate} from "../shopify.server";
 import axios from "axios";
-import {GET_AUCTION, GET_AUCTIONS_BY_CUSTOMER} from "../graphql/query";
+import {GET_AUCTIONS_BY_CUSTOMER} from "../graphql/query";
 import client from "../graphql/client";
 import {json} from "@remix-run/node";
 

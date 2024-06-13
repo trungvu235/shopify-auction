@@ -62,6 +62,7 @@ export const schema = buildSchema(`
         key: String,
         bid: Float,
         contact_number: String,
+        updatedAt: Date
     }
 
     type AuctionsList {

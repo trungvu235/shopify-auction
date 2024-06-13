@@ -1,4 +1,4 @@
-import {Button, Flex, theme} from "antd";
+import {Button, theme} from "antd";
 
 export default function LoginPage({shop}) {
 

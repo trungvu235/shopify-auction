@@ -1,22 +1,8 @@
 import React, {useState, useCallback} from 'react';
-import {
-    Page,
-    Card,
-    Tabs,
-    useBreakpoints,
-    IndexTable,
-    InlineStack,
-    Icon,
-    Button,
-    Pagination,
-    BlockStack,
-    Badge
-} from '@shopify/polaris';
+import {Page, Card, Tabs, useBreakpoints, IndexTable, InlineStack, Icon, Button, Pagination, BlockStack, Badge}
+    from '@shopify/polaris';
 import {useNavigate, useLoaderData} from '@remix-run/react';
-import {
-    ThemeEditIcon,
-    ViewIcon
-} from '@shopify/polaris-icons';
+import {ThemeEditIcon, ViewIcon} from '@shopify/polaris-icons';
 import {useQuery} from "@apollo/client";
 import {GET_AUCTIONS} from "../graphql/query";
 import {authenticate} from "../shopify.server";

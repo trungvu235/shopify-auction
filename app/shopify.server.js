@@ -47,9 +47,10 @@ const dbConnectionString = "mongodb+srv://trungvt4697:20194697@cluster0.vikgmv5.
 export const agenda = new Agenda({
    db: {
        address: dbConnectionString,
-       collection: 'agendaJobs',
+       collection: 'cronjob',
    }
 });
+
 mongoose.set("debug", true);
 mongoose.set("debug", { color: true });
 mongoose

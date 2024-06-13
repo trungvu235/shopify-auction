@@ -1,21 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {
-    BlockStack,
-    Card,
-    DescriptionList,
-    InlineStack,
-    Layout,
-    Link,
-    Page,
-    ResourceItem,
-    ResourceList,
-    Text,
-    Icon,
-    Thumbnail,
-    Box,
-    ButtonGroup,
-    Button
-} from '@shopify/polaris';
+import React, {useState, useEffect, useCallback} from 'react';
+import {BlockStack, Card, DescriptionList, InlineStack, Layout, Link, Page, ResourceItem, ResourceList, Text, Icon,
+    Thumbnail, Box, ButtonGroup, Button, Modal} from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
 import {ExternalIcon, ImageIcon, CheckIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
@@ -31,7 +16,6 @@ import client from "../graphql/client";
 
 export const loader = async ({request, params}) => {
     const {session} = await authenticate.admin(request);
-
     let store = await axios.get(`https://${session.shop}/admin/api/2024-04/shop.json`, {
         headers: {
             "X-Shopify-Access-Token": session.accessToken, "Accept-Encoding": "application/json",
@@ -52,8 +36,12 @@ export default function AuctionForm() {
     const [productData, setProductData] = useState(null);
     const [winnerData, setWinnerData] = useState(null);
     const [loadingPage, setLoadingPage] = useState(true);
-    const currentDateTime = new Date().toISOString().slice(0, 16);
     const [customersList, setCustomersList] = useState([]);
+    const [bidsModalActive, setBidsModalActive] = useState(false);
+
+    const handleBidsModal = useCallback(() => setBidsModalActive(!bidsModalActive), [bidsModalActive]);
+    const activator = <a style={{cursor: "pointer"}} onClick={handleBidsModal}>See all bids</a>;
+
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
             input: {
@@ -182,6 +170,7 @@ export default function AuctionForm() {
             console.error(error);
         }
     };
+
 
     return (
         <>
@@ -415,9 +404,59 @@ export default function AuctionForm() {
                             <div style={{marginTop: "10px"}}>
                                 <Card>
                                     <BlockStack inlineAlign="start" gap="200">
-                                        <Text as="h2" variant="headingMd">Bid Details</Text>
+                                        <div style={{display:'flex', justifyContent:'space-between', width: '100%'}}>
+                                            <Text as="h2" variant="headingMd">Bid Details</Text>
+                                            <Modal
+                                                activator={activator}
+                                                open={bidsModalActive}
+                                                onClose={handleBidsModal}
+                                                title="All bids"
+                                                primaryAction={{
+                                                    content: 'Close',
+                                                    onAction: handleBidsModal,
+                                                }}
+                                            >
+                                                <Modal.Section>
+                                                    {customersList.length && (
+                                                        <table style={{width:'100%'}}>
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Customer ID</th>
+                                                                <th>Bid</th>
+                                                                <th>Contact Number</th>
+                                                                <th>Bid at</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {customersList.map((customer, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <a
+                                                                                style={{
+                                                                                    display: 'flex',
+                                                                                    color: 'rgba(0, 91, 211, 1)',
+                                                                                    marginLeft: '2px',
+                                                                                    justifyContent: 'center',
+                                                                                }}
+                                                                                href={'https://admin.shopify.com/store/' + shop.name + '/customers/' + customer.id}
+                                                                                target="_blank">
+                                                                                #{customer.id}
+                                                                            </a>
+                                                                        </td>
+                                                                        <td style={{textAlign: 'center'}}>${customer.bid}</td>
+                                                                        <td style={{textAlign: 'center'}}>{customer.contact_number}</td>
+                                                                        <td style={{textAlign: 'center'}}>{new Date(customer.updatedAt).toLocaleString()}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    )}
+                                                </Modal.Section>
+                                            </Modal>
+                                        </div>
+
                                         <div style={{width: '100%'}}>
-                                            {auctionDetail && (
+                                        {auctionDetail && (
                                                 <BlockStack gap="300">
                                                     <InlineStack gap="1000" align="center">
                                                         <BlockStack>

@@ -1,4 +1,4 @@
-import {Button, Flex, Image, Breadcrumb, InputNumber, message, Descriptions, Carousel} from "antd";
+import {Button, Flex, Image, Breadcrumb, InputNumber, Descriptions, Carousel} from "antd";
 import React, {useEffect, useState} from "react";
 import {getAuctionDetail} from "@/utils/apis";
 import {LoadingOutlined} from "@ant-design/icons";

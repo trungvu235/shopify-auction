@@ -1,22 +1,7 @@
 import {json} from "@remix-run/node";
-import {
-    useLoaderData,
-} from "@remix-run/react";
-import {
-    Card,
-    Grid,
-    Box,
-    Text,
-    BlockStack,
-    Page,
-    InlineStack,
-    Button,
-    Icon,
-    IndexTable,
-    useBreakpoints,
-    Badge,
-    Link
-} from "@shopify/polaris";
+import {useLoaderData} from "@remix-run/react";
+import { Card, Grid, Box, Text, BlockStack, Page, InlineStack, Button, Icon, IndexTable, useBreakpoints, Badge, Link}
+    from "@shopify/polaris";
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {useNavigate} from "@remix-run/react";
