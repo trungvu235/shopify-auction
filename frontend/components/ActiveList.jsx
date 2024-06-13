@@ -7,6 +7,7 @@ import Countdown from "react-countdown";
 const { Meta } = Card;
 export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
     const [activeAuctions, setActiveAuctions] = useState([]);
+    const [pageLoading, setPageLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
 
@@ -15,6 +16,7 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
             if (response) {
                 setActiveAuctions(response.response.data.getActiveAuctions.slice().reverse());
             }
+            setPageLoading(false);
         });
     }, []);
 
@@ -47,12 +49,6 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
         setPageSize(pageSize);
     }
 
-    const navigateToMain = () => {
-        setPage('main-page');
-    }
-    const {
-        token: {colorBgContainer, borderRadiusLG},
-    } = theme.useToken();
 
     return (
         <Flex gap="small" vertical>
@@ -152,8 +148,12 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
                         </Flex>
                     </>
                 ) : (
-                    <div style={{display:'flex', justifyContent:'center', marginTop:'20%'}}>
-                        <LoadingOutlined style={{fontSize:'60px'}}/>
+                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '10%', marginBottom: '10%'}}>
+                        {pageLoading ? (
+                            <LoadingOutlined style={{fontSize: '60px'}}/>
+                        ) : (
+                            <div>There is no running auction at the moment.</div>
+                        )}
                     </div>
                 )}
             </div>

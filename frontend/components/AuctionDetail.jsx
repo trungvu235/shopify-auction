@@ -708,10 +708,10 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                     </Flex>
                                                                 )}
                                                                 {isPlaceBid && (
-                                                                    <Flex horizontal gap="middle"
-                                                                          style={{flexWrap: 'wrap'}}>
-                                                                        <strong style={{fontSize: "16px"}}>Place
-                                                                            bid</strong>
+                                                                    <Flex horizontal gap="middle" style={{flexWrap: 'wrap'}}>
+                                                                        <strong style={{fontSize: "16px"}}>
+                                                                            Place bid
+                                                                        </strong>
                                                                         <Flex vertical gap="middle">
                                                                             <Flex horizontal gap="middle">
                                                                                 <Flex vertical gap="middle">
@@ -868,6 +868,32 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {auctionDetail.auction_type === 'reverse-auction' && (
+                                                    <div className="auction-place-bid-container" style={{
+                                                        width: '100%',
+                                                        padding: '10px 20px'
+                                                    }}>
+                                                        {customerBid && (
+                                                            <Flex vertical style={{padding: '15px 0'}}
+                                                                  gap='300'>
+                                                                <Descriptions
+                                                                    title="Your bid"
+                                                                    items={
+                                                                        [{
+                                                                            key: '1',
+                                                                            label: 'Bid',
+                                                                            children: `$${customerBid.bid}`,
+                                                                        },
+                                                                            {
+                                                                                key: '2',
+                                                                                label: 'Contact Number',
+                                                                                children: `${customerBid.contact_number}`,
+                                                                            },]
+                                                                    }/>
+                                                            </Flex>
+                                                        )}
+                                                    </div>
+                                                )}
                                                 {auctionDetail.winner_id === window.shopifyCustomer.id && (
                                                     <div className="get-auction-container" style={{width: '100%'}}>
                                                         {auctionDetail.status === 'unsolved' && (
@@ -877,7 +903,8 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 padding: '10px 15px'
                                                             }}>
                                                                 <div>
-                                                                    The auction will be ready once we have verified the
+                                                                    The auction will be ready once we have verified
+                                                                    the
                                                                     transaction.
                                                                 </div>
                                                                 <div>
@@ -891,7 +918,9 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 textAlign: 'left',
                                                                 padding: '10px 15px'
                                                             }}>
-                                                                <div>The transaction has been verified. Click the button
+                                                                <div>
+                                                                    The transaction has been verified. Click the
+                                                                    button
                                                                     to purchase the auction.
                                                                 </div>
                                                                 <Button

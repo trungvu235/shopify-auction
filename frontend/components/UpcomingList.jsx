@@ -8,6 +8,7 @@ const { Meta } = Card;
 
 export default function UpcomingList({page, setPage, auctionKey, setAuctionKey}) {
     const [upcomingAuctions, setUpcomingAuctions] = useState([]);
+    const [pageLoading, setPageLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
 
@@ -16,6 +17,7 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
             if (response) {
                 setUpcomingAuctions(response.response.data.getScheduledAuctions.slice().reverse());
             }
+            setPageLoading(false);
         });
     }, []);
 
@@ -42,9 +44,6 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
         setPageSize(pageSize);
     }
 
-    const navigateToMain = () => {
-        setPage('main-page');
-    }
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
@@ -144,8 +143,12 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
                         </Flex>
                     </>
                 ) : (
-                    <div style={{display:'flex', justifyContent:'center', marginTop:'20%'}}>
-                        <LoadingOutlined style={{fontSize:'60px'}}/>
+                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '10%', marginBottom:'10%'}}>
+                        {pageLoading ? (
+                            <LoadingOutlined style={{fontSize: '60px'}}/>
+                        ) : (
+                            <div>There is no upcoming auction at the moment.</div>
+                        )}
                     </div>
                 )}
             </div>

@@ -10,30 +10,31 @@ const { Meta } = Card;
 
 export default function AuctionsList({page, setPage, auctionKey, setAuctionKey}) {
     const [auctions, setAuctions] = useState([]);
-    const [displayAuctions, setDisplayAuctions] = useState([]);
+    const [pageLoading, setPageLoading] = useState(true);
     const [bids, setBids] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
 
-    useEffect(() => {
-        async function fetchBids() {
-            try {
-                const response = await client.query({
-                    query: GET_BIDS,
-                    variables: {
-                        input: {
-                            id: `${window.shopifyCustomer.id}`
-                        }
-                    },
-                    fetchPolicy: "no-cache"
-                });
-                console.log('Get bids successfully');
-                console.log(response.data.getBids);
-                setBids(response.data.getBids);
-            } catch (error) {
-                console.error(error);
-            }
+    async function fetchBids() {
+        try {
+            const response = await client.query({
+                query: GET_BIDS,
+                variables: {
+                    input: {
+                        id: `${window.shopifyCustomer.id}`
+                    }
+                },
+                fetchPolicy: "no-cache"
+            });
+            console.log('Get bids successfully');
+            console.log(response.data.getBids);
+            setBids(response.data.getBids);
+        } catch (error) {
+            console.error(error);
         }
+    }
+
+    useEffect(() => {
         fetchBids();
     }, []);
 
@@ -43,22 +44,13 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
             const key = JSON.stringify(auctionIds);
             testFetch_2(key).then(response => {
                 if (response) {
-                    setAuctions(response.response.data.getAuctions);
+                    setAuctions(response.response.data.getAuctions.slice().reverse());
+                    setPageLoading(false);
                 }
             });
         }
     }, [bids]);
 
-
-    useEffect(() => {
-        if (auctions) {
-            setDisplayAuctions(auctions.slice().reverse());
-        }
-    }, [auctions]);
-
-    const navigateToMain = () => {
-        setPage('main-page');
-    }
     const handleAuctionClick = (auction) => {
         setAuctionKey(auction.key);
         setPage('auction-detail');
@@ -83,10 +75,10 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
     return (
         <Flex gap="small" vertical>
             <div className="auction-card">
-                {displayAuctions.length ? (
+                {auctions.length ? (
                     <>
                         <Flex wrap="wrap" justify="flex-start" gap="20px">
-                            {displayAuctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
+                            {auctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
                                 <Card
                                     key={item.key}
                                     hoverable
@@ -188,7 +180,7 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
                                                                 >
                                                                     {item.end_price
                                                                         ? `$${item.end_price}`
-                                                                        : "No bid"}
+                                                                        : "No winner"}
                                                                 </div>
                                                             </div>
                                                         </Flex>
@@ -205,14 +197,18 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
                             <Pagination
                                 current={currentPage}
                                 pageSize={pageSize}
-                                total={displayAuctions.length}
+                                total={auctions.length}
                                 onChange={handlePageChange}
                             />
                         </Flex>
                     </>
                 ) : (
-                    <div style={{display:'flex', justifyContent:'center', marginTop:'20%'}}>
-                        <LoadingOutlined style={{fontSize:'60px'}}/>
+                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '10%', marginBottom: '10%'}}>
+                        {pageLoading ? (
+                            <LoadingOutlined style={{fontSize: '60px'}}/>
+                        ) : (
+                            <div>You have no bid at the moment.</div>
+                        )}
                     </div>
                 )}
             </div>

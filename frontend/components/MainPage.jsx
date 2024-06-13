@@ -8,7 +8,7 @@ const { Meta } = Card;
 
 export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
     const [auctions, setAuctions] = useState([]);
-    const [displayAuctions, setDisplayAuctions] = useState([]);
+    const [pageLoading, setPageLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
 
@@ -28,16 +28,11 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
     useEffect(() => {
         testFetch().then(response => {
             if (response) {
-                setAuctions(response.response.data.getAuctions);
+                setAuctions(response.response.data.getAuctions.slice().reverse());
             }
+            setPageLoading(false);
         });
     }, []);
-
-    useEffect(() => {
-        if (auctions) {
-            setDisplayAuctions(auctions.slice().reverse());
-        }
-    }, [auctions]);
 
     const handleAuctionClick = (auction) => {
         setAuctionKey(auction.key);
@@ -56,10 +51,10 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
     return (
         <Flex gap="small" vertical>
             <div className="auction-card">
-                {displayAuctions.length ? (
+                {auctions.length ? (
                     <>
                         <Flex wrap="wrap" justify="flex-start" gap="20px">
-                            {displayAuctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
+                            {auctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
                                 <Card
                                     key={item.key}
                                     hoverable
@@ -215,7 +210,7 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
                                                                 >
                                                                     {item.end_price
                                                                         ? `$${item.end_price}`
-                                                                        : "No bid"}
+                                                                        : "No winner"}
                                                                 </div>
                                                             </div>
                                                         </Flex>
@@ -231,14 +226,18 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
                             <Pagination
                                 current={currentPage}
                                 pageSize={pageSize}
-                                total={displayAuctions.length}
+                                total={auctions.length}
                                 onChange={handlePageChange}
                             />
                         </Flex>
                     </>
                 ) : (
-                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '20%'}}>
-                        <LoadingOutlined style={{fontSize: '60px'}}/>
+                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '10%', marginBottom: '10%'}}>
+                        {pageLoading ? (
+                            <LoadingOutlined style={{fontSize: '60px'}}/>
+                        ) : (
+                            <div>There is no auction at the moment.</div>
+                        )}
                     </div>
                 )}
             </div>

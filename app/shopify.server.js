@@ -47,7 +47,7 @@ const dbConnectionString = "mongodb+srv://trungvt4697:20194697@cluster0.vikgmv5.
 export const agenda = new Agenda({
    db: {
        address: dbConnectionString,
-       collection: 'cronjob',
+       collection: 'auctionJobs',
    }
 });
 
@@ -58,6 +58,9 @@ mongoose
     .then((result) => {
         console.log("Connect to mongodb successfully");
         GraphQLServer();
+        agenda.start().then(r => {
+            console.log('agenda is running');
+        });
     })
     .catch((err) => {
         console.log("Error occurred when connect to mongodb: ", err.message);
