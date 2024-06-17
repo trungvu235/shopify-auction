@@ -30,7 +30,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                 setAuctionDetail(response.auctionDetail);
                 setProduct(response.product);
                 setBidder(response.winner);
-                console.log(response);
             }
         });
     }, []);
@@ -47,8 +46,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                 },
                 fetchPolicy: "no-cache"
             });
-            console.log('Get bids successfully');
-            console.log(response.data.getBid);
             setCustomerBid(response.data.getBid);
         } catch (error) {
             console.error(error);
@@ -65,7 +62,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                 },
                 fetchPolicy: "no-cache"
             });
-            console.log('Get customers successfully');
             setAllBids(customersResponse.data.getCustomersByAuction);
         } catch (error) {
             console.error(error);
@@ -87,15 +83,14 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
 
     useEffect(() => {
         if (customerBid) {
-            console.log(customerBid);
             setIsPlaceBid(false);
         }
     }, [customerBid]);
 
     useEffect(() => {
         if (allBids) {
-            console.log('all bid:');
-            console.log(allBids);
+            // console.log('all bid:');
+            // console.log(allBids);
         }
     }, [allBids]);
 
@@ -165,7 +160,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                         }
                     }
                 });
-                console.log('update successfully');
             } catch (error) {
                 console.error(error);
             }
@@ -181,7 +175,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                         }
                     }
                 });
-                console.log('create successfully');
             } catch (error) {
                 console.error(error);
             }
@@ -205,7 +198,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                         }
                     }
                 });
-                console.log('create successfully');
             } catch (error) {
                 console.error(error);
             }
@@ -222,7 +214,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
         setAuctionDetail(null);
         getAuctionDetail(auctionKey).then(response => {
             if (response) {
-                console.log(response);
                 setAuctionDetail(response.auctionDetail);
                 setProduct(response.product);
                 setBidder(response.winner);
@@ -251,7 +242,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                     }
                 }
             });
-            console.log('update successfully');
+            // console.log('update successfully');
         } catch (error) {
             console.error(error);
         }
@@ -267,7 +258,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                     }
                 }
             });
-            console.log('create successfully');
+            // console.log('create successfully');
         } catch (error) {
             console.error(error);
         }

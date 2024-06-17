@@ -14,9 +14,9 @@ import {
     Thumbnail,
     ResourceItem,
     FormLayout,
-    Checkbox, RadioButton,
+    Checkbox, RadioButton, Button,
 } from '@shopify/polaris';
-import {useLoaderData, useNavigate, useFetcher} from '@remix-run/react';
+import {useLoaderData, useNavigate, useFetcher, useSubmit, Form} from '@remix-run/react';
 import {
     ProductIcon,
     CalendarIcon,
@@ -32,6 +32,7 @@ import {GET_AUCTION} from "../graphql/query";
 import {UPDATE_AUCTION} from "../graphql/mutation";
 import PageNotFound from "../components/layout/PageNotFound";
 import ReactLoading from "react-loading";
+import handleCalculate from "../utils/AuctionCalculationHandler";
 
 export const loader = async ({request, params}) => {
     const {session, admin} = await authenticate.admin(request);
@@ -46,9 +47,20 @@ export const loader = async ({request, params}) => {
     return json({session: session, shop: store, key: params.id});
 }
 
+export async function action ({request}) {
+    const body = await request.json();
+    console.log(body);
+    await handleCalculate(body.key, body.end_date, body.store_id);
+
+    return json({
+        data: body,
+    })
+}
+
 export default function AuctionForm() {
     const navigate = useNavigate();
     const fetcher = useFetcher();
+    const submit = useSubmit();
     const {session, shop, key} = useLoaderData();
     const [name, setName] = useState();
     const [startPrice, setStartPrice] = useState();
@@ -127,17 +139,16 @@ export default function AuctionForm() {
         (value) => setBuyoutPrice(value),
         [],
     );
-
     const [updateAuction] = useMutation(UPDATE_AUCTION);
 
     const handleCreateAuction = async () => {
         if (
-            !name || !startPrice || !bidIncrement || !startDate || !endDate || (reservePriceChecked && !reservePrice) ||
+            !name || !startPrice || (!bidIncrement && auctionType === 'live-auction') || !startDate || !endDate || (reservePriceChecked && !reservePrice) ||
             (buyoutPriceChecked && !buyoutPrice) || (!bidIncrement && auctionType === 'live-auction')
         ) {
             setNameInvalid(!name ? 'This field is required' : '');
             setStartPriceInvalid(!startPrice ? 'This field is required' : '');
-            setBidIncrementInvalid(!bidIncrement ? 'This field is required' : '');
+            setBidIncrementInvalid((!bidIncrement && auctionType === 'live-auction') ? 'This field is required' : '');
             setStartDateInvalid(!startDate ? 'Please choose the valid date' : '');
             setEndDateInvalid(!endDate ? 'Please choose the valid date' : '');
             setReservePriceInvalid(reservePriceChecked && !reservePrice ? 'Please enter the reserve price' : '');
@@ -178,6 +189,14 @@ export default function AuctionForm() {
                     }, 10000);
                 });
                 await Promise.race([updatePromise, timeoutPromise]);
+                if(auctionType === 'reverse-auction'){
+                    const data = {
+                        key: auctionDetail.key,
+                        end_date: endDate,
+                        store_id: `${shop.id}`,
+                    }
+                    submit(data, {replace: true, method: "POST", encType: "application/json"});
+                }
                 shopify.toast.show('Updated successfully');
                 setEditStatus(true);
                 navigate(`../auction/${auctionDetail.key}`);
@@ -189,7 +208,6 @@ export default function AuctionForm() {
             }
         }
     };
-
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
             input: {
@@ -205,7 +223,6 @@ export default function AuctionForm() {
             }
         },
     });
-
     useEffect(() => {
         if (auctionDetail) {
             setName(auctionDetail.name);
@@ -243,18 +260,24 @@ export default function AuctionForm() {
                             },
                         }
                     }
-                    primaryAction={{
-                        content: 'Save',
-                        disabled: false,
-                        onAction: () => {
-                            handleCreateAuction().then(() => {
-                                if(editStatus){
-                                    navigate('../auction/' + key);
-                                }
-                            });
-                        },
-                    }}
                 >
+                    <InlineStack align="end">
+                        <div style={{marginTop: '-50px', position: "absolute"}}>
+                            <Form
+                                onSubmit={handleCreateAuction}
+                            >
+                                <Button
+                                    variant="primary"
+                                    type='submit'
+                                    onClick={() => {
+                                        handleCreateAuction().then( () =>console.log('submitting'))
+                                    }}
+                                >
+                                    Save
+                                </Button>
+                            </Form>
+                        </div>
+                    </InlineStack>
                     <Layout>
                         <Layout.Section variant="oneThird" gap="200">
                             <div>
@@ -275,6 +298,7 @@ export default function AuctionForm() {
                                             autoComplete="off"
                                             prefix='$'
                                             error={startPriceInvalid}
+                                            disabled={true}
                                         />
                                         {auctionType === 'live-auction' && (
                                             <TextField

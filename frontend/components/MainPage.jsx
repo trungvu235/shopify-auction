@@ -1,16 +1,18 @@
-import { Flex, theme, Tag, Card, Pagination} from "antd";
-import {LoadingOutlined} from "@ant-design/icons";
+import { Flex, theme, Tag, Card, Pagination, Select} from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import {testFetch} from "@/utils/apis";
 import React, {useEffect, useState} from "react";
 import Countdown from 'react-countdown';
 
 const { Meta } = Card;
+const { Option } = Select;
 
 export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
     const [auctions, setAuctions] = useState([]);
     const [pageLoading, setPageLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
+    const [filter, setFilter] = useState("all");
 
     const renderer = ({days, hours, minutes, seconds, completed}) => {
         if (completed) {
@@ -44,6 +46,21 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
         setPageSize(pageSize);
     }
 
+    const handleFilterChange = (value) => {
+        setFilter(value);
+    }
+
+    const filteredAuctions = auctions.filter(auction => {
+        const now = new Date();
+        if (filter === "all") return true;
+        if (filter === "upcoming") return new Date(auction.start_date) > now;
+        if (filter === "running") return new Date(auction.start_date) <= now && new Date(auction.end_date) > now;
+        if (filter === "closed") return new Date(auction.end_date) < now;
+        if (filter === "reverse-auction") return auction.auction_type === "reverse-auction";
+        if (filter === "live-auction") return auction.auction_type === "live-auction";
+        return true;
+    });
+
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
@@ -51,10 +68,20 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
     return (
         <Flex gap="small" vertical>
             <div className="auction-card">
-                {auctions.length ? (
+                <div style={{display:'flex', justifyContent: 'flex-end', paddingBottom:'10px'}}>
+                    <Select defaultValue="all" style={{ width: 200 }} onChange={handleFilterChange}>
+                        <Option value="all">All</Option>
+                        <Option value="upcoming">Upcoming</Option>
+                        <Option value="running">Running</Option>
+                        <Option value="closed">Closed</Option>
+                        <Option value="reverse-auction">Reverse Auction</Option>
+                        <Option value="live-auction">Live Auction</Option>
+                    </Select>
+                </div>
+                {filteredAuctions.length ? (
                     <>
                         <Flex wrap="wrap" justify="flex-start" gap="20px">
-                            {auctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
+                            {filteredAuctions.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item) => (
                                 <Card
                                     key={item.key}
                                     hoverable
@@ -226,7 +253,7 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
                             <Pagination
                                 current={currentPage}
                                 pageSize={pageSize}
-                                total={auctions.length}
+                                total={filteredAuctions.length}
                                 onChange={handlePageChange}
                             />
                         </Flex>

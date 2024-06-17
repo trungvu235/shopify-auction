@@ -74,7 +74,7 @@ export default function AuctionForm() {
 
     useEffect(() => {
         if (customersList) {
-            console.log(customersList);
+            // console.log(customersList);
         }
     }, [customersList]);
 

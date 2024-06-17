@@ -37,7 +37,6 @@ export async function loader({request}) {
 
     let data, winnerData;
     if(response.winner_id){
-        console.log(response.winner_id);
         data = await admin.graphql
         (`
             #graphql

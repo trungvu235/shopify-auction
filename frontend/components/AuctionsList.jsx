@@ -26,8 +26,6 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
                 },
                 fetchPolicy: "no-cache"
             });
-            console.log('Get bids successfully');
-            console.log(response.data.getBids);
             setBids(response.data.getBids);
         } catch (error) {
             console.error(error);

@@ -3,7 +3,7 @@ import React from 'react';
 import {Page, Card, Text, InlineStack, Icon, Button, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
     ResourceItem, FormLayout, Checkbox, Pagination, RadioButton,
 } from '@shopify/polaris';
-import {useNavigate, useLoaderData, useFetcher} from '@remix-run/react';
+import {useNavigate, useLoaderData, useFetcher, Form, useSubmit} from '@remix-run/react';
 import {ProductIcon, CalendarIcon, SettingsIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -11,6 +11,7 @@ import {json} from "@remix-run/node";
 import {useMutation} from "@apollo/client";
 import {CREATE_AUCTION} from "../graphql/mutation";
 import {ulid} from 'ulid';
+import handleCalculate from "../utils/AuctionCalculationHandler";
 
 export const loader = async ({request}) => {
     const {session} = await authenticate.admin(request);
@@ -23,10 +24,20 @@ export const loader = async ({request}) => {
 
     return json({session: session, shop: store});
 }
+export async function action ({request}) {
+    const body = await request.json();
+    console.log(body);
+    await handleCalculate(body.key, body.end_date, body.store_id);
+
+    return json({
+        data: body,
+    })
+}
 
 export default function AuctionForm() {
     const navigate = useNavigate();
     const fetcher = useFetcher();
+    const submit = useSubmit();
     const [name, setName] = useState();
     const [startPrice, setStartPrice] = useState();
     const [bidIncrement, setBidIncrement] = useState();
@@ -200,6 +211,14 @@ export default function AuctionForm() {
                 });
 
                 await Promise.race([createPromise, timeoutPromise]);
+                if(auctionType === 'reverse-auction'){
+                    const data = {
+                        key: key,
+                        end_date: endDate,
+                        store_id: `${shop.id}`,
+                    }
+                    submit(data, {replace: true, method: "POST", encType: "application/json"});
+                }
                 await fetcher.load('../../api/productUpdate?product=' + selectedProducts[0].productId);
                 shopify.toast.show('Created successfully');
                 setCreateStatus(true);
@@ -231,20 +250,24 @@ export default function AuctionForm() {
                     },
                 }
             }
-            primaryAction={
-                {
-                    content: 'Create',
-                    disabled: false,
-                    onAction: () => {
-                        handleCreateAuction().then(() => {
-                            if(createStatus){
-                                navigate('../auctions');
-                            }
-                        });
-                    },
-                }
-            }
         >
+            <InlineStack align="end">
+                <div style={{marginTop: '-50px', position: "absolute"}}>
+                    <Form
+                        onSubmit={handleCreateAuction}
+                    >
+                        <Button
+                            variant="primary"
+                            type='submit'
+                            onClick={() => {
+                                handleCreateAuction().then( () =>console.log('submitting'))
+                            }}
+                        >
+                            Create
+                        </Button>
+                    </Form>
+                </div>
+            </InlineStack>
             <Layout>
                 <Layout.Section variant="oneThird" gap="200">
                     <div>

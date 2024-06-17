@@ -17,8 +17,6 @@ export default function App({ home }) {
     const [page, setPage] = useState('main-page');
     const [auctionKey, setAuctionKey] = useState('');
 
-    console.log('test4');
-
     useEffect(() => {
         if(window.shopifyCustomer){
             if(window.shopifyCustomer.id !== ""){
