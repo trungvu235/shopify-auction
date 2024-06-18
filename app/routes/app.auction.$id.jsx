@@ -40,7 +40,7 @@ export default function AuctionForm() {
     const [bidsModalActive, setBidsModalActive] = useState(false);
 
     const handleBidsModal = useCallback(() => setBidsModalActive(!bidsModalActive), [bidsModalActive]);
-    const activator = <a style={{cursor: "pointer"}} onClick={handleBidsModal}>See all bids</a>;
+    const activator = <a style={{cursor: "pointer"}} onClick={handleBidsModal}>All bids</a>;
 
     const {loading: auctionsQueryLoading, data: auctionsQuery, error: dataError} = useQuery(GET_AUCTION, {
         variables: {
@@ -428,7 +428,7 @@ export default function AuctionForm() {
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {customersList.map((customer, index) => (
+                                                                {customersList.sort((a, b) => b.bid - a.bid).map((customer, index) => (
                                                                     <tr key={index}>
                                                                         <td>
                                                                             <a

@@ -209,7 +209,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
     const handleReBid = () => {
         setIsPlaceBid(true);
     };
-
     const getNewData = () => {
         setAuctionDetail(null);
         getAuctionDetail(auctionKey).then(response => {
@@ -221,11 +220,9 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
         });
         fetchBid();
     };
-
     const handlePlaceReservePrice = () => {
         setNextBid(auctionDetail.reserve_price)
     };
-
     const handlePlaceBuyoutPrice = () => {
         const newEndDate = new Date(Date.now()).toISOString().slice(0, 16);
         try {
@@ -740,9 +737,6 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 )}
                                                             </div>
                                                         )}
-                                                    </div>
-                                                    <div>
-
                                                     </div>
                                                 </div>
                                             </Flex>

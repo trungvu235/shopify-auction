@@ -1,15 +1,12 @@
 import {Button, theme} from "antd";
 
 export default function LoginPage({shop}) {
-
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
-
     const RegButtonHandler = function () {
         window.location.href = `https://${shop.domain}/account/login`;
     }
-
 
     return (
             <div style={{

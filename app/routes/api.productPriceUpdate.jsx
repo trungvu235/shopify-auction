@@ -45,5 +45,6 @@ export async function loader({request}) {
             },
         }
     );
+
     return true;
 }

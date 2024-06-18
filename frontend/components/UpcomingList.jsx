@@ -20,7 +20,6 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
             setPageLoading(false);
         });
     }, []);
-
     const renderer = ({days, hours, minutes, seconds, completed}) => {
         if (completed) {
             return <Completionist/>;
@@ -33,24 +32,20 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
         }
     };
     const Completionist = () => <div>The auction was finished</div>;
-
     const handleAuctionClick = (auction) => {
         setAuctionKey(auction.key);
         setPage('auction-detail');
     }
-
     const handlePageChange = (page, pageSize) => {
         setCurrentPage(page);
         setPageSize(pageSize);
     }
-
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
 
     return (
         <Flex gap="small" vertical>
-            {/* ... other components ... */}
             <div className="auction-card">
                 {upcomingAuctions.length ? (
                     <>

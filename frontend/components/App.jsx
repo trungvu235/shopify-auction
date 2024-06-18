@@ -43,7 +43,6 @@ export default function App({ home }) {
             overlay.style.display = 'block';
         }
     };
-
     const loginPageComponent = <LoginPage shop={shop}></LoginPage>;
     const mainPageComponent = <MainPage page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></MainPage>;
     const auctionsListComponent = <AuctionsList page={page} setPage={setPage} auctionKey={auctionKey} setAuctionKey={setAuctionKey}></AuctionsList>;

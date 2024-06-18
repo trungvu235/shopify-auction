@@ -1,29 +1,10 @@
 import {useState, useCallback, useEffect} from 'react';
 import React from 'react';
-import {
-    Page,
-    Card,
-    Text,
-    InlineStack,
-    Icon,
-    Layout,
-    BlockStack,
-    TextField,
-    Select,
-    ResourceList,
-    Thumbnail,
-    ResourceItem,
-    FormLayout,
-    Checkbox, RadioButton, Button,
+import { Page, Card, Text, InlineStack, Icon, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
+    ResourceItem, FormLayout, Checkbox, RadioButton, Button,
 } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher, useSubmit, Form} from '@remix-run/react';
-import {
-    ProductIcon,
-    CalendarIcon,
-    SettingsIcon,
-    ExternalIcon,
-    ImageIcon
-} from '@shopify/polaris-icons';
+import { ProductIcon, CalendarIcon, SettingsIcon, ExternalIcon, ImageIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
@@ -156,6 +137,15 @@ export default function AuctionForm() {
             setEditStatus(false);
         } else {
             try {
+                if(auctionType === 'reverse-auction'){
+                    const data = {
+                        key: auctionDetail.key,
+                        end_date: endDate,
+                        store_id: `${shop.id}`,
+                    }
+                    await submit(data, {replace: true, method: "POST", encType: "application/json"});
+                }
+
                 const updatePromise = await updateAuction({
                     variables: {
                         input: {
@@ -182,21 +172,12 @@ export default function AuctionForm() {
                         }
                     }
                 });
-
                 const timeoutPromise = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         reject(new Error('Update program timed out'));
                     }, 10000);
                 });
                 await Promise.race([updatePromise, timeoutPromise]);
-                if(auctionType === 'reverse-auction'){
-                    const data = {
-                        key: auctionDetail.key,
-                        end_date: endDate,
-                        store_id: `${shop.id}`,
-                    }
-                    submit(data, {replace: true, method: "POST", encType: "application/json"});
-                }
                 shopify.toast.show('Updated successfully');
                 setEditStatus(true);
                 navigate(`../auction/${auctionDetail.key}`);

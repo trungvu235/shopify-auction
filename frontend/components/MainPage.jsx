@@ -26,7 +26,6 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
         }
     };
     const Completionist = () => <div>The auction was finished</div>;
-
     useEffect(() => {
         testFetch().then(response => {
             if (response) {
@@ -35,21 +34,17 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
             setPageLoading(false);
         });
     }, []);
-
     const handleAuctionClick = (auction) => {
         setAuctionKey(auction.key);
         setPage('auction-detail');
     }
-
     const handlePageChange = (page, pageSize) => {
         setCurrentPage(page);
         setPageSize(pageSize);
     }
-
     const handleFilterChange = (value) => {
         setFilter(value);
     }
-
     const filteredAuctions = auctions.filter(auction => {
         const now = new Date();
         if (filter === "all") return true;
@@ -60,7 +55,6 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
         if (filter === "live-auction") return auction.auction_type === "live-auction";
         return true;
     });
-
     const {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
@@ -201,7 +195,6 @@ export default function MainPage({page, setPage, auctionKey, setAuctionKey}) {
                                                                     </div>
                                                                 </div>
                                                             )}
-
                                                         </Flex>
                                                         <p>Time remaining:</p>
                                                         <Countdown

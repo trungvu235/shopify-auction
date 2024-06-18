@@ -7,7 +7,6 @@ export default function LayoutPage({customer, childComponent, shop, page, setPag
         modal.style.display = "none";
         overlay.style.display = "none";
     }
-
     const items = [
         {
             key: 'main-page',

@@ -177,6 +177,14 @@ export default function AuctionForm() {
             const thumbnail = selectedProducts[0].productImage;
 
             try {
+                if(auctionType === 'reverse-auction'){
+                    const data = {
+                        key: key,
+                        end_date: endDate,
+                        store_id: `${shop.id}`,
+                    }
+                    submit(data, {replace: true, method: "POST", encType: "application/json"});
+                }
                 const createPromise = await createAuction({
                     variables: {
                         input: {
@@ -211,14 +219,6 @@ export default function AuctionForm() {
                 });
 
                 await Promise.race([createPromise, timeoutPromise]);
-                if(auctionType === 'reverse-auction'){
-                    const data = {
-                        key: key,
-                        end_date: endDate,
-                        store_id: `${shop.id}`,
-                    }
-                    submit(data, {replace: true, method: "POST", encType: "application/json"});
-                }
                 await fetcher.load('../../api/productUpdate?product=' + selectedProducts[0].productId);
                 shopify.toast.show('Created successfully');
                 setCreateStatus(true);

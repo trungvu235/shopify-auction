@@ -1,6 +1,6 @@
 import {json} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
-import {Card, Grid, Box, Text, BlockStack, Page, InlineStack, Button, Icon, IndexTable, useBreakpoints, Badge, Link}
+import { Card, Grid, Box, Text, BlockStack, Page, InlineStack, Button, Icon, IndexTable, useBreakpoints, Badge, Link }
     from "@shopify/polaris";
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -76,16 +76,7 @@ export default function Index() {
                         completedCount += 1;
                         if (status === 'unsolved' && winner_id) {
                             unsolvedAuctions.push({
-                                id,
-                                key,
-                                name,
-                                start_price,
-                                bid_increment,
-                                end_price,
-                                start_date,
-                                end_date,
-                                status,
-                                winner_id,
+                                id, key, name, start_price, bid_increment, end_price, start_date, end_date, status, winner_id,
                             });
                         }
                     }

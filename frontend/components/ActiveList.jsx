@@ -49,7 +49,6 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
         setPageSize(pageSize);
     }
 
-
     return (
         <Flex gap="small" vertical>
             <div className="auction-card">

@@ -56,23 +56,9 @@ export default function AuctionsList() {
             ) => {
                 auctionsList.push(
                     {
-                        id,
-                        key,
-                        name,
-                        product_id,
-                        status,
-                        start_date,
-                        end_date,
-                        start_price,
-                        bid_increment,
-                        end_price,
-                        auction_type,
-                        is_reverse_price,
-                        is_reverse_price_display,
-                        reserve_price,
-                        is_buyout_price,
-                        is_buyout_price_display,
-                        buyout_price,
+                        id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+                        auction_type, is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price,
+                        is_buyout_price_display, buyout_price,
                     }
                 );
             }
@@ -88,23 +74,9 @@ export default function AuctionsList() {
     auctionsList.map(
         (
             {
-                id,
-                key,
-                name,
-                product_id,
-                status,
-                start_date,
-                end_date,
-                start_price,
-                bid_increment,
-                end_price,
-                auction_type,
-                is_reverse_price,
-                is_reverse_price_display,
-                reserve_price,
-                is_buyout_price,
-                is_buyout_price_display,
-                buyout_price,
+                id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+                auction_type, is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price,
+                is_buyout_price_display, buyout_price,
             },
             index
         ) => {
@@ -113,67 +85,25 @@ export default function AuctionsList() {
             if (startDate > Date.now()) {
                 auctions[1].push(
                     {
-                        id,
-                        key,
-                        name,
-                        product_id,
-                        status,
-                        start_date,
-                        end_date,
-                        start_price,
-                        bid_increment,
-                        end_price,
-                        auction_type,
-                        is_reverse_price,
-                        is_reverse_price_display,
-                        reserve_price,
-                        is_buyout_price,
-                        is_buyout_price_display,
-                        buyout_price,
+                        id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+                        auction_type, is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price,
+                        is_buyout_price_display, buyout_price,
                     }
                 );
             } else if (startDate < Date.now() && endDate > Date.now()) {
                 auctions[0].push(
                     {
-                        id,
-                        key,
-                        name,
-                        product_id,
-                        status,
-                        start_date,
-                        end_date,
-                        start_price,
-                        bid_increment,
-                        end_price,
-                        auction_type,
-                        is_reverse_price,
-                        is_reverse_price_display,
-                        reserve_price,
-                        is_buyout_price,
-                        is_buyout_price_display,
-                        buyout_price,
+                        id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+                        auction_type, is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price,
+                        is_buyout_price_display, buyout_price,
                     }
                 );
             } else {
                 auctions[2].push(
                     {
-                        id,
-                        key,
-                        name,
-                        product_id,
-                        status,
-                        start_date,
-                        end_date,
-                        start_price,
-                        bid_increment,
-                        end_price,
-                        auction_type,
-                        is_reverse_price,
-                        is_reverse_price_display,
-                        reserve_price,
-                        is_buyout_price,
-                        is_buyout_price_display,
-                        buyout_price,
+                        id, key, name, product_id, status, start_date, end_date, start_price, bid_increment, end_price,
+                        auction_type, is_reverse_price, is_reverse_price_display, reserve_price, is_buyout_price,
+                        is_buyout_price_display, buyout_price,
                     }
                 );
             }
@@ -211,7 +141,7 @@ export default function AuctionsList() {
     };
     const rowMarkup = paginatedItems.map(
         (
-            {id, key, name, status, start_price, bid_increment, end_price, start_date, end_date, auction_type},
+            { id, key, name, status, start_price, bid_increment, end_price, start_date, end_date, auction_type },
             index
         ) => {
             const startDate = new Date(start_date);
@@ -313,7 +243,6 @@ export default function AuctionsList() {
                         )}
                     </Tabs>
                 </div>
-
             </Card>
         </Page>
     );

@@ -1,6 +1,4 @@
 import {authenticate} from "../shopify.server";
-import {json} from "@remix-run/node";
-import axios from "axios";
 
 export async function loader({request}) {
     const {session, admin} = await authenticate.admin(request);
@@ -42,7 +40,6 @@ export async function loader({request}) {
             input: input
         },
     });
-
 
     return true;
 }
