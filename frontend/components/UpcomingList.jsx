@@ -98,7 +98,7 @@ export default function UpcomingList({page, setPage, auctionKey, setAuctionKey})
                                                                     color: '#000'
                                                                 }}
                                                                 >
-                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'REVERSE AUCTION'}
+                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'SEALED-BID AUCTION'}
                                                                 </div>
                                                             </div>
                                                             <div>

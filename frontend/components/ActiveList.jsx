@@ -83,19 +83,19 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
                                                         <Tag color="green">Running</Tag>
                                                         <Flex horizontal gap="middle" justify="center">
                                                             <div>
-                                                                <p>AUCTION TYPE:</p>
+                                                                <p>Auction Type:</p>
                                                                 <div style={{
                                                                     fontWeight: 'bold',
                                                                     fontSize: '14px',
                                                                     color: '#000'
                                                                 }}
                                                                 >
-                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'REVERSE AUCTION'}
+                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'SEALED-BID AUCTION'}
                                                                 </div>
                                                             </div>
                                                             { item.auction_type === 'live-auction' && (
                                                                 <div>
-                                                                    <p>CURRENT BID:</p>
+                                                                    <p>Current Bid:</p>
                                                                     <div
                                                                         style={{
                                                                             fontWeight: 'bold',
@@ -109,9 +109,9 @@ export default function ActiveList({page, setPage, auctionKey, setAuctionKey}) {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            { item.auction_type === 'reverse-auction' && (
+                                                            { item.auction_type === 'sealed-auction' && (
                                                                 <div>
-                                                                    <p>START PRICE:</p>
+                                                                    <p>Start Price:</p>
                                                                     <div
                                                                         style={{
                                                                             fontWeight: 'bold',

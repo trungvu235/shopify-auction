@@ -1,10 +1,9 @@
 import {useState, useCallback, useEffect} from 'react';
 import React from 'react';
 import { Page, Card, Text, InlineStack, Icon, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
-    ResourceItem, FormLayout, Checkbox, RadioButton, Button,
-} from '@shopify/polaris';
+    ResourceItem, FormLayout, Checkbox, RadioButton, Button } from '@shopify/polaris';
 import {useLoaderData, useNavigate, useFetcher, useSubmit, Form} from '@remix-run/react';
-import { ProductIcon, CalendarIcon, SettingsIcon, ExternalIcon, ImageIcon} from '@shopify/polaris-icons';
+import {ProductIcon, CalendarIcon, SettingsIcon, ExternalIcon, ImageIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
 import {json} from "@remix-run/node";
@@ -124,8 +123,8 @@ export default function AuctionForm() {
 
     const handleCreateAuction = async () => {
         if (
-            !name || !startPrice || (!bidIncrement && auctionType === 'live-auction') || !startDate || !endDate || (reservePriceChecked && !reservePrice) ||
-            (buyoutPriceChecked && !buyoutPrice) || (!bidIncrement && auctionType === 'live-auction')
+            !name || !startPrice || (!bidIncrement && auctionType === 'live-auction') || !startDate || !endDate ||
+            (reservePriceChecked && !reservePrice) || (buyoutPriceChecked && !buyoutPrice)
         ) {
             setNameInvalid(!name ? 'This field is required' : '');
             setStartPriceInvalid(!startPrice ? 'This field is required' : '');
@@ -137,13 +136,13 @@ export default function AuctionForm() {
             setEditStatus(false);
         } else {
             try {
-                if(auctionType === 'reverse-auction'){
+                if(auctionType === 'sealed-auction'){
                     const data = {
                         key: auctionDetail.key,
                         end_date: endDate,
                         store_id: `${shop.id}`,
                     }
-                    await submit(data, {replace: true, method: "POST", encType: "application/json"});
+                    submit(JSON.stringify(data), {replace: true, method: "POST", encType: "application/json"});
                 }
 
                 const updatePromise = await updateAuction({
@@ -411,8 +410,8 @@ export default function AuctionForm() {
                                                 Auction type:
                                             </Text>
                                             <Text as="p" variant="headingMd">
-                                                {auctionType === 'reverse-auction' && (
-                                                    'Reverse auction'
+                                                {auctionType === 'sealed-auction' && (
+                                                    'Sealed-Bid Auction'
                                                 )}
                                                 {auctionType === 'live-auction' && (
                                                     'Live auction'

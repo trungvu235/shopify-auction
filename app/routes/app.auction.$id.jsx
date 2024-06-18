@@ -339,7 +339,7 @@ export default function AuctionForm() {
                                             },
                                             {
                                                 term: 'Auction Type',
-                                                description: auctionDetail.auction_type === 'live-auction' ? 'Live auction' : 'Reverse auction',
+                                                description: auctionDetail.auction_type === 'live-auction' ? 'Live auction' : 'Sealed-Bid Auction',
                                             },
                                             ...(auctionDetail.auction_type === 'live-auction' ? [
                                                 {
@@ -486,7 +486,7 @@ export default function AuctionForm() {
                                                                 </Text>
                                                             </BlockStack>
                                                         )}
-                                                        {auctionDetail.auction_type ==='reverse-auction' && (
+                                                        {auctionDetail.auction_type ==='sealed-auction' && (
                                                             <BlockStack>
                                                                 <Text as="h3" variant="subdued">TOTAL BIDS</Text>
                                                                 <Text as="h3" variant="headingLg" fontWeight="bold"

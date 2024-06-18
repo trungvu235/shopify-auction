@@ -42,7 +42,30 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
             const key = JSON.stringify(auctionIds);
             testFetch_2(key).then(response => {
                 if (response) {
-                    setAuctions(response.response.data.getAuctions.slice().reverse());
+                    const fetchedAuctions = response.response.data.getAuctions.slice().reverse();
+                    const now = new Date();
+                    fetchedAuctions.sort((a, b) => {
+                        const isARunning = new Date(a.start_date) <= now && new Date(a.end_date) > now;
+                        const isBRunning = new Date(b.start_date) <= now && new Date(b.end_date) > now;
+
+                        const isAUpcoming = new Date(a.start_date) > now;
+                        const isBUpcoming = new Date(b.start_date) > now;
+
+                        const isAClosed = new Date(a.end_date) < now;
+                        const isBClosed = new Date(b.end_date) < now;
+
+                        if (isARunning && !isBRunning) return -1;
+                        if (!isARunning && isBRunning) return 1;
+
+                        if (isAUpcoming && !isBUpcoming) return -1;
+                        if (!isAUpcoming && isBUpcoming) return 1;
+
+                        if (isAClosed && !isBClosed) return 1;
+                        if (!isAClosed && isBClosed) return -1;
+
+                        return 0;
+                    });
+                    setAuctions(fetchedAuctions);
                     setPageLoading(false);
                 }
             });
@@ -104,19 +127,19 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
                                                         <Tag color="green">Running</Tag>
                                                         <Flex horizontal gap="middle" justify="center">
                                                             <div>
-                                                                <p>AUCTION TYPE:</p>
+                                                                <p>Auction Type:</p>
                                                                 <div style={{
                                                                     fontWeight: 'bold',
                                                                     fontSize: '14px',
                                                                     color: '#000'
                                                                 }}
                                                                 >
-                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'REVERSE AUCTION'}
+                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'SEALED-BID AUCTION'}
                                                                 </div>
                                                             </div>
                                                             { item.auction_type === 'live-auction' && (
                                                                 <div>
-                                                                    <p>CURRENT BID:</p>
+                                                                    <p>Current Bid:</p>
                                                                     <div
                                                                         style={{
                                                                             fontWeight: 'bold',
@@ -130,9 +153,9 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            { item.auction_type === 'reverse-auction' && (
+                                                            { item.auction_type === 'sealed-auction' && (
                                                                 <div>
-                                                                    <p>START PRICE:</p>
+                                                                    <p>Start Price:</p>
                                                                     <div
                                                                         style={{
                                                                             fontWeight: 'bold',
@@ -164,7 +187,7 @@ export default function AuctionsList({page, setPage, auctionKey, setAuctionKey})
                                                                     color: '#000'
                                                                 }}
                                                                 >
-                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'REVERSE AUCTION'}
+                                                                    {item.auction_type === 'live-auction' ? 'LIVE AUCTION' : 'SEALED-BID AUCTION'}
                                                                 </div>
                                                             </div>
                                                             <div>

@@ -1,9 +1,8 @@
 import {useState, useCallback} from 'react';
 import React from 'react';
-import {Page, Card, Text, InlineStack, Icon, Button, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
-    ResourceItem, FormLayout, Checkbox, Pagination, RadioButton,
-} from '@shopify/polaris';
-import {useNavigate, useLoaderData, useFetcher, Form, useSubmit} from '@remix-run/react';
+import { Page, Card, Text, InlineStack, Icon, Button, Layout, BlockStack, TextField, Select, ResourceList, Thumbnail,
+    ResourceItem, FormLayout, Checkbox, Pagination, RadioButton } from '@shopify/polaris';
+import {useLoaderData, useNavigate, useFetcher, useSubmit, Form} from '@remix-run/react';
 import {ProductIcon, CalendarIcon, SettingsIcon} from '@shopify/polaris-icons';
 import {authenticate} from "../shopify.server";
 import axios from "axios";
@@ -33,7 +32,6 @@ export async function action ({request}) {
         data: body,
     })
 }
-
 export default function AuctionForm() {
     const navigate = useNavigate();
     const fetcher = useFetcher();
@@ -160,13 +158,15 @@ export default function AuctionForm() {
 
     const [createAuction] = useMutation(CREATE_AUCTION);
     const handleCreateAuction = async () => {
-        if (!name || !startPrice || (!bidIncrement && auctionType === 'live-auction') || !startDate || !endDate
-            || !selectedProducts.length || (reservePriceChecked && !reservePrice) || (buyoutPriceChecked && !buyoutPrice)) {
+        if (
+            !name || !startPrice || (!bidIncrement && auctionType === 'live-auction') || !startDate || !endDate
+            || !selectedProducts.length || (reservePriceChecked && !reservePrice) || (buyoutPriceChecked && !buyoutPrice)
+        ) {
             setNameInvalid(!name ? 'This field is required' : '');
             setStartPriceInvalid(!startPrice ? 'This field is required' : '');
             setBidIncrementInvalid(!bidIncrement ? 'This field is required' : '');
-            setStartDateInvalid(!startDate ? 'Please choose the valid date' : '');
-            setEndDateInvalid(!endDate ? 'Please choose the valid date' : '');
+            setStartDateInvalid(!startDate ? 'Please choose a valid date' : '');
+            setEndDateInvalid(!endDate ? 'Please choose a valid date' : '');
             setSelectedProductsInvalid(!selectedProducts.length);
             setReservePriceInvalid(reservePriceChecked && !reservePrice ? 'Please enter the reserve price' : '');
             setBuyoutPriceInvalid(buyoutPriceChecked && !buyoutPrice ? 'Please enter the buyout price' : '');
@@ -175,15 +175,14 @@ export default function AuctionForm() {
             const productId = selectedProducts[0].productId.replace(/^.*\/(\d+)$/, "$1");
             const key = ulid();
             const thumbnail = selectedProducts[0].productImage;
-
             try {
-                if(auctionType === 'reverse-auction'){
+                if (auctionType === 'sealed-auction') {
                     const data = {
                         key: key,
                         end_date: endDate,
                         store_id: `${shop.id}`,
                     }
-                    submit(data, {replace: true, method: "POST", encType: "application/json"});
+                    submit(JSON.stringify(data), {replace: true, method: "POST", encType: "application/json"});
                 }
                 const createPromise = await createAuction({
                     variables: {
@@ -225,12 +224,9 @@ export default function AuctionForm() {
                 navigate(`../auction/${key}`);
             } catch (error) {
                 console.error('Error:', error.message);
-                shopify.toast.show('Connection timeout', {
-                    isError: true,
-                });
+                shopify.toast.show('Connection timeout', { isError: true });
             }
         }
-
     };
 
     const removeItemFromFormState = useCallback((productIdToDelete) => {
@@ -451,10 +447,10 @@ export default function AuctionForm() {
                                         onChange={handleAuctionType}
                                     />
                                     <RadioButton
-                                        label="Reverve auction"
-                                        id="reverse-auction"
+                                        label="Sealed-bid auction"
+                                        id="sealed-auction"
                                         name="accounts"
-                                        checked={auctionType === 'reverse-auction'}
+                                        checked={auctionType === 'sealed-auction'}
                                         onChange={handleAuctionType}
                                     />
                                 </InlineStack>

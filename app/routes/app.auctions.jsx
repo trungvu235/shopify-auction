@@ -150,7 +150,7 @@ export default function AuctionsList() {
             return (
                 <IndexTable.Row id={key} key={key} position={index}>
                     <IndexTable.Cell><span>{name}</span></IndexTable.Cell>
-                    <IndexTable.Cell><span>{auction_type === 'live-auction' ? 'Live Auction' : 'Reverse Auction'}</span></IndexTable.Cell>
+                    <IndexTable.Cell><span>{auction_type === 'live-auction' ? 'Live Auction' : 'Sealed-Bid Auction'}</span></IndexTable.Cell>
                     <IndexTable.Cell>
                         <span>${start_price}</span>
                     </IndexTable.Cell>

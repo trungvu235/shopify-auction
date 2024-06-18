@@ -17,7 +17,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
     const [bidder, setBidder] = useState();
     const [currentBid, setCurrentBid] = useState();
     const [nextBid, setNextBid] = useState(0);
-    const [reverseBid, setReverseBid] = useState(0);
+    const [sealedBid, setSealedBid] = useState(0);
     const [phoneNumber, setPhoneNumber] = useState();
     const [phoneNumberError, setPhoneNumberError] = useState(false);
     const [customerBid, setCustomerBid] = useState();
@@ -73,7 +73,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
             setStartDate(new Date(auctionDetail.start_date));
             setEndDate(new Date(auctionDetail.end_date));
             setCurrentBid(auctionDetail.end_price ? auctionDetail.end_price : auctionDetail.start_price);
-            setReverseBid(auctionDetail.start_price);
+            setSealedBid(auctionDetail.start_price);
             if(new Date(auctionDetail.end_date) < Date.now()){
                 fetchAuctionBidders();
             }
@@ -138,8 +138,8 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
     const handleNextBidChange = (value) => {
         setNextBid(value);
     };
-    const handleReverseBidChange = (value) => {
-        setReverseBid(value);
+    const handleSealedBidChange = (value) => {
+        setSealedBid(value);
     };
     const handlePhoneNumberChange = (value) => {
         setPhoneNumber(value);
@@ -183,7 +183,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
             setPhoneNumberError(true);
         }
     };
-    const handlePlaceReverseBid = () => {
+    const handlePlaceSealedBid = () => {
         if (phoneNumber && phoneNumber.length > 4) {
             setPhoneNumberError(false);
             try {
@@ -193,7 +193,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                         input: {
                             id: window.shopifyCustomer.id,
                             key: auctionDetail.key,
-                            bid: parseFloat(reverseBid),
+                            bid: parseFloat(sealedBid),
                             contact_number: phoneNumber,
                         }
                     }
@@ -384,7 +384,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 display: 'flex',
                                                                 justifyContent: 'space-between'
                                                             }}>
-                                                                <strong>Reverse Price</strong>
+                                                                <strong>Reserve Price</strong>
                                                                 <strong>
                                                                     ${auctionDetail.reserve_price}
                                                                 </strong>
@@ -553,7 +553,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 display: 'flex',
                                                                 justifyContent: 'space-between'
                                                             }}>
-                                                                <strong>Reverse Price</strong>
+                                                                <strong>Reserve Price</strong>
                                                                 <strong>
                                                                     ${auctionDetail.reserve_price}
                                                                 </strong>
@@ -577,11 +577,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                             </div>
                                                         </div>
                                                     )}
-                                                    <div style={{
-                                                        marginTop: '10px 0',
-                                                        padding: '10px 15px',
-                                                        borderBottom: 'solid 1px #eaeaea'
-                                                    }}>
+                                                    <div style={{ marginTop: '10px 0', padding: '10px 15px', borderBottom: 'solid 1px #eaeaea'}}>
                                                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                                             <div>Start at</div>
                                                             <strong>
@@ -610,8 +606,9 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                     <div style={{marginBottom: '10px'}}>
                                                         {nextBid && auctionDetail.auction_type === 'live-auction' && (
                                                             <Flex horizontal gap="middle" style={{flexWrap: 'wrap'}}>
-                                                                <strong style={{fontSize: "16px"}}>Place live
-                                                                    bid</strong>
+                                                                <strong style={{fontSize: "16px"}}>
+                                                                    Place live bid
+                                                                </strong>
                                                                 <Flex vertical gap="middle">
                                                                     <Flex horizontal gap="middle">
                                                                         <Flex vertical gap="middle">
@@ -664,7 +661,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
 
                                                             </Flex>
                                                         )}
-                                                        {auctionDetail.auction_type === 'reverse-auction' && (
+                                                        {auctionDetail.auction_type === 'sealed-auction' && (
                                                             <div>
                                                                 {customerBid && (
                                                                     <Flex vertical style={{padding: '15px 0'}}
@@ -703,17 +700,20 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                         <Flex vertical gap="middle">
                                                                             <Flex horizontal gap="middle">
                                                                                 <Flex vertical gap="middle">
-                                                                                    <InputNumber addonBefore="$"
-                                                                                                 value={reverseBid}
-                                                                                                 min={auctionDetail.start_price}
-                                                                                                 onChange={handleReverseBidChange}/>
+                                                                                    <InputNumber
+                                                                                        addonBefore="$"
+                                                                                        value={sealedBid}
+                                                                                        min={auctionDetail.start_price}
+                                                                                        onChange={handleSealedBidChange}
+                                                                                    />
                                                                                     <PhoneInput
                                                                                         international
                                                                                         countryCallingCodeEditable={false}
                                                                                         defaultCountry="VN"
                                                                                         placeholder="Enter phone number"
                                                                                         value={phoneNumber}
-                                                                                        onChange={handlePhoneNumberChange}/>
+                                                                                        onChange={handlePhoneNumberChange}
+                                                                                    />
                                                                                     {phoneNumberError && (
                                                                                         <div style={{color: 'red'}}>
                                                                                             Please enter a valid phone
@@ -726,7 +726,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                                         background: "rgba(0, 21, 41,0.85)",
                                                                                     }}
                                                                                     type="primary"
-                                                                                    onClick={handlePlaceReverseBid}
+                                                                                    onClick={handlePlaceSealedBid}
                                                                                 >
                                                                                     Place Bid
                                                                                 </Button>
@@ -853,7 +853,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {auctionDetail.auction_type === 'reverse-auction' && (
+                                                {auctionDetail.auction_type === 'sealed-auction' && (
                                                     <div className="auction-place-bid-container" style={{
                                                         width: '100%',
                                                         padding: '10px 20px'
@@ -888,9 +888,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 padding: '10px 15px'
                                                             }}>
                                                                 <div>
-                                                                    The auction will be ready once we have verified
-                                                                    the
-                                                                    transaction.
+                                                                    The auction will be ready once we have verified the transaction.
                                                                 </div>
                                                                 <div>
                                                                     Please wait a moment...
@@ -904,9 +902,7 @@ export default function AuctionDetail({page, setPage, auctionKey, setAuctionKey}
                                                                 padding: '10px 15px'
                                                             }}>
                                                                 <div>
-                                                                    The transaction has been verified. Click the
-                                                                    button
-                                                                    to purchase the auction.
+                                                                    The transaction has been verified. Click the button to purchase the auction.
                                                                 </div>
                                                                 <Button
                                                                     style={{background: "rgba(0, 21, 41,0.85)"}}
