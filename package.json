@@ -13,7 +13,7 @@
     "shopify:deploy": "shopify app deploy",
     "config:use": "shopify app config use",
     "env": "shopify app env",
-    "start": "remix-serve build",
+    "start": "remix-serve build/index.js",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
     "prisma": "prisma",
@@ -21,7 +21,8 @@
     "vite:dev": "vite",
     "vite:build": "vite build",
     "cleanup": "rimraf --glob extensions/*/assets/*.{json,geetkeep}",
-    "shopify:extensions": "shopify app generate extension"
+    "shopify:extensions": "shopify app generate extension",
+    "env-show": "shopify app env show"
   },
   "dependencies": {
     "@apollo/client": "^3.8.8",
@@ -77,7 +78,7 @@
     "eslint-config-prettier": "^8.8.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
-    "vite": "^4.4.4",
+    "vite": "^5.2.11",
     "vite-plugin-shopify": "^2.1.1"
   },
   "workspaces": [
